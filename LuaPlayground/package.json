@@ -1,0 +1,13 @@
+{
+    "app":"LuaPlayground",
+    "name":"LuaPlayground",
+    "description":"Module testing and analytics tool",
+    "info":{
+        "author": "Xuan Sang LEs",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.0.1-a",
+    "category":"System",
+    "iconclass":"fa fa-adn",
+    "mimes":["none"]
+}
