@@ -1,0 +1,13 @@
+{
+    "app":"MediaPlayer",
+    "name":"Media Player",
+    "description":"MP3 player for AntOS",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.0.8-a",
+    "category":"Multimedia",
+    "iconclass":"fa fa-headphones",
+    "mimes":["none"]
+}

@@ -1,0 +1,44 @@
+<afx-app-window apptitle="__(Media Player)" width="300" height="450" resizable="false" data-id="MediaPlayer">
+    <afx-vbox >
+        <afx-hbox data-height="85">
+            <afx-vbox>
+                <div data-height="5"></div>
+                <afx-hbox>
+                    <div data-width="5"></div>
+                    <afx-label data-id="play-time" data-width="50" ></afx-label>
+                    <afx-label data-id = "song-name" ></afx-label>
+                    <afx-label data-id="total-time" data-width="50"></afx-label>
+                    <div data-width="5"></div>
+                </afx-hbox>
+                <afx-hbox>
+                    <div data-width="5"></div>
+                    <afx-slider data-id="play-slide" value="0" max="100"></afx-slider>
+                    <div data-width="5"></div>
+                </afx-hbox>
+               
+                <afx-hbox class = "play-control" data-height="50">
+                    <div data-width="5"></div>
+                    <afx-switch data-width = "22" data-id="play-random"></afx-switch>
+                    <div data-id="animation" class="animation">
+                      <span></span>  
+                      <span></span>  
+                      <span></span>  
+                      <span></span>  
+                      <span></span>  
+                    </div>
+                    <afx-button class = "ctlbtn" data-width="26" data-id="play-prev" iconclass="fa fa-step-backward" ></afx-button>
+                    <afx-switch data-width="38" data-id="play-pause" ></afx-switch>
+                    <afx-button class = "ctlbtn" data-width="26" data-id="play-next" iconclass="fa fa-step-forward"></afx-button>
+                    <afx-slider data-id="vol-control"  max="100"></afx-slider>
+                    <afx-switch data-width = "22" data-id="play-vol"></afx-switch>
+                </afx-hbox>
+            </afx-vbox>
+        </afx-hbox>
+        <afx-hbox>
+            <div data-width="5"></div>
+            <afx-list-view data-id="playlist"></afx-list-view>
+            <div data-width="5"></div>
+        </afx-hbox>
+       <div data-height="5"></div>
+    </afx-vbox>
+</afx-app-window>

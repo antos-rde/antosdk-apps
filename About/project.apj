@@ -1,0 +1,8 @@
+{
+    "name": "About",
+    "root": "home://workspace/About",
+    "css": [],
+    "javascripts": [],
+    "coffees": ["coffees/main.coffee"],
+    "copies": ["assets/scheme.html", "package.json", "README.md"]
+}

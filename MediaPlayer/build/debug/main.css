@@ -1,0 +1,108 @@
+
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-button button{
+    border: 0;
+    font-size: 25px;
+    padding-top:9px;
+    background-color: transparent;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-pause"]{
+    padding-top:5px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-pause"] span::before{
+    content: "\f144";
+    font-size: 40px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-pause"] .swon::before{
+    content: "\f28b";
+}
+afx-app-window[data-id="MediaPlayer"] afx-label[data-id="play-time"] {
+    text-align: left;
+}
+afx-app-window[data-id="MediaPlayer"] afx-label[data-id="total-time"] {
+    text-align: right;
+}
+afx-app-window[data-id="MediaPlayer"] afx-label[data-id="song-name"] {
+    text-align: center;
+    display: inline;
+    overflow: hidden;
+}
+afx-app-window[data-id="MediaPlayer"] afx-slider .dragpoint {
+    width:12px;
+    height: 12px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-slider[data-id="vol-control"] .progress {
+    background-color: #a6a6a6;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-vol"] {
+    margin-top:10px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-vol"] span::before{
+    content: "\f026";
+    font-size: 19px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-vol"] .swon::before{
+    content: "\f028";
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-random"] span::before{
+    content: "\f074";
+    font-size: 16px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-random"] .swon::before{
+    content: "\f074";
+}
+afx-app-window[data-id="MediaPlayer"] afx-hbox.play-control afx-switch[data-id="play-random"] {
+    margin-top:10px;
+}
+afx-app-window[data-id="MediaPlayer"] afx-list-view[data-id="playlist"] {
+    border:1px solid #a6a6a6;
+}
+afx-app-window[data-id="MediaPlayer"] afx-button.ctlbtn button:active{
+    background-color: transparent;
+    color:#2786F3;
+}
+afx-app-window[data-id="MediaPlayer"] .animation {
+    position: relative;
+}
+
+afx-app-window[data-id="MediaPlayer"] .animation span{  
+  width:5px;  
+  height: 5px;  
+  bottom:18px;
+  position:absolute;  
+  -webkit-animation: bodong 0.5s infinite  ease;  
+}  
+
+afx-app-window[data-id="MediaPlayer"] .animation span:first-child{  
+  left:10px;  
+  -webkit-animation-delay:.3s;
+  background-color: red;
+}  
+
+afx-app-window[data-id="MediaPlayer"] .animation span:nth-child(2){  
+  left:17px;  
+  -webkit-animation-delay:.4s;  
+    background-color:orange ;
+}  
+afx-app-window[data-id="MediaPlayer"] .animation span:nth-child(3){  
+  left:24px;  
+  -webkit-animation-delay:.6s;  
+  background-color: #2786F3;
+}  
+afx-app-window[data-id="MediaPlayer"] .animation span:nth-child(4){  
+  left:31px;  
+  -webkit-animation-delay:.8s;
+  background-color: chocolate;
+}  
+afx-app-window[data-id="MediaPlayer"] .animation span:nth-child(5){  
+  left:38px;  
+  -webkit-animation-delay:1s;
+  background-color: blue;
+}  
+
+@-webkit-keyframes bodong{  
+  0%{height:5px; background:bule;}  
+  30%{height:15px; background:bule;}  
+  60%{height:20px; background:bule;}  
+  80%{height:15px; background:bule;}  
+  100%{height:5px; background:bule;}  
+}

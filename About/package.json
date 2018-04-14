@@ -1,0 +1,13 @@
+{
+    "app":"About",
+    "name":"About",
+    "description":"AntOS about",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-question-circle",
+    "mimes":["none"]
+}

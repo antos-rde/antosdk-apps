@@ -1,0 +1,1 @@
+{"name":"MediaPlayer","root":"home://workspace/MediaPlayer","css":["css/main.css"],"javascripts":["javascripts/howler.min.js"],"coffees":["coffees/main.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}
