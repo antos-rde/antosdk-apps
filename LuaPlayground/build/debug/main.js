@@ -23,7 +23,13 @@
       this.on("vboxchange", function() {
         return me.editor.resize();
       });
-      return this.socket = null;
+      (this.find("log-clear")).set("onbtclick", function(e) {
+        return me.log("clean");
+      });
+      this.socket = null;
+      return this.bindKey("CTRL-R", function() {
+        return me.run();
+      });
     }
 
     menu() {

@@ -17,9 +17,10 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
         @editor.setTheme "ace/theme/monokai"
         @on "vboxchange", () ->
             me.editor.resize()
-        
+        (@find "log-clear").set "onbtclick", (e) ->
+            me.log "clean"
         @socket = null
-    
+        @bindKey "CTRL-R", () -> me.run()
     menu: () ->
         me = @
         menu = [{
