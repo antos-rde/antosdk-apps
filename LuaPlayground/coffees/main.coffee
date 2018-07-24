@@ -57,5 +57,5 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
     cleanup: (e)->
         @socket.close() if @socket
         
-this.OS.dependencies = ["ace/ace"]
+LuaPlayground.dependencies = ["ace/ace"]
 this.OS.register "LuaPlayground", LuaPlayground
