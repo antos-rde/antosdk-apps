@@ -5,11 +5,10 @@ class TinyEditor extends this.OS.GUI.BaseApplication
     main: () ->
         me = @
         @editor = @find "editor"
-        @stbar = @find "statusbar"
         @bindKey "ALT-N", () -> me.newFile()
         @bindKey "ALT-O", () -> me.openFile()
         @bindKey "CTRL-S", () -> me.saveFile()
-        @filehandler = null
+        @filehandler = if @args and @args.length > 0 then @args[0].asFileHandler() else null
         $(@editor).on 'input', (e) ->
             return if me.filehandler.dirty is true
             me.filehandler.dirty = true
@@ -39,7 +38,7 @@ class TinyEditor extends this.OS.GUI.BaseApplication
         @filehandler = null
         @read()
     
-    openFile: (fi) ->
+    openFile: () ->
         me = @
         @openDialog "FileDiaLog", ( dir, fname, d ) ->
             me.filehandler = "#{dir}/#{fname}".asFileHandler()

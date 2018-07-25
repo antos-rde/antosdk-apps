@@ -10,7 +10,6 @@
       var me;
       me = this;
       this.editor = this.find("editor");
-      this.stbar = this.find("statusbar");
       this.bindKey("ALT-N", function() {
         return me.newFile();
       });
@@ -20,7 +19,7 @@
       this.bindKey("CTRL-S", function() {
         return me.saveFile();
       });
-      this.filehandler = null;
+      this.filehandler = this.args && this.args.length > 0 ? this.args[0].asFileHandler() : null;
       $(this.editor).on('input', function(e) {
         if (me.filehandler.dirty === true) {
           return;
@@ -74,7 +73,7 @@
       return this.read();
     }
 
-    openFile(fi) {
+    openFile() {
       var me;
       me = this;
       return this.openDialog("FileDiaLog", function(dir, fname, d) {
