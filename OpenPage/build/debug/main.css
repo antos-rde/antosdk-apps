@@ -1,0 +1,7 @@
+
+afx-app-window[data-id="OpenPage"] div[data-id="container"]
+{
+    overflow: auto;
+    margin:0 auto;
+    padding:0px
+}

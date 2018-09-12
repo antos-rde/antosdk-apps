@@ -1,0 +1,1 @@
+{"name":"OpenPage","root":"home://Documents/workspace/antosdk-apps/OpenPage","css":["css/main.css"],"javascripts":["javascripts/webodf.js","javascripts/EditorSession.js"],"coffees":["coffees/main.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}
