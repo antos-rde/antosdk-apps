@@ -34,7 +34,7 @@ afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"] afx-button button
     height: 100%;
 }
 
-afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"] afx-button button:hover, afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"] afx-button.btactive button
+afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"] afx-button button:hover, afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"] afx-button button.btactive
 {
     border: 1px solid #759DC0;
     background-color: transparent;

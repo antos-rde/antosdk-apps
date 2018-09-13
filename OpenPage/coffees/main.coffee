@@ -4,7 +4,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
     
     main: () ->
         # load session class
-        if not OpenPage.editorSession
+        if not OpenPage.EditorSession
             require ["webodf/editor/EditorSession"], (ES) ->
                 OpenPage.EditorSession = ES
         @eventSubscriptions = new core.EventSubscriptions()
@@ -56,9 +56,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
         @userid = "localuser"
         @canvas = new odf.OdfCanvas(el)
         @documentChanged = (e) ->
-            console.log e
+            #console.log e
         @metaChanged = (e) ->
-            console.log e
+            #console.log e
         @textStylingChanged = (e) ->
             me.updateToolbar e
         #@canvas.enableAnnotations(true, true)
@@ -90,7 +90,14 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalCursorMoved, ()-> me.updateHyperlinkButtons()
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalParagraphChanged, ()-> me.updateHyperlinkButtons()
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalParagraphStyleModified, ()-> me.updateHyperlinkButtons()
-                    
+            
+            #image controller
+            me.imageController = me.editorSession.sessionController.getImageController()
+            #imageController.subscribe(gui.ImageController.enabledChanged, enableButtons)
+            
+            #text controller
+            me.textController = me.editorSession.sessionController.getTextController()
+            
             me.editorSession.sessionController.setUndoManager new gui.TrivialUndoManager()
             me.editorSession.sessionController.getUndoManager().subscribe gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged
             me.editorSession.sessionController.getMetadataController().subscribe gui.MetadataController.signalMetadataChanged, me.metaChanged
@@ -220,6 +227,38 @@ class OpenPage extends this.OS.GUI.BaseApplication
     unlink: (e) ->
         @hyperlinkController.removeHyperlinks()
     
+    undo: (e) ->
+        @editorSession.undo()
+    
+    redo: (e) ->
+        @editorSession.redo()
+    
+    image: (e) ->
+        me = @
+        @openDialog "FileDiaLog", (d, n, p) ->
+            fp = p.asFileHandler()
+            fp.asFileHandler().read (data) ->
+                blob = new Blob [data], { type: fp.info.mime }
+                reader = new FileReader()
+                reader.onloadend = () ->
+                    return me.error __("Couldnt load image {0}", p) if reader.readyState isnt 2
+                    # insert the image to document
+                    hiddenImage = new Image()
+                    hiddenImage.style.position = "absolute"
+                    hiddenImage.style.left = "-99999px"
+                    document.body.appendChild hiddenImage
+                    hiddenImage.onload =  () ->
+                        content = reader.result.substring(reader.result.indexOf(",") + 1)
+                        #insert image
+                        me.textController.removeCurrentSelection()
+                        me.imageController.insertImage fp.info.mime, content, hiddenImage.width, hiddenImage.height
+                        document.body.removeChild hiddenImage
+                    hiddenImage.src = reader.result
+                
+                reader.readAsDataURL blob
+            , "binary"
+        , __("Select image file"), { mimes: ["image/.*"] }
+    
     closeDocument: () ->
         # finish editing
         return unless @editorSession and @session
@@ -252,6 +291,8 @@ class OpenPage extends this.OS.GUI.BaseApplication
                         me.notify "Document closed"
                     me.session = undefined
                     me.directFormattingCtl = undefined
+                    me.textController = undefined
+                    me.imageController = undefined
                     #
             
     

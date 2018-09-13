@@ -8,7 +8,7 @@
 
     main() {
       // load session class
-      if (!OpenPage.editorSession) {
+      if (!OpenPage.EditorSession) {
         require(["webodf/editor/EditorSession"], function(ES) {
           return OpenPage.EditorSession = ES;
         });
@@ -79,12 +79,10 @@
       el.classList.add("notranslate");
       this.userid = "localuser";
       this.canvas = new odf.OdfCanvas(el);
-      this.documentChanged = function(e) {
-        return console.log(e);
-      };
-      this.metaChanged = function(e) {
-        return console.log(e);
-      };
+      this.documentChanged = function(e) {};
+      //console.log e
+      this.metaChanged = function(e) {};
+      //console.log e
       this.textStylingChanged = function(e) {
         return me.updateToolbar(e);
       };
@@ -124,6 +122,13 @@
         me.eventSubscriptions.addFrameSubscription(me.editorSession, OpenPage.EditorSession.signalParagraphStyleModified, function() {
           return me.updateHyperlinkButtons();
         });
+        
+        //image controller
+        me.imageController = me.editorSession.sessionController.getImageController();
+        //imageController.subscribe(gui.ImageController.enabledChanged, enableButtons)
+
+        //text controller
+        me.textController = me.editorSession.sessionController.getTextController();
         me.editorSession.sessionController.setUndoManager(new gui.TrivialUndoManager());
         me.editorSession.sessionController.getUndoManager().subscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
         me.editorSession.sessionController.getMetadataController().subscribe(gui.MetadataController.signalMetadataChanged, me.metaChanged);
@@ -311,6 +316,53 @@
       return this.hyperlinkController.removeHyperlinks();
     }
 
+    undo(e) {
+      return this.editorSession.undo();
+    }
+
+    redo(e) {
+      return this.editorSession.redo();
+    }
+
+    image(e) {
+      var me;
+      me = this;
+      return this.openDialog("FileDiaLog", function(d, n, p) {
+        var fp;
+        fp = p.asFileHandler();
+        return fp.asFileHandler().read(function(data) {
+          var blob, reader;
+          blob = new Blob([data], {
+            type: fp.info.mime
+          });
+          reader = new FileReader();
+          reader.onloadend = function() {
+            var hiddenImage;
+            if (reader.readyState !== 2) {
+              return me.error(__("Couldnt load image {0}", p));
+            }
+            // insert the image to document
+            hiddenImage = new Image();
+            hiddenImage.style.position = "absolute";
+            hiddenImage.style.left = "-99999px";
+            document.body.appendChild(hiddenImage);
+            hiddenImage.onload = function() {
+              var content;
+              content = reader.result.substring(reader.result.indexOf(",") + 1);
+              //insert image
+              me.textController.removeCurrentSelection();
+              me.imageController.insertImage(fp.info.mime, content, hiddenImage.width, hiddenImage.height);
+              return document.body.removeChild(hiddenImage);
+            };
+            return hiddenImage.src = reader.result;
+          };
+          return reader.readAsDataURL(blob);
+        }, "binary");
+      }, __("Select image file"), {
+        mimes: ["image/.*"]
+      });
+    }
+
     closeDocument() {
       var me, op;
       // finish editing
@@ -354,7 +406,9 @@
               return me.notify("Document closed");
             });
             me.session = void 0;
-            return me.directFormattingCtl = void 0;
+            me.directFormattingCtl = void 0;
+            me.textController = void 0;
+            return me.imageController = void 0;
           });
         });
       });
