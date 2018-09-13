@@ -1,5 +1,5 @@
 (function() {
-  var OpenPage;
+  var HyperLinkDialog, OpenPage;
 
   OpenPage = class OpenPage extends this.OS.GUI.BaseApplication {
     constructor(args) {
@@ -7,19 +7,89 @@
     }
 
     main() {
-      var el, me, userid;
+      // load session class
+      if (!OpenPage.editorSession) {
+        require(["webodf/editor/EditorSession"], function(ES) {
+          return OpenPage.EditorSession = ES;
+        });
+      }
+      this.eventSubscriptions = new core.EventSubscriptions();
+      this.initToolbox();
+      this.initCanvas();
+      return this.canvas.load(`${this._api.handler.get}/home://welcome.odt`);
+    }
+
+    initToolbox() {
+      var el, fn, me, name, ref, results;
+      me = this;
+      this.basictool = {
+        undo: this.find("btundo"),
+        redo: this.find("btredo"),
+        bold: this.find("btbold"),
+        italic: this.find("btitalic"),
+        underline: this.find("btunderline"),
+        strike: this.find("btstrike"),
+        note: this.find("btnote"),
+        link: this.find("btlink"),
+        unlink: this.find("btunlink"),
+        image: this.find("btimage"),
+        ac: this.find("btac"),
+        al: this.find("btal"),
+        ar: this.find("btar"),
+        aj: this.find("btaj"),
+        indent: this.find("btindent"),
+        outdent: this.find("btoutdent"),
+        fonts: this.find("font-list"),
+        fontsize: this.find("font-size")
+      };
+      fn = function(name, el) {
+        var act;
+        if (name === "fonts") {
+          act = "onlistselect";
+        } else if (name === "fontsize") {
+          act = "onchange";
+        } else {
+          act = "onbtclick";
+        }
+        return el.set(act, function(e) {
+          if (!me.directFormattingCtl) {
+            return;
+          }
+          if (!me[name]) {
+            return;
+          }
+          me[name](e);
+          return me.editorFocus();
+        });
+      };
+      ref = this.basictool;
+      results = [];
+      for (name in ref) {
+        el = ref[name];
+        results.push(fn(name, el));
+      }
+      return results;
+    }
+
+    initCanvas() {
+      var el, me;
       el = this.find("odfcanvas");
       me = this;
       el.setAttribute("translate", "no");
       el.classList.add("notranslate");
-      this.eventNotifier = new core.EventNotifier(["unknown-error", "documentModifiedChanged", "metadataChanged"]);
-      userid = "localuser";
-      require(["webodf/editor/EditorSession"], function(ES) {
-        return OpenPage.EditorSession = ES;
-      });
+      this.userid = "localuser";
       this.canvas = new odf.OdfCanvas(el);
+      this.documentChanged = function(e) {
+        return console.log(e);
+      };
+      this.metaChanged = function(e) {
+        return console.log(e);
+      };
+      this.textStylingChanged = function(e) {
+        return me.updateToolbar(e);
+      };
       //@canvas.enableAnnotations(true, true)
-      this.canvas.addListener("statereadychange", function() {
+      return this.canvas.addListener("statereadychange", function() {
         var op, viewOptions;
         me.session = new ops.Session(me.canvas);
         viewOptions = {
@@ -27,7 +97,7 @@
           caretAvatarsInitiallyVisible: false,
           caretBlinksOnRangeSelect: true
         };
-        me.editorSession = new OpenPage.EditorSession(me.session, userid, {
+        me.editorSession = new OpenPage.EditorSession(me.session, me.userid, {
           viewOptions: viewOptions,
           directTextStylingEnabled: true,
           directParagraphStylingEnabled: true,
@@ -39,35 +109,330 @@
           zoomingEnabled: true,
           reviewModeEnabled: false
         });
+        // basic format
+        me.directFormattingCtl = me.editorSession.sessionController.getDirectFormattingController();
+        me.directFormattingCtl.subscribe(gui.DirectFormattingController.textStylingChanged, me.textStylingChanged);
+        me.directFormattingCtl.subscribe(gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged);
+        // hyper link controller
+        me.hyperlinkController = me.editorSession.sessionController.getHyperlinkController();
+        me.eventSubscriptions.addFrameSubscription(me.editorSession, OpenPage.EditorSession.signalCursorMoved, function() {
+          return me.updateHyperlinkButtons();
+        });
+        me.eventSubscriptions.addFrameSubscription(me.editorSession, OpenPage.EditorSession.signalParagraphChanged, function() {
+          return me.updateHyperlinkButtons();
+        });
+        me.eventSubscriptions.addFrameSubscription(me.editorSession, OpenPage.EditorSession.signalParagraphStyleModified, function() {
+          return me.updateHyperlinkButtons();
+        });
         me.editorSession.sessionController.setUndoManager(new gui.TrivialUndoManager());
-        me.editorSession.sessionController.getUndoManager().subscribe(gui.UndoManager.signalDocumentModifiedChanged, function(mod) {
-          return me.eventNotifier.emit("documentModifiedChanged", mod);
-        });
-        me.editorSession.sessionController.getMetadataController().subscribe(gui.MetadataController.signalMetadataChanged, function(changes) {
-          return me.eventNotifier.emit("metadataChanged", changes);
-        });
+        me.editorSession.sessionController.getUndoManager().subscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
+        me.editorSession.sessionController.getMetadataController().subscribe(gui.MetadataController.signalMetadataChanged, me.metaChanged);
         op = new ops.OpAddMember();
         op.init({
-          memberid: userid,
+          memberid: me.userid,
           setProperties: {
             "fullName": "Xuan Sang LE",
             "color": "blue"
           }
         });
         me.session.enqueue([op]);
+        me.initFontList(me.editorSession.getDeclaredFonts());
         me.editorSession.sessionController.insertLocalCursor();
-        me.editorSession.sessionController.startEditing();
-        return me.editorSession.sessionController.getEventManager().focus();
+        return me.editorSession.sessionController.startEditing();
       });
-      this.canvas.load(`${this._api.handler.get}/home://Downloads/welcome.odt`);
-      return this.eventNotifier.subscribe("documentModifiedChanged", function(d) {
-        return console.log("document is modified");
+    }
+
+    //console.log me.editorSession.getDeclaredFonts()
+
+    initFontList(list) {
+      var j, len, v;
+      for (j = 0, len = list.length; j < len; j++) {
+        v = list[j];
+        v.text = v.name;
+      }
+      return this.basictool.fonts.set("items", list);
+    }
+
+    updateToolbar(changes) {
+      if (changes.hasOwnProperty('isBold')) {
+        // basic style
+        this.basictool.bold.set("selected", changes.isBold);
+      }
+      if (changes.hasOwnProperty('isItalic')) {
+        this.basictool.italic.set("selected", changes.isItalic);
+      }
+      if (changes.hasOwnProperty('hasUnderline')) {
+        this.basictool.underline.set("selected", changes.hasUnderline);
+      }
+      if (changes.hasOwnProperty('hasStrikeThrough')) {
+        this.basictool.strike.set("selected", changes.hasStrikeThrough);
+      }
+      if (changes.hasOwnProperty("fontSize")) {
+        this.basictool.fontsize.set("value", changes.fontSize);
+      }
+      if (changes.hasOwnProperty("fontName")) {
+        this.selectFont(changes.fontName);
+      }
+      if (changes.hasOwnProperty("isAlignedLeft")) {
+        //pharagraph style
+        this.basictool.al.set("selected", changes.isAlignedLeft);
+      }
+      if (changes.hasOwnProperty("isAlignedRight")) {
+        this.basictool.ar.set("selected", changes.isAlignedRight);
+      }
+      if (changes.hasOwnProperty("isAlignedCenter")) {
+        this.basictool.ac.set("selected", changes.isAlignedCenter);
+      }
+      if (changes.hasOwnProperty("isAlignedJustified")) {
+        return this.basictool.aj.set("selected", changes.isAlignedJustified);
+      }
+    }
+
+    updateHyperlinkButtons(e) {
+      var selectedLinks;
+      selectedLinks = this.editorSession.getSelectedHyperlinks();
+      return this.basictool.unlink.set("enable", selectedLinks.length > 0);
+    }
+
+    selectFont(name) {
+      var i, item, items, j, len, v;
+      items = this.basictool.fonts.get("items");
+      for (i = j = 0, len = items.length; j < len; i = ++j) {
+        v = items[i];
+        if (v.name === name) {
+          item = i;
+        }
+      }
+      return this.basictool.fonts.set("selected", item);
+    }
+
+    editorFocus() {
+      return this.editorSession.sessionController.getEventManager().focus();
+    }
+
+    bold(e) {
+      //console.log @, e
+      return this.directFormattingCtl.setBold(!this.basictool.bold.get("selected"));
+    }
+
+    italic(e) {
+      return this.directFormattingCtl.setItalic(!this.basictool.italic.get("selected"));
+    }
+
+    underline(e) {
+      return this.directFormattingCtl.setHasUnderline(!this.basictool.underline.get("selected"));
+    }
+
+    strike(e) {
+      return this.directFormattingCtl.setHasStrikethrough(!this.basictool.strike.get("selected"));
+    }
+
+    fonts(e) {
+      return this.directFormattingCtl.setFontName(e.data.name);
+    }
+
+    fontsize(e) {
+      return this.directFormattingCtl.setFontSize(e);
+    }
+
+    al(e) {
+      return this.directFormattingCtl.alignParagraphLeft();
+    }
+
+    ar(e) {
+      return this.directFormattingCtl.alignParagraphRight();
+    }
+
+    ac(e) {
+      return this.directFormattingCtl.alignParagraphCenter();
+    }
+
+    aj(e) {
+      return this.directFormattingCtl.alignParagraphJustified();
+    }
+
+    indent(e) {
+      return this.directFormattingCtl.indent();
+    }
+
+    outdent(e) {
+      return this.directFormattingCtl.outdent();
+    }
+
+    link(e) {
+      var data, linkTarget, linksInSelection, me, selection, textSerializer;
+      // get the link first
+      me = this;
+      textSerializer = new odf.TextSerializer();
+      selection = this.editorSession.getSelectedRange();
+      linksInSelection = this.editorSession.getSelectedHyperlinks();
+      linkTarget = linksInSelection[0] ? odf.OdfUtils.getHyperlinkTarget(linksInSelection[0]) : "http://";
+      data = {
+        link: linkTarget,
+        text: "",
+        readonly: true,
+        action: "new"
+      };
+      if (selection && selection.collapsed && linksInSelection.length === 1) {
+        // selection is collapsed within a single link
+        // text in this case is read only
+        data.text = textSerializer.writeToString(linksInSelection[0]);
+        data.action = "edit";
+      } else if (selection && !selection.collapsed) {
+        // user select part of link or a block of text
+        // user convert a selection to a link
+        data.text = textSerializer.writeToString(selection.cloneContents());
+      } else {
+        data.readonly = false;
+      }
+      return this.openDialog(new HyperLinkDialog(), function(d) {
+        var selectedLinkRange, selectionController;
+        selectionController = me.editorSession.sessionController.getSelectionController();
+        if (d.readonly) {
+          // edit the existing link
+          if (d.action === "edit") {
+            selectedLinkRange = selection.cloneRange();
+            selectedLinkRange.selectNode(linksInSelection[0]);
+            selectionController.selectRange(selectedLinkRange, true);
+          }
+          me.hyperlinkController.removeHyperlinks();
+          return me.hyperlinkController.addHyperlink(d.link);
+        } else {
+          me.hyperlinkController.addHyperlink(d.link, d.text);
+          linksInSelection = me.editorSession.getSelectedHyperlinks();
+          selectedLinkRange = selection.cloneRange();
+          selectedLinkRange.selectNode(linksInSelection[0]);
+          return selectionController.selectRange(selectedLinkRange, true);
+        }
+      }, "__(Insert/edit link)", data);
+    }
+
+    unlink(e) {
+      return this.hyperlinkController.removeHyperlinks();
+    }
+
+    closeDocument() {
+      var me, op;
+      // finish editing
+      if (!(this.editorSession && this.session)) {
+        return;
+      }
+      me = this;
+      this.eventSubscriptions.unsubscribeAll();
+      this.editorSession.sessionController.endEditing();
+      this.editorSession.sessionController.removeLocalCursor();
+      // remove user
+      op = new ops.OpRemoveMember();
+      op.init({
+        memberid: this.userid
       });
+      this.session.enqueue([op]);
+      // close the session
+      return this.session.close(function(e) {
+        if (e) {
+          return me.error("Cannot close session " + e);
+        }
+        me.editorSession.sessionController.getMetadataController().unsubscribe(gui.MetadataController.signalMetadataChanged, me.metaChanged);
+        me.editorSession.sessionController.getUndoManager().unsubscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
+        me.directFormattingCtl.unsubscribe(gui.DirectFormattingController.textStylingChanged, me.textStylingChanged);
+        me.directFormattingCtl.unsubscribe(gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged);
+        // destry editorSession
+        return me.editorSession.destroy(function(e) {
+          if (e) {
+            return me.error("Cannot destroy editor session " + e);
+          }
+          me.editorSession = void 0;
+          // destroy session
+          return me.session.destroy(function(e) {
+            if (e) {
+              return me.error("Cannot destroy document session " + e);
+            }
+            core.Async.destroyAll([me.canvas.destroy], function(e) {
+              if (e) {
+                return me.error("Cannot destroy canvas" + e);
+              }
+              return me.notify("Document closed");
+            });
+            me.session = void 0;
+            return me.directFormattingCtl = void 0;
+          });
+        });
+      });
+    }
+
+    
+    cleanup(e) {
+      return this.closeDocument();
     }
 
   };
 
   this.OS.register("OpenPage", OpenPage);
+
+  HyperLinkDialog = class HyperLinkDialog extends this.OS.GUI.BasicDialog {
+    constructor() {
+      super("HyperLinkDialog", {
+        tags: [
+          {
+            tag: "afx-label",
+            att: 'text="__(Text)" data-height="23" class="header"'
+          },
+          {
+            tag: "input",
+            att: 'data-height="30"'
+          },
+          {
+            tag: "afx-label",
+            att: 'text="__(Link)" data-height="23" class="header"'
+          },
+          {
+            tag: "input",
+            att: 'data-height="30"'
+          },
+          {
+            tag: "div",
+            att: ' data-height="5"'
+          }
+        ],
+        width: 350,
+        height: 150,
+        resizable: false,
+        buttons: [
+          {
+            label: "Ok",
+            onclick: function(d) {
+              var data;
+              data = {
+                text: (d.find("content1")).value,
+                link: (d.find("content3")).value,
+                readonly: d.data.readonly,
+                action: d.data.action
+              };
+              if (d.handler) {
+                d.handler(data);
+              }
+              return d.quit();
+            }
+          },
+          {
+            label: "__(Cancel)",
+            onclick: function(d) {
+              return d.quit();
+            }
+          }
+        ],
+        filldata: function(d) {
+          if (!d.data) {
+            return;
+          }
+          (d.find("content1")).value = d.data.text;
+          (d.find("content3")).value = d.data.link;
+          return $(d.find("content1")).prop('disabled', d.data.readonly);
+        }
+      });
+    }
+
+  };
 
 }).call(this);
 
