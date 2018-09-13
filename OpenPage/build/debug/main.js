@@ -382,7 +382,7 @@
       // close the session
       return this.session.close(function(e) {
         if (e) {
-          return me.error("Cannot close session " + e);
+          return me.error(__("Cannot close session {0}", e));
         }
         me.editorSession.sessionController.getMetadataController().unsubscribe(gui.MetadataController.signalMetadataChanged, me.metaChanged);
         me.editorSession.sessionController.getUndoManager().unsubscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
@@ -391,17 +391,17 @@
         // destry editorSession
         return me.editorSession.destroy(function(e) {
           if (e) {
-            return me.error("Cannot destroy editor session " + e);
+            return me.error(__("Cannot destroy editor session {0}", e));
           }
           me.editorSession = void 0;
           // destroy session
           return me.session.destroy(function(e) {
             if (e) {
-              return me.error("Cannot destroy document session " + e);
+              return me.error(__("Cannot destroy document session {0}", e));
             }
             core.Async.destroyAll([me.canvas.destroy], function(e) {
               if (e) {
-                return me.error("Cannot destroy canvas" + e);
+                return me.error(__("Cannot destroy canvas {0}", e));
               }
               return me.notify("Document closed");
             });

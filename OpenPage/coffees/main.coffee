@@ -274,20 +274,20 @@ class OpenPage extends this.OS.GUI.BaseApplication
         @session.enqueue [op]
         # close the session
         @session.close (e) ->
-            return (me.error "Cannot close session " + e) if e
+            return me.error __("Cannot close session {0}", e) if e
             me.editorSession.sessionController.getMetadataController().unsubscribe gui.MetadataController.signalMetadataChanged, me.metaChanged
             me.editorSession.sessionController.getUndoManager().unsubscribe gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged
             me.directFormattingCtl.unsubscribe gui.DirectFormattingController.textStylingChanged, me.textStylingChanged
             me.directFormattingCtl.unsubscribe gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged
             # destry editorSession
             me.editorSession.destroy (e) ->
-                return (me.error "Cannot destroy editor session " + e) if e
+                return me.error __("Cannot destroy editor session {0}", e) if e
                 me.editorSession = undefined
                 # destroy session
                 me.session.destroy (e) ->
-                    return (me.error "Cannot destroy document session " + e) if e
+                    return me.error __("Cannot destroy document session {0}", e) if e
                     core.Async.destroyAll [me.canvas.destroy], (e) ->
-                        return me.error "Cannot destroy canvas" + e if e
+                        return me.error __("Cannot destroy canvas {0}", e) if e
                         me.notify "Document closed"
                     me.session = undefined
                     me.directFormattingCtl = undefined
