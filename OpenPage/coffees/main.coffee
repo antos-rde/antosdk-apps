@@ -4,9 +4,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
     
     main: () ->
         # load session class
-        if not OpenPage.EditorSession
-            require ["webodf/editor/EditorSession"], (ES) ->
-                OpenPage.EditorSession = ES
+        #if not OpenPage.EditorSession
+        #    require ["webodf/editor/EditorSession"], (ES) ->
+        #        OpenPage.EditorSession = ES
         @userid = @systemsetting.user.username
         @eventSubscriptions = new core.EventSubscriptions()
         @initToolbox()
@@ -81,6 +81,17 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.currentStyle = e.styleName
             me.basictool.styles.set "selected", item
         
+        @styleAdded = (e) ->
+            return unless e.family is 'paragraph'
+            items = me.basictool.styles.get "items"
+            item = v for v in items when v.name is e.name
+            return if item
+            stylens = "urn:oasis:names:tc:opendocument:xmlns:style:1.0"
+            el = me.editorSession.getParagraphStyleElement e.name
+            dtext = el.getAttributeNS stylens, 'display-name'
+            me.basictool.styles.push { text: dtext , name: e.name }, true
+            #me.resource.formats.push {text: dtext, name:e.name}
+        
         @updateSlider = (v) ->
             value = Math.floor v*100
             me.basictool.zoom.set "value", value
@@ -132,6 +143,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.zoomHelper.subscribe gui.ZoomHelper.signalZoomChanged, me.updateSlider
             me.updateSlider me.zoomHelper.getZoomLevel()
             
+            # format controller 
+            me.editorSession.subscribe OpenPage.EditorSession.signalCommonStyleCreated, me.styleAdded
+            
             me.editorSession.sessionController.setUndoManager new gui.TrivialUndoManager()
             me.editorSession.sessionController.getUndoManager().subscribe gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged
             me.editorSession.sessionController.getMetadataController().subscribe gui.MetadataController.signalMetadataChanged, me.metaChanged
@@ -157,8 +171,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
         @basictool.fonts.set "items", list
     
     initStyles: (list) ->
+        list.unshift {name:"", displayName: 'Default style' }
         v.text = v.displayName for v in list
-        @resource.formats.push { text: v.text, name: v.name, el: @editorSession.getParagraphStyleElement(v.name) } for v in list
+        @resource.formats.push { text: v.text, name: v.name } for v in list
         @basictool.styles.set "items", list
     
     updateToolbar: (changes) ->
@@ -335,6 +350,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.directFormattingCtl.unsubscribe gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged
             me.editorSession.unsubscribe OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged
             me.zoomHelper.unsubscribe gui.ZoomHelper.signalZoomChanged, me.updateSlider
+            me.editorSession.unsubscribe OpenPage.EditorSession.signalCommonStyleCreated, me.styleAdded
             # destry editorSession
             me.editorSession.destroy (e) ->
                 return me.error __("Cannot destroy editor session {0}", e) if e
@@ -355,6 +371,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     me.textStylingChanged = undefined
                     me.paragrahStyleChanged = undefined
                     me.updateSlider = undefined
+                    me.styleAdded = undefined
                     #
             
     

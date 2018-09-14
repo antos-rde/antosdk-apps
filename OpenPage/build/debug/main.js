@@ -8,11 +8,9 @@
 
     main() {
       // load session class
-      if (!OpenPage.EditorSession) {
-        require(["webodf/editor/EditorSession"], function(ES) {
-          return OpenPage.EditorSession = ES;
-        });
-      }
+      //if not OpenPage.EditorSession
+      //    require ["webodf/editor/EditorSession"], (ES) ->
+      //        OpenPage.EditorSession = ES
       this.userid = this.systemsetting.user.username;
       this.eventSubscriptions = new core.EventSubscriptions();
       this.initToolbox();
@@ -115,6 +113,30 @@
         me.currentStyle = e.styleName;
         return me.basictool.styles.set("selected", item);
       };
+      this.styleAdded = function(e) {
+        var dtext, item, items, j, len, stylens, v;
+        if (e.family !== 'paragraph') {
+          return;
+        }
+        items = me.basictool.styles.get("items");
+        for (j = 0, len = items.length; j < len; j++) {
+          v = items[j];
+          if (v.name === e.name) {
+            item = v;
+          }
+        }
+        if (item) {
+          return;
+        }
+        stylens = "urn:oasis:names:tc:opendocument:xmlns:style:1.0";
+        el = me.editorSession.getParagraphStyleElement(e.name);
+        dtext = el.getAttributeNS(stylens, 'display-name');
+        return me.basictool.styles.push({
+          text: dtext,
+          name: e.name
+        }, true);
+      };
+      //me.resource.formats.push {text: dtext, name:e.name}
       this.updateSlider = function(v) {
         var value, zlb;
         value = Math.floor(v * 100);
@@ -173,6 +195,9 @@
         me.zoomHelper = me.editorSession.getOdfCanvas().getZoomHelper();
         me.zoomHelper.subscribe(gui.ZoomHelper.signalZoomChanged, me.updateSlider);
         me.updateSlider(me.zoomHelper.getZoomLevel());
+        
+        // format controller 
+        me.editorSession.subscribe(OpenPage.EditorSession.signalCommonStyleCreated, me.styleAdded);
         me.editorSession.sessionController.setUndoManager(new gui.TrivialUndoManager());
         me.editorSession.sessionController.getUndoManager().subscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
         me.editorSession.sessionController.getMetadataController().subscribe(gui.MetadataController.signalMetadataChanged, me.metaChanged);
@@ -212,6 +237,10 @@
 
     initStyles(list) {
       var j, l, len, len1, v;
+      list.unshift({
+        name: "",
+        displayName: 'Default style'
+      });
       for (j = 0, len = list.length; j < len; j++) {
         v = list[j];
         v.text = v.displayName;
@@ -220,8 +249,7 @@
         v = list[l];
         this.resource.formats.push({
           text: v.text,
-          name: v.name,
-          el: this.editorSession.getParagraphStyleElement(v.name)
+          name: v.name
         });
       }
       return this.basictool.styles.set("items", list);
@@ -477,6 +505,7 @@
         me.directFormattingCtl.unsubscribe(gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged);
         me.editorSession.unsubscribe(OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged);
         me.zoomHelper.unsubscribe(gui.ZoomHelper.signalZoomChanged, me.updateSlider);
+        me.editorSession.unsubscribe(OpenPage.EditorSession.signalCommonStyleCreated, me.styleAdded);
         // destry editorSession
         return me.editorSession.destroy(function(e) {
           if (e) {
@@ -503,7 +532,8 @@
             me.documentChanged = void 0;
             me.textStylingChanged = void 0;
             me.paragrahStyleChanged = void 0;
-            return me.updateSlider = void 0;
+            me.updateSlider = void 0;
+            return me.styleAdded = void 0;
           });
         });
       });
@@ -606,6 +636,12 @@
           top: this.find("spntop"),
           bottom: this.find("spnbottom")
         },
+        padding: {
+          left: this.find("pspnleft"),
+          right: this.find("pspnright"),
+          top: this.find("pspntop"),
+          bottom: this.find("pspnbottom")
+        },
         style: {
           bold: this.find("swbold"),
           italic: this.find("switalic"),
@@ -619,10 +655,24 @@
         },
         formats: this.find("lstformats")
       };
+      this.initStyleObject();
+      this.preview = ($(this.find("preview")).find("p"))[0];
+      $(this.preview).css("padding", "0").css("margin", "0");
+      return this.initUIEvent();
+    }
+
+    //@previewStyle()
+    initStyleObject() {
       // init the format object
-      this.currentStyle = {
+      return this.currentStyle = {
         aligment: this._api.switcher("left", "right", "center", "justify"),
         spacing: {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0
+        },
+        padding: {
           left: 0,
           top: 0,
           right: 0,
@@ -640,14 +690,10 @@
           size: 12
         }
       };
-      this.preview = ($(this.find("preview")).find("p"))[0];
-      $(this.preview).css("padding", "0").css("margin", "0");
-      this.initUIEvent();
-      return this.previewStyle();
     }
 
     initUIEvent() {
-      var k, me, ref, ref1, ref2, set, v;
+      var k, me, ref, ref1, ref2, ref3, set, v;
       me = this;
       set = function(e, o, k, f) {
         return me.ui[o][k].set(e, function(r) {
@@ -672,9 +718,14 @@
         v = ref1[k];
         set("onchange", "spacing", k);
       }
-      ref2 = this.ui.style;
+      ref2 = this.ui.padding;
       for (k in ref2) {
         v = ref2[k];
+        set("onchange", "padding", k);
+      }
+      ref3 = this.ui.style;
+      for (k in ref3) {
+        v = ref3[k];
         if (k !== "color" && k !== "bgcolor") {
           set("onchange", "style", k, (function(e) {
             return e.data;
@@ -709,18 +760,134 @@
       this.ui.formats.set("onlistselect", function(e) {
         return me.fromODFStyleFormat(e.data);
       });
-      return this.ui.formats.set("selected", 0);
+      this.ui.formats.set("selected", 0);
+      (this.find("btok")).set("onbtclick", function(e) {
+        return me.saveCurrentStyle();
+      });
+      (this.find("btx")).set("onbtclick", function(e) {
+        return me.quit();
+      });
+      return (this.find("bt-clone")).set("onbtclick", function(e) {
+        return me.clone();
+      });
     }
 
-    //@currentStyle =
+    clone() {
+      var me, selected;
+      me = this;
+      selected = this.ui.formats.get("selected");
+      if (!selected) {
+        return;
+      }
+      return this.openDialog("PromptDialog", function(d) {
+        var newstyle;
+        if (!(d && d.trim() !== "")) {
+          return me.notify(__("Abort: no style name is specified"));
+        }
+        newstyle = me.parent.editorSession.cloneParagraphStyle(selected.name, d);
+        me.ui.formats.push({
+          text: d,
+          name: newstyle
+        });
+        me.ui.formats.set("selected", (me.ui.formats.get('count')) - 1);
+        return me.notify(__("New style: {0} added", newstyle));
+      }, __("Clone style: {0}", selected.text), {
+        label: __("New style name:")
+      });
+    }
+
+    saveCurrentStyle() {
+      var odfs, selected;
+      selected = this.ui.formats.get("selected");
+      if (!selected) {
+        return;
+      }
+      odfs = {
+        "style:paragraph-properties": {
+          "fo:margin-top": this.currentStyle.spacing.top + "mm",
+          "fo:margin-left": this.currentStyle.spacing.left + "mm",
+          "fo:margin-bottom": this.currentStyle.spacing.bottom + "mm",
+          "fo:margin-right": this.currentStyle.spacing.right + "mm",
+          "fo:padding-top": this.currentStyle.padding.top + "mm",
+          "fo:padding-left": this.currentStyle.padding.left + "mm",
+          "fo:padding-bottom": this.currentStyle.padding.bottom + "mm",
+          "fo:padding-right": this.currentStyle.padding.right + "mm",
+          "fo:text-align": this.currentStyle.aligment.selected || "left"
+        },
+        "style:text-properties": {
+          "fo:font-weight": this.currentStyle.style.bold ? "bold" : "normal",
+          "fo:font-style": this.currentStyle.style.italic ? "italic" : "normal",
+          "style:text-underline-style": this.currentStyle.style.underline ? "solid" : "none",
+          "fo:font-size": this.currentStyle.font.size + "pt",
+          "fo:font-name": this.currentStyle.font.family.text,
+          "fo:color": this.currentStyle.style.color ? this.currentStyle.style.color.hex : "#000000",
+          "fo:background-color": this.currentStyle.style.bgcolor ? this.currentStyle.style.bgcolor.hex : "transparent"
+        }
+      };
+      this.parent.editorSession.updateParagraphStyle(selected.name, odfs);
+      return this.notify(__("Paragraph format [{0}] is saved", selected.text));
+    }
+
     fromODFStyleFormat(odfs) {
-      console.log("change style");
-      return console.log(odfs);
+      var cssUnits, findFont, me, style;
+      me = this;
+      this.initStyleObject();
+      cssUnits = new core.CSSUnits();
+      findFont = function(name) {
+        var item, items, j, len, v;
+        items = me.ui.font.family.get("items");
+        for (j = 0, len = items.length; j < len; j++) {
+          v = items[j];
+          if (v.text === name) {
+            item = v;
+          }
+        }
+        if (!item) {
+          return void 0;
+        }
+        return item;
+      };
+      // spacing
+      style = this.parent.editorSession.getParagraphStyleAttributes(odfs.name)['style:paragraph-properties'];
+      if (style) {
+        this.currentStyle.spacing.top = cssUnits.convertMeasure(style['fo:margin-top'], 'mm') || 0;
+        this.currentStyle.spacing.left = cssUnits.convertMeasure(style['fo:margin-left'], 'mm') || 0;
+        this.currentStyle.spacing.right = cssUnits.convertMeasure(style['fo:margin-right'], 'mm') || 0;
+        this.currentStyle.spacing.bottom = cssUnits.convertMeasure(style['fo:margin-bottom'], 'mm') || 0;
+        this.currentStyle.padding.top = cssUnits.convertMeasure(style['fo:padding-top'], 'mm') || 0;
+        this.currentStyle.padding.left = cssUnits.convertMeasure(style['fo:padding-left'], 'mm') || 0;
+        this.currentStyle.padding.right = cssUnits.convertMeasure(style['fo:padding-right'], 'mm') || 0;
+        this.currentStyle.padding.bottom = cssUnits.convertMeasure(style['fo:padding-bottom'], 'mm') || 0;
+        if (style['fo:text-align']) {
+          this.currentStyle.aligment[style['fo:text-align']] = true;
+        }
+      }
+      style = this.parent.editorSession.getParagraphStyleAttributes(odfs.name)['style:text-properties'];
+      if (style) {
+        this.currentStyle.style.bold = style['fo:font-weight'] === 'bold';
+        this.currentStyle.style.italic = style['fo:font-style'] === 'italic';
+        if (style['style:text-underline-style'] && style['style:text-underline-style'] !== 'none') {
+          this.currentStyle.style.underline = true;
+        }
+        this.currentStyle.font.size = parseFloat(style['fo:font-size']);
+        this.currentStyle.font.family = findFont(style['style:font-name']);
+        if (style['fo:color']) {
+          this.currentStyle.style.color = {
+            hex: style['fo:color']
+          };
+        }
+        if (style['fo:background-color']) {
+          this.currentStyle.style.bgcolor = {
+            hex: style['fo:background-color']
+          };
+        }
+      }
+      return this.previewStyle();
     }
 
     previewStyle() {
       var el, i, item, items, j, len, v;
-      console.log("previewing");
+      //console.log "previewing"
       // reset ui
       this.ui.aligment.left.set("swon", this.currentStyle.aligment.left);
       this.ui.aligment.right.set("swon", this.currentStyle.aligment.right);
@@ -730,19 +897,27 @@
       this.ui.spacing.right.set("value", this.currentStyle.spacing.right);
       this.ui.spacing.top.set("value", this.currentStyle.spacing.top);
       this.ui.spacing.bottom.set("value", this.currentStyle.spacing.bottom);
+      this.ui.padding.left.set("value", this.currentStyle.padding.left);
+      this.ui.padding.right.set("value", this.currentStyle.padding.right);
+      this.ui.padding.top.set("value", this.currentStyle.padding.top);
+      this.ui.padding.bottom.set("value", this.currentStyle.padding.bottom);
       this.ui.style.bold.set("swon", this.currentStyle.style.bold);
       this.ui.style.italic.set("swon", this.currentStyle.style.italic);
       this.ui.style.underline.set("swon", this.currentStyle.style.underline);
       this.ui.font.size.set("value", this.currentStyle.font.size);
-      items = this.ui.font.family.get("items");
-      for (i = j = 0, len = items.length; j < len; i = ++j) {
-        v = items[i];
-        if (v.name === name) {
-          item = i;
+      
+      //console.log @currentStyle
+      if (this.currentStyle.font.family) {
+        items = this.ui.font.family.get("items");
+        for (i = j = 0, len = items.length; j < len; i = ++j) {
+          v = items[i];
+          if (v.text === this.currentStyle.font.family.text) {
+            item = i;
+          }
         }
-      }
-      if (item >= 0) {
-        this.ui.font.family.set("selected", item);
+        if (item >= 0) {
+          this.ui.font.family.set("selected", item);
+        }
       }
       if (this.currentStyle.style.color) {
         $(this.ui.style.color).css("background-color", this.currentStyle.style.color.hex);
@@ -753,10 +928,14 @@
       // set the preview css
       el = $(this.preview);
       el.css("text-align", this.currentStyle.aligment.selected);
-      el.css("padding-left", this.currentStyle.spacing.left + "mm");
-      el.css("padding-right", this.currentStyle.spacing.right + "mm");
-      el.css("padding-top", this.currentStyle.spacing.top + "mm");
-      el.css("padding-bottom", this.currentStyle.spacing.bottom + "mm");
+      el.css("margin-left", this.currentStyle.spacing.left + "mm");
+      el.css("margin-right", this.currentStyle.spacing.right + "mm");
+      el.css("margin-top", this.currentStyle.spacing.top + "mm");
+      el.css("margin-bottom", this.currentStyle.spacing.bottom + "mm");
+      el.css("padding-left", this.currentStyle.padding.left + "mm");
+      el.css("padding-right", this.currentStyle.padding.right + "mm");
+      el.css("padding-top", this.currentStyle.padding.top + "mm");
+      el.css("padding-bottom", this.currentStyle.padding.bottom + "mm");
       el.css("font-weight", "normal").css("font-style", "normal").css("text-decoration", "none");
       if (this.currentStyle.style.bold) {
         el.css("font-weight", "bold");
@@ -781,7 +960,7 @@
 
   };
 
-  FormatDialog.scheme = "<afx-app-window apptitle=\"__(Format Dialog)\" width=\"500\" height=\"450\" data-id=\"FormatDialog\">\n    <afx-vbox>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstformats\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-button text=\"clone\" data-id=\"bt-clone\" iconclass = \"fa fa-copy\" data-width=\"60\"></afx-button>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <afx-label text=\"__(Aligment)\" class=\"header\" data-height=\"20\"></afx-label>\n        <afx-hbox data-height=\"23\" data-id=\"aligmentbox\">\n            <div data-width=\"20\" ></div>\n            <afx-switch data-width=\"30\" data-id=\"swleft\"></afx-switch>\n            <afx-label text=\"__(Left)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swright\"></afx-switch>\n            <afx-label text=\"__(Right)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swcenter\"></afx-switch>\n            <afx-label text=\"__(Center)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swjustify\"></afx-switch>\n            <afx-label text=\"__(Justify)\"></afx-label>\n            <div data-width=\"20\" ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n        <afx-label text=\"__(Spacing)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n         <afx-label text=\"__(Style)\" class=\"header\" data-height=\"20\"></afx-label>\n         <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"stylebox\">\n            <div data-width=\"5\"></div>\n            <afx-switch data-width=\"30\" data-id=\"swbold\"></afx-switch>\n            <afx-label text=\"__(Bold)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"switalic\"></afx-switch>\n            <afx-label text=\"__(Italic)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swunderline\"></afx-switch>\n            <afx-label text=\"__(Underline)\"></afx-label>\n            <afx-label data-width=\"35\" text=\"__(Text:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"txtcolor\"></div>\n            <div data-width=\"5\"></div>\n            <afx-label data-width=\"80\" text=\"__(Background:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"bgcolor\"></div>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Font)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstfont\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"35\" text=\"__(Size:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnfsize\"></afx-nspinner>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Preview)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox>\n             <div data-width=\"5\"></div>\n            <div data-id=\"preview\">\n                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>\n            </div>\n             <div data-width=\"5\"></div>\n        </afx-hbox>\n        \n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div></div>\n            <afx-button text=\"__(Ok)\" data-width=\"30\" data-id=\"btok\"></afx-button>\n            <div data-width=\"5\"></div>\n            <afx-button text=\"__(Cancel)\" data-width=\"55\" data-id=\"btx\"></afx-button>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n    </afx-vbox>\n</afx-app-window>";
+  FormatDialog.scheme = "<afx-app-window apptitle=\"__(Format Dialog)\" width=\"500\" height=\"500\" data-id=\"FormatDialog\">\n    <afx-vbox>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstformats\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-button text=\"clone\" data-id=\"bt-clone\" iconclass = \"fa fa-copy\" data-width=\"65\"></afx-button>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <afx-label text=\"__(Aligment)\" class=\"header\" data-height=\"20\"></afx-label>\n        <afx-hbox data-height=\"23\" data-id=\"aligmentbox\">\n            <div data-width=\"20\" ></div>\n            <afx-switch data-width=\"30\" data-id=\"swleft\"></afx-switch>\n            <afx-label text=\"__(Left)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swright\"></afx-switch>\n            <afx-label text=\"__(Right)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swcenter\"></afx-switch>\n            <afx-label text=\"__(Center)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swjustify\"></afx-switch>\n            <afx-label text=\"__(Justify)\"></afx-label>\n            <div data-width=\"20\" ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n        <afx-label text=\"__(Spacing)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Padding)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        \n         <div data-height=\"5\"></div>\n         <afx-label text=\"__(Style)\" class=\"header\" data-height=\"20\"></afx-label>\n         <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"stylebox\">\n            <div data-width=\"5\"></div>\n            <afx-switch data-width=\"30\" data-id=\"swbold\"></afx-switch>\n            <afx-label text=\"__(Bold)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"switalic\"></afx-switch>\n            <afx-label text=\"__(Italic)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swunderline\"></afx-switch>\n            <afx-label text=\"__(Underline)\"></afx-label>\n            <afx-label data-width=\"35\" text=\"__(Text:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"txtcolor\"></div>\n            <div data-width=\"5\"></div>\n            <afx-label data-width=\"80\" text=\"__(Background:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"bgcolor\"></div>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Font)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstfont\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"35\" text=\"__(Size:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnfsize\"></afx-nspinner>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Preview)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox>\n             <div data-width=\"5\"></div>\n            <div data-id=\"preview\">\n                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>\n            </div>\n             <div data-width=\"5\"></div>\n        </afx-hbox>\n        \n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div></div>\n            <afx-button text=\"__(Save)\" data-width=\"35\" data-id=\"btok\"></afx-button>\n            <div data-width=\"5\"></div>\n            <afx-button text=\"__(Cancel)\" data-width=\"55\" data-id=\"btx\"></afx-button>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n    </afx-vbox>\n</afx-app-window>";
 
 }).call(this);
 
@@ -1748,9 +1927,10 @@ exports._tr_init=_tr_init;exports._tr_stored_block=_tr_stored_block;exports._tr_
 
 /*global runtime, define, document, core, odf, gui, ops*/
 
-define("webodf/editor/EditorSession", [
+/*define("webodf/editor/EditorSession", [
     "dojo/text!resources/fonts/fonts.css"
-], function (fontsCSS) { // fontsCSS is retrieved as a string, using dojo's text retrieval AMD plugin
+],*/ 
+this.OS.APP.OpenPage.EditorSession = (function (fontsCSS) { // fontsCSS is retrieved as a string, using dojo's text retrieval AMD plugin
     "use strict";
 
     runtime.loadClass("core.Async");
@@ -2380,5 +2560,5 @@ define("webodf/editor/EditorSession", [
     /**@const*/EditorSession.signalUndoStackChanged =       "signalUndoStackChanged";
 
     return EditorSession;
-});
+})("");
 
