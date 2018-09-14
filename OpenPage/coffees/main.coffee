@@ -7,11 +7,16 @@ class OpenPage extends this.OS.GUI.BaseApplication
         if not OpenPage.EditorSession
             require ["webodf/editor/EditorSession"], (ES) ->
                 OpenPage.EditorSession = ES
+        @userid = @systemsetting.user.username
         @eventSubscriptions = new core.EventSubscriptions()
         @initToolbox()
         @initCanvas()
         @canvas.load "#{@_api.handler.get}/home://welcome.odt"
-    
+        @currentStyle = ""
+        @resource =
+            fonts: []
+            formats: []
+        
     initToolbox: () ->
         me = @
         @basictool =
@@ -32,11 +37,15 @@ class OpenPage extends this.OS.GUI.BaseApplication
             indent: @find("btindent"),
             outdent: @find("btoutdent"),
             fonts: @find("font-list"),
-            fontsize: @find("font-size")
+            fontsize: @find("font-size"),
+            styles: @find("format-list"),
+            zoom: @find("slzoom")
+            format: @find("btformat")
+        
         fn = (name, el) ->
-            if name is "fonts"
+            if name is "fonts" or name is "styles"
                act = "onlistselect"
-            else if name is "fontsize"
+            else if name is "fontsize" or name is "zoom"
                 act = "onchange"
             else
                 act = "onbtclick"
@@ -48,12 +57,16 @@ class OpenPage extends this.OS.GUI.BaseApplication
         for name, el of @basictool
            fn name, el
         
+        (@find "btzoomfix").set "onbtclick", (e) -> me.zoom 100
+        @basictool.zoom.set "onchanging", (e) ->
+            zlb = me.find "lbzoom"
+            zlb.set "text", Math.floor(e) + "%"
+        
     initCanvas: () ->
         el = @find "odfcanvas"
         me = @
         el.setAttribute "translate", "no"
         el.classList.add "notranslate"
-        @userid = "localuser"
         @canvas = new odf.OdfCanvas(el)
         @documentChanged = (e) ->
             #console.log e
@@ -61,6 +74,19 @@ class OpenPage extends this.OS.GUI.BaseApplication
             #console.log e
         @textStylingChanged = (e) ->
             me.updateToolbar e
+        @paragrahStyleChanged = (e) ->
+            return unless e.type is "style"
+            items = me.basictool.styles.get "items"
+            item = i for v, i in items when v.name is e.styleName
+            me.currentStyle = e.styleName
+            me.basictool.styles.set "selected", item
+        
+        @updateSlider = (v) ->
+            value = Math.floor v*100
+            me.basictool.zoom.set "value", value
+            zlb = me.find "lbzoom"
+            zlb.set "text", value+"%"
+        
         #@canvas.enableAnnotations(true, true)
         @canvas.addListener "statereadychange", ()->
             me.session = new ops.Session(me.canvas)
@@ -85,11 +111,14 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.directFormattingCtl = me.editorSession.sessionController.getDirectFormattingController()
             me.directFormattingCtl.subscribe gui.DirectFormattingController.textStylingChanged, me.textStylingChanged
             me.directFormattingCtl.subscribe gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged
+            me.editorSession.subscribe OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged
+            
             # hyper link controller
             me.hyperlinkController = me.editorSession.sessionController.getHyperlinkController()
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalCursorMoved, ()-> me.updateHyperlinkButtons()
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalParagraphChanged, ()-> me.updateHyperlinkButtons()
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalParagraphStyleModified, ()-> me.updateHyperlinkButtons()
+            
             
             #image controller
             me.imageController = me.editorSession.sessionController.getImageController()
@@ -98,6 +127,11 @@ class OpenPage extends this.OS.GUI.BaseApplication
             #text controller
             me.textController = me.editorSession.sessionController.getTextController()
             
+            # zoom controller
+            me.zoomHelper = me.editorSession.getOdfCanvas().getZoomHelper()
+            me.zoomHelper.subscribe gui.ZoomHelper.signalZoomChanged, me.updateSlider
+            me.updateSlider me.zoomHelper.getZoomLevel()
+            
             me.editorSession.sessionController.setUndoManager new gui.TrivialUndoManager()
             me.editorSession.sessionController.getUndoManager().subscribe gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged
             me.editorSession.sessionController.getMetadataController().subscribe gui.MetadataController.signalMetadataChanged, me.metaChanged
@@ -105,12 +139,13 @@ class OpenPage extends this.OS.GUI.BaseApplication
             op.init {
                 memberid: me.userid,
                 setProperties:{
-                    "fullName": "Xuan Sang LE",
+                    "fullName": me.userid,
                     "color": "blue"
                 }
             }
             me.session.enqueue([op])
             me.initFontList me.editorSession.getDeclaredFonts()
+            me.initStyles me.editorSession.getAvailableParagraphStyles()
             me.editorSession.sessionController.insertLocalCursor()
             me.editorSession.sessionController.startEditing()
             #console.log me.editorSession.getDeclaredFonts()
@@ -118,7 +153,13 @@ class OpenPage extends this.OS.GUI.BaseApplication
     
     initFontList: (list) ->
         v.text = v.name for v in list
+        @resource.fonts.push { text: v.text, name: v.family } for v in list
         @basictool.fonts.set "items", list
+    
+    initStyles: (list) ->
+        v.text = v.displayName for v in list
+        @resource.formats.push { text: v.text, name: v.name, el: @editorSession.getParagraphStyleElement(v.name) } for v in list
+        @basictool.styles.set "items", list
     
     updateToolbar: (changes) ->
         # basic style
@@ -259,6 +300,19 @@ class OpenPage extends this.OS.GUI.BaseApplication
             , "binary"
         , __("Select image file"), { mimes: ["image/.*"] }
     
+    styles: (e) ->
+        return if e.data.name is @currentStyle
+        @editorSession.setCurrentParagraphStyle e.data.name
+    
+    zoom: (e) ->
+        #console.log "zooming", e
+        @zoomHelper.setZoomLevel e/100.0
+    
+    format: (e) ->
+        @openDialog new FormatDialog(), (d) ->
+            console.log d
+        , __("Add/Modify paragraph format"), @resource
+    
     closeDocument: () ->
         # finish editing
         return unless @editorSession and @session
@@ -279,6 +333,8 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.editorSession.sessionController.getUndoManager().unsubscribe gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged
             me.directFormattingCtl.unsubscribe gui.DirectFormattingController.textStylingChanged, me.textStylingChanged
             me.directFormattingCtl.unsubscribe gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged
+            me.editorSession.unsubscribe OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged
+            me.zoomHelper.unsubscribe gui.ZoomHelper.signalZoomChanged, me.updateSlider
             # destry editorSession
             me.editorSession.destroy (e) ->
                 return me.error __("Cannot destroy editor session {0}", e) if e
@@ -293,6 +349,12 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     me.directFormattingCtl = undefined
                     me.textController = undefined
                     me.imageController = undefined
+                    me.ZoomHelper = undefined
+                    me.metaChanged = undefined
+                    me.documentChanged = undefined
+                    me.textStylingChanged = undefined
+                    me.paragrahStyleChanged = undefined
+                    me.updateSlider = undefined
                     #
             
     

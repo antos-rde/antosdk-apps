@@ -1,5 +1,5 @@
 (function() {
-  var HyperLinkDialog, OpenPage;
+  var FormatDialog, HyperLinkDialog, OpenPage;
 
   OpenPage = class OpenPage extends this.OS.GUI.BaseApplication {
     constructor(args) {
@@ -13,14 +13,20 @@
           return OpenPage.EditorSession = ES;
         });
       }
+      this.userid = this.systemsetting.user.username;
       this.eventSubscriptions = new core.EventSubscriptions();
       this.initToolbox();
       this.initCanvas();
-      return this.canvas.load(`${this._api.handler.get}/home://welcome.odt`);
+      this.canvas.load(`${this._api.handler.get}/home://welcome.odt`);
+      this.currentStyle = "";
+      return this.resource = {
+        fonts: [],
+        formats: []
+      };
     }
 
     initToolbox() {
-      var el, fn, me, name, ref, results;
+      var el, fn, me, name, ref;
       me = this;
       this.basictool = {
         undo: this.find("btundo"),
@@ -40,13 +46,16 @@
         indent: this.find("btindent"),
         outdent: this.find("btoutdent"),
         fonts: this.find("font-list"),
-        fontsize: this.find("font-size")
+        fontsize: this.find("font-size"),
+        styles: this.find("format-list"),
+        zoom: this.find("slzoom"),
+        format: this.find("btformat")
       };
       fn = function(name, el) {
         var act;
-        if (name === "fonts") {
+        if (name === "fonts" || name === "styles") {
           act = "onlistselect";
-        } else if (name === "fontsize") {
+        } else if (name === "fontsize" || name === "zoom") {
           act = "onchange";
         } else {
           act = "onbtclick";
@@ -63,12 +72,18 @@
         });
       };
       ref = this.basictool;
-      results = [];
       for (name in ref) {
         el = ref[name];
-        results.push(fn(name, el));
+        fn(name, el);
       }
-      return results;
+      (this.find("btzoomfix")).set("onbtclick", function(e) {
+        return me.zoom(100);
+      });
+      return this.basictool.zoom.set("onchanging", function(e) {
+        var zlb;
+        zlb = me.find("lbzoom");
+        return zlb.set("text", Math.floor(e) + "%");
+      });
     }
 
     initCanvas() {
@@ -77,7 +92,6 @@
       me = this;
       el.setAttribute("translate", "no");
       el.classList.add("notranslate");
-      this.userid = "localuser";
       this.canvas = new odf.OdfCanvas(el);
       this.documentChanged = function(e) {};
       //console.log e
@@ -86,6 +100,29 @@
       this.textStylingChanged = function(e) {
         return me.updateToolbar(e);
       };
+      this.paragrahStyleChanged = function(e) {
+        var i, item, items, j, len, v;
+        if (e.type !== "style") {
+          return;
+        }
+        items = me.basictool.styles.get("items");
+        for (i = j = 0, len = items.length; j < len; i = ++j) {
+          v = items[i];
+          if (v.name === e.styleName) {
+            item = i;
+          }
+        }
+        me.currentStyle = e.styleName;
+        return me.basictool.styles.set("selected", item);
+      };
+      this.updateSlider = function(v) {
+        var value, zlb;
+        value = Math.floor(v * 100);
+        me.basictool.zoom.set("value", value);
+        zlb = me.find("lbzoom");
+        return zlb.set("text", value + "%");
+      };
+      
       //@canvas.enableAnnotations(true, true)
       return this.canvas.addListener("statereadychange", function() {
         var op, viewOptions;
@@ -111,6 +148,8 @@
         me.directFormattingCtl = me.editorSession.sessionController.getDirectFormattingController();
         me.directFormattingCtl.subscribe(gui.DirectFormattingController.textStylingChanged, me.textStylingChanged);
         me.directFormattingCtl.subscribe(gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged);
+        me.editorSession.subscribe(OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged);
+        
         // hyper link controller
         me.hyperlinkController = me.editorSession.sessionController.getHyperlinkController();
         me.eventSubscriptions.addFrameSubscription(me.editorSession, OpenPage.EditorSession.signalCursorMoved, function() {
@@ -129,6 +168,11 @@
 
         //text controller
         me.textController = me.editorSession.sessionController.getTextController();
+        
+        // zoom controller
+        me.zoomHelper = me.editorSession.getOdfCanvas().getZoomHelper();
+        me.zoomHelper.subscribe(gui.ZoomHelper.signalZoomChanged, me.updateSlider);
+        me.updateSlider(me.zoomHelper.getZoomLevel());
         me.editorSession.sessionController.setUndoManager(new gui.TrivialUndoManager());
         me.editorSession.sessionController.getUndoManager().subscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
         me.editorSession.sessionController.getMetadataController().subscribe(gui.MetadataController.signalMetadataChanged, me.metaChanged);
@@ -136,12 +180,13 @@
         op.init({
           memberid: me.userid,
           setProperties: {
-            "fullName": "Xuan Sang LE",
+            "fullName": me.userid,
             "color": "blue"
           }
         });
         me.session.enqueue([op]);
         me.initFontList(me.editorSession.getDeclaredFonts());
+        me.initStyles(me.editorSession.getAvailableParagraphStyles());
         me.editorSession.sessionController.insertLocalCursor();
         return me.editorSession.sessionController.startEditing();
       });
@@ -150,12 +195,36 @@
     //console.log me.editorSession.getDeclaredFonts()
 
     initFontList(list) {
-      var j, len, v;
+      var j, l, len, len1, v;
       for (j = 0, len = list.length; j < len; j++) {
         v = list[j];
         v.text = v.name;
       }
+      for (l = 0, len1 = list.length; l < len1; l++) {
+        v = list[l];
+        this.resource.fonts.push({
+          text: v.text,
+          name: v.family
+        });
+      }
       return this.basictool.fonts.set("items", list);
+    }
+
+    initStyles(list) {
+      var j, l, len, len1, v;
+      for (j = 0, len = list.length; j < len; j++) {
+        v = list[j];
+        v.text = v.displayName;
+      }
+      for (l = 0, len1 = list.length; l < len1; l++) {
+        v = list[l];
+        this.resource.formats.push({
+          text: v.text,
+          name: v.name,
+          el: this.editorSession.getParagraphStyleElement(v.name)
+        });
+      }
+      return this.basictool.styles.set("items", list);
     }
 
     updateToolbar(changes) {
@@ -363,6 +432,24 @@
       });
     }
 
+    styles(e) {
+      if (e.data.name === this.currentStyle) {
+        return;
+      }
+      return this.editorSession.setCurrentParagraphStyle(e.data.name);
+    }
+
+    zoom(e) {
+      //console.log "zooming", e
+      return this.zoomHelper.setZoomLevel(e / 100.0);
+    }
+
+    format(e) {
+      return this.openDialog(new FormatDialog(), function(d) {
+        return console.log(d);
+      }, __("Add/Modify paragraph format"), this.resource);
+    }
+
     closeDocument() {
       var me, op;
       // finish editing
@@ -388,6 +475,8 @@
         me.editorSession.sessionController.getUndoManager().unsubscribe(gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged);
         me.directFormattingCtl.unsubscribe(gui.DirectFormattingController.textStylingChanged, me.textStylingChanged);
         me.directFormattingCtl.unsubscribe(gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged);
+        me.editorSession.unsubscribe(OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged);
+        me.zoomHelper.unsubscribe(gui.ZoomHelper.signalZoomChanged, me.updateSlider);
         // destry editorSession
         return me.editorSession.destroy(function(e) {
           if (e) {
@@ -408,7 +497,13 @@
             me.session = void 0;
             me.directFormattingCtl = void 0;
             me.textController = void 0;
-            return me.imageController = void 0;
+            me.imageController = void 0;
+            me.ZoomHelper = void 0;
+            me.metaChanged = void 0;
+            me.documentChanged = void 0;
+            me.textStylingChanged = void 0;
+            me.paragrahStyleChanged = void 0;
+            return me.updateSlider = void 0;
           });
         });
       });
@@ -487,6 +582,206 @@
     }
 
   };
+
+  FormatDialog = class FormatDialog extends this.OS.GUI.BaseDialog {
+    constructor() {
+      super("FormatDialog");
+    }
+
+    init() {
+      return this._gui.htmlToScheme(FormatDialog.scheme, this, this.host);
+    }
+
+    main() {
+      this.ui = {
+        aligment: {
+          left: this.find("swleft"),
+          right: this.find("swright"),
+          center: this.find("swcenter"),
+          justify: this.find("swjustify")
+        },
+        spacing: {
+          left: this.find("spnleft"),
+          right: this.find("spnright"),
+          top: this.find("spntop"),
+          bottom: this.find("spnbottom")
+        },
+        style: {
+          bold: this.find("swbold"),
+          italic: this.find("switalic"),
+          underline: this.find("swunderline"),
+          color: this.find("txtcolor"),
+          bgcolor: this.find("bgcolor")
+        },
+        font: {
+          family: this.find("lstfont"),
+          size: this.find("spnfsize")
+        },
+        formats: this.find("lstformats")
+      };
+      // init the format object
+      this.currentStyle = {
+        aligment: this._api.switcher("left", "right", "center", "justify"),
+        spacing: {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0
+        },
+        style: {
+          bold: false,
+          italic: false,
+          underline: false,
+          color: void 0,
+          bgcolor: void 0
+        },
+        font: {
+          family: void 0,
+          size: 12
+        }
+      };
+      this.preview = ($(this.find("preview")).find("p"))[0];
+      $(this.preview).css("padding", "0").css("margin", "0");
+      this.initUIEvent();
+      return this.previewStyle();
+    }
+
+    initUIEvent() {
+      var k, me, ref, ref1, ref2, set, v;
+      me = this;
+      set = function(e, o, k, f) {
+        return me.ui[o][k].set(e, function(r) {
+          var v;
+          v = r;
+          if (f) {
+            v = f(r);
+          }
+          me.currentStyle[o][k] = v;
+          return me.previewStyle();
+        });
+      };
+      ref = this.ui.aligment;
+      for (k in ref) {
+        v = ref[k];
+        set("onchange", "aligment", k, (function(e) {
+          return e.data;
+        }));
+      }
+      ref1 = this.ui.spacing;
+      for (k in ref1) {
+        v = ref1[k];
+        set("onchange", "spacing", k);
+      }
+      ref2 = this.ui.style;
+      for (k in ref2) {
+        v = ref2[k];
+        if (k !== "color" && k !== "bgcolor") {
+          set("onchange", "style", k, (function(e) {
+            return e.data;
+          }));
+        }
+      }
+      set("onchange", "font", "size");
+      $(this.ui.style.color).click(function(e) {
+        return me.openDialog("ColorPickerDialog", function(d) {
+          me.currentStyle.style.color = d;
+          return me.previewStyle();
+        });
+      });
+      $(this.ui.style.bgcolor).click(function(e) {
+        return me.openDialog("ColorPickerDialog", function(d) {
+          me.currentStyle.style.bgcolor = d;
+          return me.previewStyle();
+        });
+      });
+      if (this.data && this.data.fonts) {
+        //font
+        this.ui.font.family.set("items", this.data.fonts);
+      }
+      set("onlistselect", "font", "family", (function(e) {
+        return e.data;
+      }));
+      //format list
+      this.ui.formats.set("selected", -1);
+      if (this.data && this.data.formats) {
+        this.ui.formats.set("items", this.data.formats);
+      }
+      this.ui.formats.set("onlistselect", function(e) {
+        return me.fromODFStyleFormat(e.data);
+      });
+      return this.ui.formats.set("selected", 0);
+    }
+
+    //@currentStyle =
+    fromODFStyleFormat(odfs) {
+      console.log("change style");
+      return console.log(odfs);
+    }
+
+    previewStyle() {
+      var el, i, item, items, j, len, v;
+      console.log("previewing");
+      // reset ui
+      this.ui.aligment.left.set("swon", this.currentStyle.aligment.left);
+      this.ui.aligment.right.set("swon", this.currentStyle.aligment.right);
+      this.ui.aligment.center.set("swon", this.currentStyle.aligment.center);
+      this.ui.aligment.justify.set("swon", this.currentStyle.aligment.justify);
+      this.ui.spacing.left.set("value", this.currentStyle.spacing.left);
+      this.ui.spacing.right.set("value", this.currentStyle.spacing.right);
+      this.ui.spacing.top.set("value", this.currentStyle.spacing.top);
+      this.ui.spacing.bottom.set("value", this.currentStyle.spacing.bottom);
+      this.ui.style.bold.set("swon", this.currentStyle.style.bold);
+      this.ui.style.italic.set("swon", this.currentStyle.style.italic);
+      this.ui.style.underline.set("swon", this.currentStyle.style.underline);
+      this.ui.font.size.set("value", this.currentStyle.font.size);
+      items = this.ui.font.family.get("items");
+      for (i = j = 0, len = items.length; j < len; i = ++j) {
+        v = items[i];
+        if (v.name === name) {
+          item = i;
+        }
+      }
+      if (item >= 0) {
+        this.ui.font.family.set("selected", item);
+      }
+      if (this.currentStyle.style.color) {
+        $(this.ui.style.color).css("background-color", this.currentStyle.style.color.hex);
+      }
+      if (this.currentStyle.style.bgcolor) {
+        $(this.ui.style.bgcolor).css("background-color", this.currentStyle.style.bgcolor.hex);
+      }
+      // set the preview css
+      el = $(this.preview);
+      el.css("text-align", this.currentStyle.aligment.selected);
+      el.css("padding-left", this.currentStyle.spacing.left + "mm");
+      el.css("padding-right", this.currentStyle.spacing.right + "mm");
+      el.css("padding-top", this.currentStyle.spacing.top + "mm");
+      el.css("padding-bottom", this.currentStyle.spacing.bottom + "mm");
+      el.css("font-weight", "normal").css("font-style", "normal").css("text-decoration", "none");
+      if (this.currentStyle.style.bold) {
+        el.css("font-weight", "bold");
+      }
+      if (this.currentStyle.style.italic) {
+        el.css("font-style", "italic");
+      }
+      if (this.currentStyle.style.underline) {
+        el.css("text-decoration", "underline");
+      }
+      if (this.currentStyle.style.color) {
+        el.css("color", this.currentStyle.style.color.hex);
+      }
+      if (this.currentStyle.style.bgcolor) {
+        el.css("background-color", this.currentStyle.style.bgcolor.hex);
+      }
+      el.css("font-size", this.currentStyle.font.size + "pt");
+      if (this.currentStyle.font.family) {
+        return el.css("font-family", this.currentStyle.font.family.name);
+      }
+    }
+
+  };
+
+  FormatDialog.scheme = "<afx-app-window apptitle=\"__(Format Dialog)\" width=\"500\" height=\"450\" data-id=\"FormatDialog\">\n    <afx-vbox>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstformats\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-button text=\"clone\" data-id=\"bt-clone\" iconclass = \"fa fa-copy\" data-width=\"60\"></afx-button>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <afx-label text=\"__(Aligment)\" class=\"header\" data-height=\"20\"></afx-label>\n        <afx-hbox data-height=\"23\" data-id=\"aligmentbox\">\n            <div data-width=\"20\" ></div>\n            <afx-switch data-width=\"30\" data-id=\"swleft\"></afx-switch>\n            <afx-label text=\"__(Left)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swright\"></afx-switch>\n            <afx-label text=\"__(Right)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swcenter\"></afx-switch>\n            <afx-label text=\"__(Center)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swjustify\"></afx-switch>\n            <afx-label text=\"__(Justify)\"></afx-label>\n            <div data-width=\"20\" ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n        <afx-label text=\"__(Spacing)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n         <afx-label text=\"__(Style)\" class=\"header\" data-height=\"20\"></afx-label>\n         <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"stylebox\">\n            <div data-width=\"5\"></div>\n            <afx-switch data-width=\"30\" data-id=\"swbold\"></afx-switch>\n            <afx-label text=\"__(Bold)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"switalic\"></afx-switch>\n            <afx-label text=\"__(Italic)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swunderline\"></afx-switch>\n            <afx-label text=\"__(Underline)\"></afx-label>\n            <afx-label data-width=\"35\" text=\"__(Text:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"txtcolor\"></div>\n            <div data-width=\"5\"></div>\n            <afx-label data-width=\"80\" text=\"__(Background:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"bgcolor\"></div>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Font)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstfont\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"35\" text=\"__(Size:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnfsize\"></afx-nspinner>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Preview)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox>\n             <div data-width=\"5\"></div>\n            <div data-id=\"preview\">\n                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>\n            </div>\n             <div data-width=\"5\"></div>\n        </afx-hbox>\n        \n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div></div>\n            <afx-button text=\"__(Ok)\" data-width=\"30\" data-id=\"btok\"></afx-button>\n            <div data-width=\"5\"></div>\n            <afx-button text=\"__(Cancel)\" data-width=\"55\" data-id=\"btx\"></afx-button>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n    </afx-vbox>\n</afx-app-window>";
 
 }).call(this);
 

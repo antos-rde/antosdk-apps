@@ -19,7 +19,8 @@
                 <afx-button data-width = "25" data-id="btaj" iconclass = "fa fa-align-justify"></afx-button>
                 <afx-button data-width = "25" data-id="btindent" iconclass = "fa fa-indent"></afx-button>
                 <afx-button data-width = "25" data-id="btoutdent" iconclass = "fa fa-outdent"></afx-button>
-                <afx-list-view dropdown = "true" data-width="80" data-id="format-list"></afx-list-view>
+                <afx-button data-width = "25" data-id="btformat" iconclass = "fa fa-paint-brush"></afx-button>
+                <afx-list-view dropdown = "true" data-width="100" data-id="format-list"></afx-list-view>
                 <div data-width="5"></div>
                 <afx-nspinner data-width = "50" data-id="font-size" ></afx-nspinner>
                 <div data-width="5"></div>
@@ -30,6 +31,16 @@
             <div data-id="container">
                 <div data-id="odfcanvas"></div>
             </div>
+            <div data-height="5"></div>
+            <afx-hbox data-id="status-bar" data-height="28">
+                <div></div>
+                <afx-button data-width = "25" data-id="btzoomfix" iconclass = "fa fa-arrows-alt"></afx-button>
+                <div data-width="5"></div>
+                <afx-slider data-id="slzoom" data-width="150" max="400"></afx-slider>
+                <div data-width="5"></div>
+                <afx-label data-id = "lbzoom" data-width="40"></afx-label>
+            </afx-hbox>
+            
         </afx-vbox>
         
     </afx-hbox>
