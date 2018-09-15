@@ -1,4 +1,5 @@
 
+@namespace office url(urn:oasis:names:tc:opendocument:xmlns:office:1.0);
 afx-app-window[data-id="OpenPage"] div[data-id="container"]
 {
     overflow: auto;
@@ -8,13 +9,41 @@ afx-app-window[data-id="OpenPage"] div[data-id="container"]
     padding-bottom: 10px;
     text-align: center;
     background-color: #f2f1f0;
+    /*position: relative;*/
 }
 
+/*
+@media screen, print, handheld, projection
+{
+    office|body{
+        display: inline !important;
+    }    
+}*/
+
+
+/*
+Fix annotation problem not showing
+*/
+/*
+afx-app-window[data-id="OpenPage"] document, afx-app-window[data-id="OpenPage"] office:body{
+    display: inline !important;
+}
+afx-app-window[data-id="OpenPage"] .annotationsPane{
+    right: 0 !important;
+    top: 0 !important;
+    position: absolute !important;
+}*/
 afx-app-window[data-id="OpenPage"] div[data-id="odfcanvas"]
 {
     cursor: text;
     margin:auto;
     box-shadow: 1px 1px 3px 3px #9f9F9F;
+    /*added*/
+    transform-origin: top center;
+    -webkit-transform-origin: top center;
+    -moz-transform-origin: top center;
+    -o-transform-origin: top center;
+    overflow: hidden;
 }
 
 afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"]
@@ -44,6 +73,8 @@ afx-app-window[data-id="OpenPage"] afx-hbox[data-id="toolbox"] afx-button button
     border-radius:5px;
     color:#759DC0;
 }
+
+
 afx-app-window[data-id="HyperLinkDialog"] afx-label.header span
 {
     font-weight: bold;
@@ -59,7 +90,8 @@ afx-app-window[data-id="FormatDialog"] afx-label.header span
 }
 afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="aligmentbox"] afx-label span,
 afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="spacingbox"] afx-label span,
-afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="stylebox"] afx-label span
+afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="stylebox"] afx-label span,
+afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="font-box"] > div > afx-label  span
 {
     display: block;
     padding-top: 7px;

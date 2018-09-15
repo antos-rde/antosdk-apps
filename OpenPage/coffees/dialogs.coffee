@@ -49,6 +49,7 @@ class FormatDialog extends this.OS.GUI.BaseDialog
                 right: @find("spnright"),
                 top: @find("spntop"),
                 bottom: @find("spnbottom"),
+                lineheight: @find("spnlheight")
             padding:
                 left: @find("pspnleft"),
                 right: @find("pspnright"),
@@ -80,7 +81,8 @@ class FormatDialog extends this.OS.GUI.BaseDialog
                 left:0
                 top:0,
                 right:0,
-                bottom:0
+                bottom:0,
+                lineheight: 0
             padding:
                 left:0
                 top:0,
@@ -165,6 +167,7 @@ class FormatDialog extends this.OS.GUI.BaseDialog
                 "fo:padding-left": @currentStyle.padding.left + "mm"
                 "fo:padding-bottom": @currentStyle.padding.bottom + "mm"
                 "fo:padding-right": @currentStyle.padding.right + "mm"
+                "fo:line-height": if @currentStyle.spacing.lineheight > 0 then @currentStyle.spacing.lineheight + "mm"  else "normal"
                 "fo:text-align": @currentStyle.aligment.selected || "left"
             "style:text-properties":
                 "fo:font-weight": if @currentStyle.style.bold then "bold" else "normal"
@@ -197,6 +200,7 @@ class FormatDialog extends this.OS.GUI.BaseDialog
             @currentStyle.padding.left = cssUnits.convertMeasure(style['fo:padding-left'], 'mm') || 0
             @currentStyle.padding.right = cssUnits.convertMeasure(style['fo:padding-right'], 'mm') || 0
             @currentStyle.padding.bottom = cssUnits.convertMeasure(style['fo:padding-bottom'], 'mm') || 0
+            @currentStyle.spacing.lineheight = cssUnits.convertMeasure(style['fo:line-height'], 'mm')  || 4.2 # 1em = 4,2175176mm
             @currentStyle.aligment[style['fo:text-align']] = true if style['fo:text-align']
         style = @parent.editorSession.getParagraphStyleAttributes(odfs.name)['style:text-properties']
         if style
@@ -220,6 +224,7 @@ class FormatDialog extends this.OS.GUI.BaseDialog
         @ui.spacing.right.set "value", @currentStyle.spacing.right
         @ui.spacing.top.set "value", @currentStyle.spacing.top
         @ui.spacing.bottom.set "value", @currentStyle.spacing.bottom
+        @ui.spacing.lineheight.set "value", @currentStyle.spacing.lineheight
         
         @ui.padding.left.set "value", @currentStyle.padding.left
         @ui.padding.right.set "value", @currentStyle.padding.right
@@ -237,11 +242,11 @@ class FormatDialog extends this.OS.GUI.BaseDialog
             item = i for v, i in items when v.text is @currentStyle.font.family.text
             @ui.font.family.set "selected", item if item >= 0
         
-        $(@ui.style.color).css "background-color", @currentStyle.style.color.hex if @currentStyle.style.color
-        $(@ui.style.bgcolor).css "background-color", @currentStyle.style.bgcolor.hex if @currentStyle.style.bgcolor
+        $(@ui.style.color).css "background-color", if @currentStyle.style.color then @currentStyle.style.color.hex else "#000000"
+        $(@ui.style.bgcolor).css "background-color", if @currentStyle.style.bgcolor then @currentStyle.style.bgcolor.hex else "white"
         # set the preview css
         el = $ @preview
-        el.css "text-align", @currentStyle.aligment.selected
+        el.css "text-align", if @currentStyle.aligment.selected then @currentStyle.aligment.selected else "left"
         el.css "margin-left", @currentStyle.spacing.left + "mm"
         el.css "margin-right", @currentStyle.spacing.right + "mm"
         el.css "margin-top", @currentStyle.spacing.top + "mm"
@@ -256,13 +261,15 @@ class FormatDialog extends this.OS.GUI.BaseDialog
             .css "font-weight", "normal"
             .css "font-style", "normal"
             .css "text-decoration", "none"
+            .css "line-height", "normal"
         el.css "font-weight", "bold" if @currentStyle.style.bold
         el.css "font-style", "italic" if @currentStyle.style.italic
         el.css "text-decoration", "underline" if @currentStyle.style.underline
-        el.css "color", @currentStyle.style.color.hex if @currentStyle.style.color
-        el.css "background-color", @currentStyle.style.bgcolor.hex if @currentStyle.style.bgcolor
+        el.css "color", if @currentStyle.style.color then @currentStyle.style.color.hex else "#000000"
+        el.css "background-color", if @currentStyle.style.bgcolor then @currentStyle.style.bgcolor.hex  else "transparent"
         el.css "font-size", @currentStyle.font.size + "pt"
         el.css "font-family", @currentStyle.font.family.name if @currentStyle.font.family
+        el.css "line-height", @currentStyle.spacing.lineheight + "mm" if @currentStyle.spacing.lineheight > 0
 
 FormatDialog.scheme = """
 <afx-app-window apptitle="__(Format Dialog)" width="500" height="500" data-id="FormatDialog">
@@ -289,7 +296,7 @@ FormatDialog.scheme = """
             <div data-width="20" ></div>
         </afx-hbox>
          <div data-height="5"></div>
-        <afx-label text="__(Spacing)" class="header" data-height="20"></afx-label>
+        <afx-label text="__(Margin)" class="header" data-height="20"></afx-label>
         <div data-height="5"></div>
         <afx-hbox data-height="23" data-id="spacingbox">
             <div ></div>
@@ -346,12 +353,15 @@ FormatDialog.scheme = """
         <div data-height="5"></div>
         <afx-label text="__(Font)" class="header" data-height="20"></afx-label>
         <div data-height="5"></div>
-        <afx-hbox data-height="30">
+        <afx-hbox data-height="30" data-id="font-box">
             <div data-width="5"></div>
             <afx-list-view data-id="lstfont" dropdown = "true"></afx-list-view>
             <div data-width="5" ></div>
             <afx-label data-width="35" text="__(Size:)"></afx-label>
             <afx-nspinner data-width="50" data-id="spnfsize"></afx-nspinner>
+            <div data-width="5" ></div>
+            <afx-label data-width="80" text="__(Line Height:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spnlheight" value="4.2" step="0.2"></afx-nspinner>
             <div data-width="5"></div>
         </afx-hbox>
         <div data-height="5"></div>

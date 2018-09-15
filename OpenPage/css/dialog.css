@@ -13,7 +13,8 @@ afx-app-window[data-id="FormatDialog"] afx-label.header span
 }
 afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="aligmentbox"] afx-label span,
 afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="spacingbox"] afx-label span,
-afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="stylebox"] afx-label span
+afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="stylebox"] afx-label span,
+afx-app-window[data-id="FormatDialog"] afx-hbox[data-id="font-box"] > div > afx-label  span
 {
     display: block;
     padding-top: 7px;

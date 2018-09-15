@@ -7,20 +7,166 @@
     }
 
     main() {
+      var me;
       // load session class
       //if not OpenPage.EditorSession
       //    require ["webodf/editor/EditorSession"], (ES) ->
       //        OpenPage.EditorSession = ES
-      this.userid = this.systemsetting.user.username;
+      me = this;
       this.eventSubscriptions = new core.EventSubscriptions();
       this.initToolbox();
-      this.initCanvas();
-      this.canvas.load(`${this._api.handler.get}/home://welcome.odt`);
+      this.userid = `${this.systemsetting.user.username}@${this.pid}`;
+      //file = "home://welcome.odt"
+      //file = "#{@_api.handler.get}/home://welcome.odt"
+      //@canvas.load file
+      //odfContainer = new odf.OdfContainer file, (c) ->
+      //    me.canvas.setOdfContainer c, false
       this.currentStyle = "";
-      return this.resource = {
+      if (this.args && this.args.length > 0) {
+        this.open(this.args[0]);
+      } else {
+        this.newdoc();
+      }
+      this.resource = {
         fonts: [],
         formats: []
       };
+      this.bindKey("ALT-N", function() {
+        return me.actionFile(`${me.name}-New`);
+      });
+      this.bindKey("ALT-O", function() {
+        return me.actionFile(`${me.name}-Open`);
+      });
+      this.bindKey("CTRL-S", function() {
+        return me.actionFile(`${me.name}-Save`);
+      });
+      return this.bindKey("ALT-W", function() {
+        return me.actionFile(`${me.name}-Saveas`);
+      });
+    }
+
+    menu() {
+      var me, menu;
+      me = this;
+      menu = [
+        {
+          text: "__(File)",
+          child: [
+            {
+              text: "__(New)",
+              dataid: `${this.name}-New`,
+              shortcut: "A-N"
+            },
+            {
+              text: "__(Open)",
+              dataid: `${this.name}-Open`,
+              shortcut: "A-O"
+            },
+            {
+              text: "__(Save)",
+              dataid: `${this.name}-Save`,
+              shortcut: "C-S"
+            },
+            {
+              text: "__(Save as)",
+              dataid: `${this.name}-Saveas`,
+              shortcut: "A-W"
+            }
+          ],
+          onmenuselect: function(e) {
+            return me.actionFile(e.item.data.dataid);
+          }
+        }
+      ];
+      return menu;
+    }
+
+    actionFile(e) {
+      var me, saveas;
+      me = this;
+      saveas = function() {
+        return me.openDialog("FileDiaLog", function(d, n, p) {
+          me.currfile.setPath(`${d}${n}`);
+          return me.save();
+        }, __("Save as"), {
+          file: me.currfile
+        });
+      };
+      switch (e) {
+        case `${this.name}-Open`:
+          return this.openDialog("FileDiaLog", function(d, f, p) {
+            return me.open(p);
+          }, __("Open file"), {
+            mimes: me.meta().mimes
+          });
+        case `${this.name}-Save`:
+          if (this.currfile.basename) {
+            //@currfile.cache = @editor.value()
+            return this.save();
+          }
+          return saveas();
+        case `${this.name}-Saveas`:
+          return saveas();
+        case `${this.name}-New`:
+          return this.newdoc();
+      }
+    }
+
+    newdoc() {
+      var blank;
+      blank = `${(this.meta().path)}/blank.odt`;
+      return this.open(blank, true);
+    }
+
+    open(p, b) {
+      var me;
+      me = this;
+      return this.pathAsDataURL(p).then(function(r) {
+        var OdfContainer;
+        if (me.editorSession) {
+          me.closeDocument();
+        }
+        me.initCanvas();
+        return OdfContainer = new odf.OdfContainer(r.reader.result, function(c) {
+          me.canvas.setOdfContainer(c, false);
+          if (b) {
+            return me.currfile = "Untitled".asFileHandler();
+          }
+          me.currfile.setPath(p);
+          me.scheme.set("apptitle", me.currfile.basename);
+          return me.notify(__("File {0} opened", p));
+        });
+      }).catch(function(e) {
+        return me.error(__("Problem read file {0}", e));
+      });
+    }
+
+    save() {
+      var container, me;
+      me = this;
+      if (!this.editorSession) {
+        return;
+      }
+      container = this.canvas.odfContainer();
+      if (!container) {
+        return this.error(__("No document container found"));
+      }
+      return container.createByteArray(function(ba) {
+        // create blob
+        me.currfile.cache = new Blob([ba], {
+          type: "application/vnd.oasis.opendocument.text"
+        });
+        return me.currfile.write("application/vnd.oasis.opendocument.text", function(r) {
+          if (r.error) {
+            return me.error(__("Cannot save file: {0}", r.error));
+          }
+          me.notify(__("File {0} saved", me.currfile.basename));
+          me.scheme.set("apptitle", me.currfile.basename);
+          return me.currfile.dirty = false;
+        });
+      }, function(err) {
+        return this.error(__("Cannot create byte array from container: {0}", err || ""));
+      });
     }
 
     initToolbox() {
@@ -91,9 +237,21 @@
       el.setAttribute("translate", "no");
       el.classList.add("notranslate");
       this.canvas = new odf.OdfCanvas(el);
-      this.documentChanged = function(e) {};
+      this.documentChanged = function(e) {
+        if (me.currfile.dirty) {
+          return;
+        }
+        me.currfile.dirty = true;
+        return me.scheme.set("apptitle", me.currfile.basename + "*");
+      };
       //console.log e
-      this.metaChanged = function(e) {};
+      this.metaChanged = function(e) {
+        if (me.currfile.dirty) {
+          return;
+        }
+        me.currfile.dirty = true;
+        return me.scheme.set("apptitle", me.currfile.basename + "*");
+      };
       //console.log e
       this.textStylingChanged = function(e) {
         return me.updateToolbar(e);
@@ -144,8 +302,7 @@
         zlb = me.find("lbzoom");
         return zlb.set("text", value + "%");
       };
-      
-      //@canvas.enableAnnotations(true, true)
+      //me.canvas.enableAnnotations true, true
       return this.canvas.addListener("statereadychange", function() {
         var op, viewOptions;
         me.session = new ops.Session(me.canvas);
@@ -166,6 +323,10 @@
           zoomingEnabled: true,
           reviewModeEnabled: false
         });
+        me.initFontList(me.editorSession.getDeclaredFonts());
+        me.initStyles(me.editorSession.getAvailableParagraphStyles());
+        //fix annotation problem on canvas
+        //console.log $("office:body").css "background-color", "red"
         // basic format
         me.directFormattingCtl = me.editorSession.sessionController.getDirectFormattingController();
         me.directFormattingCtl.subscribe(gui.DirectFormattingController.textStylingChanged, me.textStylingChanged);
@@ -183,6 +344,9 @@
         me.eventSubscriptions.addFrameSubscription(me.editorSession, OpenPage.EditorSession.signalParagraphStyleModified, function() {
           return me.updateHyperlinkButtons();
         });
+        
+        //annotation controller
+        me.annotationController = me.editorSession.sessionController.getAnnotationController();
         
         //image controller
         me.imageController = me.editorSession.sessionController.getImageController();
@@ -210,8 +374,6 @@
           }
         });
         me.session.enqueue([op]);
-        me.initFontList(me.editorSession.getDeclaredFonts());
-        me.initStyles(me.editorSession.getAvailableParagraphStyles());
         me.editorSession.sessionController.insertLocalCursor();
         return me.editorSession.sessionController.startEditing();
       });
@@ -349,6 +511,10 @@
       return this.directFormattingCtl.alignParagraphCenter();
     }
 
+    note(e) {
+      return this.annotationController.addAnnotation();
+    }
+
     aj(e) {
       return this.directFormattingCtl.alignParagraphJustified();
     }
@@ -421,40 +587,52 @@
       return this.editorSession.redo();
     }
 
-    image(e) {
-      var me;
-      me = this;
-      return this.openDialog("FileDiaLog", function(d, n, p) {
+    pathAsDataURL(p) {
+      return new Promise(function(resolve, error) {
         var fp;
         fp = p.asFileHandler();
-        return fp.asFileHandler().read(function(data) {
+        return fp.read(function(data) {
           var blob, reader;
           blob = new Blob([data], {
             type: fp.info.mime
           });
           reader = new FileReader();
           reader.onloadend = function() {
-            var hiddenImage;
             if (reader.readyState !== 2) {
-              return me.error(__("Couldnt load image {0}", p));
+              return error(p);
             }
-            // insert the image to document
-            hiddenImage = new Image();
-            hiddenImage.style.position = "absolute";
-            hiddenImage.style.left = "-99999px";
-            document.body.appendChild(hiddenImage);
-            hiddenImage.onload = function() {
-              var content;
-              content = reader.result.substring(reader.result.indexOf(",") + 1);
-              //insert image
-              me.textController.removeCurrentSelection();
-              me.imageController.insertImage(fp.info.mime, content, hiddenImage.width, hiddenImage.height);
-              return document.body.removeChild(hiddenImage);
-            };
-            return hiddenImage.src = reader.result;
+            return resolve({
+              reader: reader,
+              fp: fp
+            });
           };
           return reader.readAsDataURL(blob);
         }, "binary");
+      });
+    }
+
+    image(e) {
+      var me;
+      me = this;
+      return this.openDialog("FileDiaLog", function(d, n, p) {
+        return me.pathAsDataURL(p).then(function(r) {
+          var hiddenImage;
+          hiddenImage = new Image();
+          hiddenImage.style.position = "absolute";
+          hiddenImage.style.left = "-99999px";
+          document.body.appendChild(hiddenImage);
+          hiddenImage.onload = function() {
+            var content;
+            content = r.reader.result.substring(r.reader.result.indexOf(",") + 1);
+            //insert image
+            me.textController.removeCurrentSelection();
+            me.imageController.insertImage(r.fp.info.mime, content, hiddenImage.width, hiddenImage.height);
+            return document.body.removeChild(hiddenImage);
+          };
+          return hiddenImage.src = r.reader.result;
+        }).catch(function() {
+          return me.error(__("Couldnt load image {0}", p));
+        });
       }, __("Select image file"), {
         mimes: ["image/.*"]
       });
@@ -469,13 +647,14 @@
 
     zoom(e) {
       //console.log "zooming", e
+      if (!this.zoomHelper) {
+        return;
+      }
       return this.zoomHelper.setZoomLevel(e / 100.0);
     }
 
     format(e) {
-      return this.openDialog(new FormatDialog(), function(d) {
-        return console.log(d);
-      }, __("Add/Modify paragraph format"), this.resource);
+      return this.openDialog(new FormatDialog(), function(d) {}, __("Add/Modify paragraph format"), this.resource);
     }
 
     closeDocument() {
@@ -524,6 +703,7 @@
               return me.notify("Document closed");
             });
             me.session = void 0;
+            me.annotationController = void 0;
             me.directFormattingCtl = void 0;
             me.textController = void 0;
             me.imageController = void 0;
@@ -533,7 +713,9 @@
             me.textStylingChanged = void 0;
             me.paragrahStyleChanged = void 0;
             me.updateSlider = void 0;
-            return me.styleAdded = void 0;
+            me.styleAdded = void 0;
+            me.basictool.fonts.set("selected", -1);
+            return me.basictool.styles.set("selected", -1);
           });
         });
       });
@@ -634,7 +816,8 @@
           left: this.find("spnleft"),
           right: this.find("spnright"),
           top: this.find("spntop"),
-          bottom: this.find("spnbottom")
+          bottom: this.find("spnbottom"),
+          lineheight: this.find("spnlheight")
         },
         padding: {
           left: this.find("pspnleft"),
@@ -670,7 +853,8 @@
           left: 0,
           top: 0,
           right: 0,
-          bottom: 0
+          bottom: 0,
+          lineheight: 0
         },
         padding: {
           left: 0,
@@ -812,6 +996,7 @@
           "fo:padding-left": this.currentStyle.padding.left + "mm",
           "fo:padding-bottom": this.currentStyle.padding.bottom + "mm",
           "fo:padding-right": this.currentStyle.padding.right + "mm",
+          "fo:line-height": this.currentStyle.spacing.lineheight > 0 ? this.currentStyle.spacing.lineheight + "mm" : "normal",
           "fo:text-align": this.currentStyle.aligment.selected || "left"
         },
         "style:text-properties": {
@@ -858,6 +1043,7 @@
         this.currentStyle.padding.left = cssUnits.convertMeasure(style['fo:padding-left'], 'mm') || 0;
         this.currentStyle.padding.right = cssUnits.convertMeasure(style['fo:padding-right'], 'mm') || 0;
         this.currentStyle.padding.bottom = cssUnits.convertMeasure(style['fo:padding-bottom'], 'mm') || 0;
+        this.currentStyle.spacing.lineheight = cssUnits.convertMeasure(style['fo:line-height'], 'mm') || 4.2; // 1em = 4,2175176mm
         if (style['fo:text-align']) {
           this.currentStyle.aligment[style['fo:text-align']] = true;
         }
@@ -897,6 +1083,7 @@
       this.ui.spacing.right.set("value", this.currentStyle.spacing.right);
       this.ui.spacing.top.set("value", this.currentStyle.spacing.top);
       this.ui.spacing.bottom.set("value", this.currentStyle.spacing.bottom);
+      this.ui.spacing.lineheight.set("value", this.currentStyle.spacing.lineheight);
       this.ui.padding.left.set("value", this.currentStyle.padding.left);
       this.ui.padding.right.set("value", this.currentStyle.padding.right);
       this.ui.padding.top.set("value", this.currentStyle.padding.top);
@@ -919,15 +1106,11 @@
           this.ui.font.family.set("selected", item);
         }
       }
-      if (this.currentStyle.style.color) {
-        $(this.ui.style.color).css("background-color", this.currentStyle.style.color.hex);
-      }
-      if (this.currentStyle.style.bgcolor) {
-        $(this.ui.style.bgcolor).css("background-color", this.currentStyle.style.bgcolor.hex);
-      }
+      $(this.ui.style.color).css("background-color", this.currentStyle.style.color ? this.currentStyle.style.color.hex : "#000000");
+      $(this.ui.style.bgcolor).css("background-color", this.currentStyle.style.bgcolor ? this.currentStyle.style.bgcolor.hex : "white");
       // set the preview css
       el = $(this.preview);
-      el.css("text-align", this.currentStyle.aligment.selected);
+      el.css("text-align", this.currentStyle.aligment.selected ? this.currentStyle.aligment.selected : "left");
       el.css("margin-left", this.currentStyle.spacing.left + "mm");
       el.css("margin-right", this.currentStyle.spacing.right + "mm");
       el.css("margin-top", this.currentStyle.spacing.top + "mm");
@@ -936,7 +1119,7 @@
       el.css("padding-right", this.currentStyle.padding.right + "mm");
       el.css("padding-top", this.currentStyle.padding.top + "mm");
       el.css("padding-bottom", this.currentStyle.padding.bottom + "mm");
-      el.css("font-weight", "normal").css("font-style", "normal").css("text-decoration", "none");
+      el.css("font-weight", "normal").css("font-style", "normal").css("text-decoration", "none").css("line-height", "normal");
       if (this.currentStyle.style.bold) {
         el.css("font-weight", "bold");
       }
@@ -946,21 +1129,20 @@
       if (this.currentStyle.style.underline) {
         el.css("text-decoration", "underline");
       }
-      if (this.currentStyle.style.color) {
-        el.css("color", this.currentStyle.style.color.hex);
-      }
-      if (this.currentStyle.style.bgcolor) {
-        el.css("background-color", this.currentStyle.style.bgcolor.hex);
-      }
+      el.css("color", this.currentStyle.style.color ? this.currentStyle.style.color.hex : "#000000");
+      el.css("background-color", this.currentStyle.style.bgcolor ? this.currentStyle.style.bgcolor.hex : "transparent");
       el.css("font-size", this.currentStyle.font.size + "pt");
       if (this.currentStyle.font.family) {
-        return el.css("font-family", this.currentStyle.font.family.name);
+        el.css("font-family", this.currentStyle.font.family.name);
+      }
+      if (this.currentStyle.spacing.lineheight > 0) {
+        return el.css("line-height", this.currentStyle.spacing.lineheight + "mm");
       }
     }
 
   };
 
-  FormatDialog.scheme = "<afx-app-window apptitle=\"__(Format Dialog)\" width=\"500\" height=\"500\" data-id=\"FormatDialog\">\n    <afx-vbox>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstformats\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-button text=\"clone\" data-id=\"bt-clone\" iconclass = \"fa fa-copy\" data-width=\"65\"></afx-button>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <afx-label text=\"__(Aligment)\" class=\"header\" data-height=\"20\"></afx-label>\n        <afx-hbox data-height=\"23\" data-id=\"aligmentbox\">\n            <div data-width=\"20\" ></div>\n            <afx-switch data-width=\"30\" data-id=\"swleft\"></afx-switch>\n            <afx-label text=\"__(Left)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swright\"></afx-switch>\n            <afx-label text=\"__(Right)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swcenter\"></afx-switch>\n            <afx-label text=\"__(Center)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swjustify\"></afx-switch>\n            <afx-label text=\"__(Justify)\"></afx-label>\n            <div data-width=\"20\" ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n        <afx-label text=\"__(Spacing)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Padding)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        \n         <div data-height=\"5\"></div>\n         <afx-label text=\"__(Style)\" class=\"header\" data-height=\"20\"></afx-label>\n         <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"stylebox\">\n            <div data-width=\"5\"></div>\n            <afx-switch data-width=\"30\" data-id=\"swbold\"></afx-switch>\n            <afx-label text=\"__(Bold)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"switalic\"></afx-switch>\n            <afx-label text=\"__(Italic)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swunderline\"></afx-switch>\n            <afx-label text=\"__(Underline)\"></afx-label>\n            <afx-label data-width=\"35\" text=\"__(Text:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"txtcolor\"></div>\n            <div data-width=\"5\"></div>\n            <afx-label data-width=\"80\" text=\"__(Background:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"bgcolor\"></div>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Font)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstfont\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"35\" text=\"__(Size:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnfsize\"></afx-nspinner>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Preview)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox>\n             <div data-width=\"5\"></div>\n            <div data-id=\"preview\">\n                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>\n            </div>\n             <div data-width=\"5\"></div>\n        </afx-hbox>\n        \n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div></div>\n            <afx-button text=\"__(Save)\" data-width=\"35\" data-id=\"btok\"></afx-button>\n            <div data-width=\"5\"></div>\n            <afx-button text=\"__(Cancel)\" data-width=\"55\" data-id=\"btx\"></afx-button>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n    </afx-vbox>\n</afx-app-window>";
+  FormatDialog.scheme = "<afx-app-window apptitle=\"__(Format Dialog)\" width=\"500\" height=\"500\" data-id=\"FormatDialog\">\n    <afx-vbox>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstformats\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-button text=\"clone\" data-id=\"bt-clone\" iconclass = \"fa fa-copy\" data-width=\"65\"></afx-button>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <afx-label text=\"__(Aligment)\" class=\"header\" data-height=\"20\"></afx-label>\n        <afx-hbox data-height=\"23\" data-id=\"aligmentbox\">\n            <div data-width=\"20\" ></div>\n            <afx-switch data-width=\"30\" data-id=\"swleft\"></afx-switch>\n            <afx-label text=\"__(Left)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swright\"></afx-switch>\n            <afx-label text=\"__(Right)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swcenter\"></afx-switch>\n            <afx-label text=\"__(Center)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swjustify\"></afx-switch>\n            <afx-label text=\"__(Justify)\"></afx-label>\n            <div data-width=\"20\" ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n        <afx-label text=\"__(Margin)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Padding)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        \n         <div data-height=\"5\"></div>\n         <afx-label text=\"__(Style)\" class=\"header\" data-height=\"20\"></afx-label>\n         <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"stylebox\">\n            <div data-width=\"5\"></div>\n            <afx-switch data-width=\"30\" data-id=\"swbold\"></afx-switch>\n            <afx-label text=\"__(Bold)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"switalic\"></afx-switch>\n            <afx-label text=\"__(Italic)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swunderline\"></afx-switch>\n            <afx-label text=\"__(Underline)\"></afx-label>\n            <afx-label data-width=\"35\" text=\"__(Text:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"txtcolor\"></div>\n            <div data-width=\"5\"></div>\n            <afx-label data-width=\"80\" text=\"__(Background:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"bgcolor\"></div>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Font)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\" data-id=\"font-box\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstfont\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"35\" text=\"__(Size:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnfsize\"></afx-nspinner>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"80\" text=\"__(Line Height:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnlheight\" value=\"4.2\" step=\"0.2\"></afx-nspinner>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Preview)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox>\n             <div data-width=\"5\"></div>\n            <div data-id=\"preview\">\n                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>\n            </div>\n             <div data-width=\"5\"></div>\n        </afx-hbox>\n        \n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div></div>\n            <afx-button text=\"__(Save)\" data-width=\"35\" data-id=\"btok\"></afx-button>\n            <div data-width=\"5\"></div>\n            <afx-button text=\"__(Cancel)\" data-width=\"55\" data-id=\"btx\"></afx-button>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n    </afx-vbox>\n</afx-app-window>";
 
 }).call(this);
 
