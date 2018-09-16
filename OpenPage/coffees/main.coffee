@@ -95,6 +95,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
                 me.notify __("File {0} saved", me.currfile.basename)
                 me.scheme.set "apptitle", me.currfile.basename
                 me.currfile.dirty = false
+                me.editorFocus()
         , (err) ->
             @error __("Cannot create byte array from container: {0}", err|| "")
     
@@ -429,7 +430,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
                 return
         , __("Add/Modify paragraph format"), @resource
     
-    closeDocument: () ->
+    closeDocument: (f) ->
         # finish editing
         return unless @editorSession and @session
         me = @
@@ -462,6 +463,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     core.Async.destroyAll [me.canvas.destroy], (e) ->
                         return me.error __("Cannot destroy canvas {0}", e) if e
                         me.notify "Document closed"
+                        f() if f
                     me.session = undefined
                     me.annotationController = undefined
                     me.directFormattingCtl = undefined
@@ -476,10 +478,15 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     me.styleAdded = undefined
                     me.basictool.fonts.set "selected", -1
                     me.basictool.styles.set "selected", -1
+                    
                     #
             
     
     cleanup: (e) ->
-        @closeDocument()
+        me = @
+        if @editorSession
+            e.preventDefault()
+            me.closeDocument ()->
+                me.quit()
 
 this.OS.register "OpenPage", OpenPage
