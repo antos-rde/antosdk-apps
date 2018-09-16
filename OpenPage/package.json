@@ -1,13 +1,13 @@
 {
     "app":"OpenPage",
     "name":"OpenPage",
-    "description":"",
+    "description":"Open Document Format (ODF) text editor using WebODF",
     "info":{
-        "author": "",
-        "email": ""
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
     },
     "version":"0.0.1-a",
     "category":"Other",
-    "iconclass":"fa fa-adn",
-    "mimes":["none"]
+    "icon":"icon.png",
+    "mimes":["application/vnd.oasis.opendocument.text"]
 }

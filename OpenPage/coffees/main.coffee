@@ -4,19 +4,101 @@ class OpenPage extends this.OS.GUI.BaseApplication
     
     main: () ->
         # load session class
-        if not OpenPage.EditorSession
-            require ["webodf/editor/EditorSession"], (ES) ->
-                OpenPage.EditorSession = ES
-        @userid = @systemsetting.user.username
+        #if not OpenPage.EditorSession
+        #    require ["webodf/editor/EditorSession"], (ES) ->
+        #        OpenPage.EditorSession = ES
+        me =@
         @eventSubscriptions = new core.EventSubscriptions()
         @initToolbox()
-        @initCanvas()
-        @canvas.load "#{@_api.handler.get}/home://welcome.odt"
+        @userid = "#{@systemsetting.user.username}@#{@pid}"
+        #file = "home://welcome.odt"
+        #file = "#{@_api.handler.get}/home://welcome.odt"
+        #@canvas.load file
+        #odfContainer = new odf.OdfContainer file, (c) ->
+        #    me.canvas.setOdfContainer c, false
         @currentStyle = ""
+        if @args and @args.length > 0 then @open @args[0] else @newdoc()
         @resource =
             fonts: []
             formats: []
+        @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
+        @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
+        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
+        @bindKey "ALT-W", () -> me.actionFile "#{me.name}-Saveas"
         
+    
+    menu: () ->
+        me = @
+        menu = [{
+                text: "__(File)",
+                child: [
+                    { text: "__(New)", dataid: "#{@name}-New", shortcut: "A-N" },
+                    { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O" },
+                    { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
+                    { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }
+                ],
+                onmenuselect: (e) -> me.actionFile e.item.data.dataid
+            }]
+        menu
+    
+    actionFile: (e) ->
+        me = @
+        saveas = () ->
+            me.openDialog "FileDiaLog", (d, n, p) ->
+                me.currfile.setPath "#{d}#{n}"
+                me.save()
+            , __("Save as"), { file: me.currfile }
+        switch e
+            when "#{@name}-Open"
+                @openDialog "FileDiaLog", ( d, f , p) ->
+                    me.open p
+                , __("Open file"), { mimes: me.meta().mimes }
+            when "#{@name}-Save"
+                #@currfile.cache = @editor.value()
+                return @save() if @currfile.basename
+                saveas()
+            when "#{@name}-Saveas"
+                saveas()
+             when "#{@name}-New"
+                @newdoc()
+    
+    
+    newdoc: () ->
+        blank = "#{@meta().path}/blank.odt"
+        @open blank, true
+    open: (p,b) ->
+        me = @
+        
+        @pathAsDataURL(p)
+            .then (r) ->
+                me.closeDocument() if me.editorSession
+                me.initCanvas()
+                OdfContainer = new odf.OdfContainer r.reader.result, (c) ->
+                    me.canvas.setOdfContainer c, false
+                    return me.currfile  = "Untitled".asFileHandler() if b
+                    me.currfile.setPath p
+                    me.scheme.set "apptitle", me.currfile.basename
+                    me.notify __("File {0} opened", p)
+            .catch (e) ->
+                me.error __("Problem read file {0}", e) 
+    
+    save: () ->
+        me = @
+        return unless @editorSession
+        container = @canvas.odfContainer()
+        return @error __("No document container found") unless container
+        container.createByteArray (ba) ->
+            # create blob
+            me.currfile.cache = new Blob [ba], { type: "application/vnd.oasis.opendocument.text" }
+            me.currfile.write "application/vnd.oasis.opendocument.text", (r) ->
+                return me.error __("Cannot save file: {0}", r.error) if r.error
+                me.notify __("File {0} saved", me.currfile.basename)
+                me.scheme.set "apptitle", me.currfile.basename
+                me.currfile.dirty = false
+                me.editorFocus()
+        , (err) ->
+            @error __("Cannot create byte array from container: {0}", err|| "")
+    
     initToolbox: () ->
         me = @
         @basictool =
@@ -69,8 +151,14 @@ class OpenPage extends this.OS.GUI.BaseApplication
         el.classList.add "notranslate"
         @canvas = new odf.OdfCanvas(el)
         @documentChanged = (e) ->
+            return if me.currfile.dirty
+            me.currfile.dirty = true
+            me.scheme.set "apptitle", me.currfile.basename + "*"
             #console.log e
         @metaChanged = (e) ->
+            return if me.currfile.dirty
+            me.currfile.dirty = true
+            me.scheme.set "apptitle", me.currfile.basename + "*"
             #console.log e
         @textStylingChanged = (e) ->
             me.updateToolbar e
@@ -81,13 +169,23 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.currentStyle = e.styleName
             me.basictool.styles.set "selected", item
         
+        @styleAdded = (e) ->
+            return unless e.family is 'paragraph'
+            items = me.basictool.styles.get "items"
+            item = v for v in items when v.name is e.name
+            return if item
+            stylens = "urn:oasis:names:tc:opendocument:xmlns:style:1.0"
+            el = me.editorSession.getParagraphStyleElement e.name
+            dtext = el.getAttributeNS stylens, 'display-name'
+            me.basictool.styles.push { text: dtext , name: e.name }, true
+            #me.resource.formats.push {text: dtext, name:e.name}
+        
         @updateSlider = (v) ->
             value = Math.floor v*100
             me.basictool.zoom.set "value", value
             zlb = me.find "lbzoom"
             zlb.set "text", value+"%"
-        
-        #@canvas.enableAnnotations(true, true)
+        #me.canvas.enableAnnotations true, true
         @canvas.addListener "statereadychange", ()->
             me.session = new ops.Session(me.canvas)
             viewOptions =
@@ -107,6 +205,10 @@ class OpenPage extends this.OS.GUI.BaseApplication
                 zoomingEnabled: true,
                 reviewModeEnabled: false
             })
+            me.initFontList me.editorSession.getDeclaredFonts()
+            me.initStyles me.editorSession.getAvailableParagraphStyles()
+            #fix annotation problem on canvas
+            #console.log $("office:body").css "background-color", "red"
             # basic format
             me.directFormattingCtl = me.editorSession.sessionController.getDirectFormattingController()
             me.directFormattingCtl.subscribe gui.DirectFormattingController.textStylingChanged, me.textStylingChanged
@@ -119,6 +221,8 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalParagraphChanged, ()-> me.updateHyperlinkButtons()
             me.eventSubscriptions.addFrameSubscription me.editorSession, OpenPage.EditorSession.signalParagraphStyleModified, ()-> me.updateHyperlinkButtons()
             
+            #annotation controller
+            me.annotationController = me.editorSession.sessionController.getAnnotationController()
             
             #image controller
             me.imageController = me.editorSession.sessionController.getImageController()
@@ -132,6 +236,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.zoomHelper.subscribe gui.ZoomHelper.signalZoomChanged, me.updateSlider
             me.updateSlider me.zoomHelper.getZoomLevel()
             
+            # format controller 
+            me.editorSession.subscribe OpenPage.EditorSession.signalCommonStyleCreated, me.styleAdded
+            
             me.editorSession.sessionController.setUndoManager new gui.TrivialUndoManager()
             me.editorSession.sessionController.getUndoManager().subscribe gui.UndoManager.signalDocumentModifiedChanged, me.documentChanged
             me.editorSession.sessionController.getMetadataController().subscribe gui.MetadataController.signalMetadataChanged, me.metaChanged
@@ -144,8 +251,6 @@ class OpenPage extends this.OS.GUI.BaseApplication
                 }
             }
             me.session.enqueue([op])
-            me.initFontList me.editorSession.getDeclaredFonts()
-            me.initStyles me.editorSession.getAvailableParagraphStyles()
             me.editorSession.sessionController.insertLocalCursor()
             me.editorSession.sessionController.startEditing()
             #console.log me.editorSession.getDeclaredFonts()
@@ -157,8 +262,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
         @basictool.fonts.set "items", list
     
     initStyles: (list) ->
+        list.unshift {name:"", displayName: 'Default style' }
         v.text = v.displayName for v in list
-        @resource.formats.push { text: v.text, name: v.name, el: @editorSession.getParagraphStyleElement(v.name) } for v in list
+        @resource.formats.push { text: v.text, name: v.name } for v in list
         @basictool.styles.set "items", list
     
     updateToolbar: (changes) ->
@@ -214,6 +320,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
     
     ac: (e) ->
         @directFormattingCtl.alignParagraphCenter()
+    
+    note: (e) ->
+        @annotationController.addAnnotation()
     
     aj: (e) ->
         @directFormattingCtl.alignParagraphJustified()
@@ -274,30 +383,37 @@ class OpenPage extends this.OS.GUI.BaseApplication
     redo: (e) ->
         @editorSession.redo()
     
-    image: (e) ->
-        me = @
-        @openDialog "FileDiaLog", (d, n, p) ->
+    pathAsDataURL: (p) ->
+        return new Promise (resolve, error) ->
             fp = p.asFileHandler()
-            fp.asFileHandler().read (data) ->
+            fp.read (data) ->
                 blob = new Blob [data], { type: fp.info.mime }
                 reader = new FileReader()
                 reader.onloadend = () ->
-                    return me.error __("Couldnt load image {0}", p) if reader.readyState isnt 2
-                    # insert the image to document
+                    return error(p) if reader.readyState isnt 2
+                    resolve {reader: reader, fp: fp }
+                reader.readAsDataURL blob
+            , "binary"
+        
+    
+    image: (e) ->
+        me = @
+        @openDialog "FileDiaLog", (d, n, p) ->
+            me.pathAsDataURL(p)
+                .then (r) ->
                     hiddenImage = new Image()
                     hiddenImage.style.position = "absolute"
                     hiddenImage.style.left = "-99999px"
                     document.body.appendChild hiddenImage
                     hiddenImage.onload =  () ->
-                        content = reader.result.substring(reader.result.indexOf(",") + 1)
+                        content = r.reader.result.substring(r.reader.result.indexOf(",") + 1)
                         #insert image
                         me.textController.removeCurrentSelection()
-                        me.imageController.insertImage fp.info.mime, content, hiddenImage.width, hiddenImage.height
+                        me.imageController.insertImage r.fp.info.mime, content, hiddenImage.width, hiddenImage.height
                         document.body.removeChild hiddenImage
-                    hiddenImage.src = reader.result
-                
-                reader.readAsDataURL blob
-            , "binary"
+                    hiddenImage.src = r.reader.result
+                .catch () ->
+                    me.error __("Couldnt load image {0}", p)
         , __("Select image file"), { mimes: ["image/.*"] }
     
     styles: (e) ->
@@ -306,14 +422,15 @@ class OpenPage extends this.OS.GUI.BaseApplication
     
     zoom: (e) ->
         #console.log "zooming", e
+        return unless @zoomHelper
         @zoomHelper.setZoomLevel e/100.0
     
     format: (e) ->
         @openDialog new FormatDialog(), (d) ->
-            console.log d
+                return
         , __("Add/Modify paragraph format"), @resource
     
-    closeDocument: () ->
+    closeDocument: (f) ->
         # finish editing
         return unless @editorSession and @session
         me = @
@@ -335,6 +452,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
             me.directFormattingCtl.unsubscribe gui.DirectFormattingController.paragraphStylingChanged, me.textStylingChanged
             me.editorSession.unsubscribe OpenPage.EditorSession.signalParagraphChanged, me.paragrahStyleChanged
             me.zoomHelper.unsubscribe gui.ZoomHelper.signalZoomChanged, me.updateSlider
+            me.editorSession.unsubscribe OpenPage.EditorSession.signalCommonStyleCreated, me.styleAdded
             # destry editorSession
             me.editorSession.destroy (e) ->
                 return me.error __("Cannot destroy editor session {0}", e) if e
@@ -345,7 +463,9 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     core.Async.destroyAll [me.canvas.destroy], (e) ->
                         return me.error __("Cannot destroy canvas {0}", e) if e
                         me.notify "Document closed"
+                        f() if f
                     me.session = undefined
+                    me.annotationController = undefined
                     me.directFormattingCtl = undefined
                     me.textController = undefined
                     me.imageController = undefined
@@ -355,10 +475,18 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     me.textStylingChanged = undefined
                     me.paragrahStyleChanged = undefined
                     me.updateSlider = undefined
+                    me.styleAdded = undefined
+                    me.basictool.fonts.set "selected", -1
+                    me.basictool.styles.set "selected", -1
+                    
                     #
             
     
     cleanup: (e) ->
-        @closeDocument()
+        me = @
+        if @editorSession
+            e.preventDefault()
+            me.closeDocument ()->
+                me.quit()
 
 this.OS.register "OpenPage", OpenPage

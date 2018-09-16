@@ -24,9 +24,10 @@
 
 /*global runtime, define, document, core, odf, gui, ops*/
 
-define("webodf/editor/EditorSession", [
+/*define("webodf/editor/EditorSession", [
     "dojo/text!resources/fonts/fonts.css"
-], function (fontsCSS) { // fontsCSS is retrieved as a string, using dojo's text retrieval AMD plugin
+],*/ 
+this.OS.APP.OpenPage.EditorSession = (function (fontsCSS) { // fontsCSS is retrieved as a string, using dojo's text retrieval AMD plugin
     "use strict";
 
     runtime.loadClass("core.Async");
@@ -656,5 +657,5 @@ define("webodf/editor/EditorSession", [
     /**@const*/EditorSession.signalUndoStackChanged =       "signalUndoStackChanged";
 
     return EditorSession;
-});
+})("");
 
