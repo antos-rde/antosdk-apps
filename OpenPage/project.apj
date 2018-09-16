@@ -1,1 +1,1 @@
-{"name":"OpenPage","root":"home://myws/antosdk-apps/OpenPage","css":["css/main.css","css/dialog.css"],"javascripts":["javascripts/webodf.js","javascripts/EditorSession.js"],"coffees":["coffees/main.coffee","coffees/dialogs.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}
+{"name":"OpenPage","root":"home://workspace/OpenPage","css":["css/main.css","css/dialog.css"],"javascripts":["javascripts/webodf.js","javascripts/EditorSession.js"],"coffees":["coffees/main.coffee","coffees/dialogs.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}

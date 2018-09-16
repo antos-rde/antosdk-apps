@@ -44,7 +44,7 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
         value = @editor.getValue().trim()
         return unless value and value isnt ""
         proto = if window.location.protocol is "https:" then "wss://" else "ws://"
-        @socket = new WebSocket proto + @_api.HOST + "/lua-api/os/apigateway?ws=1"
+        @socket = new WebSocket proto + @_api.HOST + "/system/apigateway?ws=1"
         @socket.onopen = () ->
             #send data to server
             me.socket.send( JSON.stringify { code: value } )
