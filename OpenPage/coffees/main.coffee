@@ -45,7 +45,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
         me = @
         saveas = () ->
             me.openDialog "FileDiaLog", (d, n, p) ->
-                me.currfile.setPath "#{d}#{n}"
+                me.currfile.setPath "#{d}/#{n}"
                 me.save()
             , __("Save as"), { file: me.currfile }
         switch e
@@ -68,15 +68,14 @@ class OpenPage extends this.OS.GUI.BaseApplication
         @open blank, true
     open: (p,b) ->
         me = @
-        
         @pathAsDataURL(p)
             .then (r) ->
                 me.closeDocument() if me.editorSession
                 me.initCanvas()
-                OdfContainer = new odf.OdfContainer r.reader.result, (c) ->
+                OdfContainer = new odf.OdfContainer r.data, (c) ->
                     me.canvas.setOdfContainer c, false
                     return me.currfile  = "Untitled".asFileHandler() if b
-                    me.currfile.setPath p
+                    if me.currfile then me.currfile.setPath p else me.currfile = p.asFileHandler()
                     me.scheme.set "apptitle", me.currfile.basename
                     me.notify __("File {0} opened", p)
             .catch (e) ->
@@ -391,10 +390,19 @@ class OpenPage extends this.OS.GUI.BaseApplication
                 reader = new FileReader()
                 reader.onloadend = () ->
                     return error(p) if reader.readyState isnt 2
-                    resolve {reader: reader, fp: fp }
+                    resolve {data: reader.result, fp: fp }
                 reader.readAsDataURL blob
             , "binary"
-        
+            ###
+            if not isText
+                
+            else
+                fp.read (data) ->
+                    # convert to base64
+                    b64 = btoa data
+                    dataurl = "data:#{fp.info.mime};base64," + b64
+                    resolve { reader: {result: dataurl}, fp:fp }
+            ###
     
     image: (e) ->
         me = @
@@ -406,12 +414,12 @@ class OpenPage extends this.OS.GUI.BaseApplication
                     hiddenImage.style.left = "-99999px"
                     document.body.appendChild hiddenImage
                     hiddenImage.onload =  () ->
-                        content = r.reader.result.substring(r.reader.result.indexOf(",") + 1)
+                        content = r.data.substring(r.data.indexOf(",") + 1)
                         #insert image
                         me.textController.removeCurrentSelection()
                         me.imageController.insertImage r.fp.info.mime, content, hiddenImage.width, hiddenImage.height
                         document.body.removeChild hiddenImage
-                    hiddenImage.src = r.reader.result
+                    hiddenImage.src = r.data
                 .catch () ->
                     me.error __("Couldnt load image {0}", p)
         , __("Select image file"), { mimes: ["image/.*"] }

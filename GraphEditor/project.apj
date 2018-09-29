@@ -1,0 +1,1 @@
+{"name":"GraphEditor","root":"home://workspace/GraphEditor","css":["css/main.css"],"javascripts":["javascripts/svg-pan-zoom.js","javascripts/mermaidAPI.min.js"],"coffees":["coffees/main.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}
