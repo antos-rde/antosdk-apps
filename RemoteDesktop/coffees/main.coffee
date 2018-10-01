@@ -13,7 +13,7 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
                 { tag: "div", att: ' data-height="5"' }
             ],
             width: 350,
-            height: 280,
+            height: 280, 
             resizable: false,
             buttons: [
                 { 
@@ -51,7 +51,8 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
     main: () ->
         me = @
         @canvas = @find "screen"
-        @client = new WVNC {
+        @container = @find "container"
+        @client = new WVNC { 
             element: me.canvas,
             ws: 'wss://localhost:9192/wvnc',
             worker: "#{me._api.handler.get}/#{me.meta().path}/decoder.js"   
@@ -59,13 +60,25 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         @client.onerror = (m) ->
             me.error m
             me.showConnectionDialog()
+        @client.onresize = ()->
+            me.setScale()
         @client.onpassword = ()->
             return new Promise (r,e)->
                 me.openDialog "PromptDialog", (d) ->
                     r(d) 
                 , __("VNC password"), { label: __("VNC password"), value: "demopass", type: "password" }
+        @on "resize", (e)-> me.setScale()
+        @on "focus", (e) -> $(me.canvas).focus()
         @client.init().then () -> 
             me.showConnectionDialog()
+    
+    setScale: () ->
+        return unless @client and @client.resolution
+        w = $(@container).width()
+        h = $(@container).height()
+        sx = w / @client.resolution.w
+        sy = h / @client.resolution.h
+        if sx > sy then @client.setScale sy else @client.setScale sx
     
     showConnectionDialog: () ->
         me = @
