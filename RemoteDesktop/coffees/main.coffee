@@ -31,7 +31,7 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
                 { label: "__(Cancel)", onclick: (d) -> d.quit() }
             ],
             filldata: (d) -> 
-                (d.find "content1").value = "176.180.44.70:9999"
+                (d.find "content1").value = "/opt/www/vnc.conf"
                 (d.find "content3").set "items", [
                     { text: "16 bits", value: 16 }, 
                     { text: "32 bits", value: 32, selected:true}]
@@ -56,10 +56,15 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
             ws: 'wss://localhost:9192/wvnc',
             worker: "#{me._api.handler.get}/#{me.meta().path}/decoder.js"   
         }
+        @client.onerror = (m) ->
+            me.error m
+            me.showConnectionDialog()
         @client.onpassword = ()->
             return new Promise (r,e)->
-                r("demopass")
-        @client.init().then () ->
+                me.openDialog "PromptDialog", (d) ->
+                    r(d) 
+                , __("VNC password"), { label: __("VNC password"), value: "demopass", type: "password" }
+        @client.init().then () -> 
             me.showConnectionDialog()
     
     showConnectionDialog: () ->
@@ -67,4 +72,7 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         @openDialog new ConnectionDialog, (d) ->
             me.client.connect d.server, d
         , __("Connection")
+    
+    cleanup: () ->
+        @client.disconnect() if @client
 this.OS.register "RemoteDesktop", RemoteDesktop
