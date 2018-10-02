@@ -44,6 +44,37 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
                 (d.find "content7").set "value", 40
         }
 
+class CredentialDialog extends this.OS.GUI.BasicDialog
+    constructor: () ->
+        super "ConnectionDialog", {
+            tags: [
+                { tag: "afx-label", att: 'text="__(User name)" data-height="23" class="header"' },
+                { tag: "input", att: 'data-height="30"' },
+                { tag: "afx-label", att: 'text="__(Password)" data-height="23" class="header"' },
+                { tag: "input", att: 'data-height="30" type="password"' },
+                { tag: "div", att: ' data-height="5"' }
+            ],
+            width: 350,
+            height: 150, 
+            resizable: false,
+            buttons: [
+                { 
+                    label: "__(Ok)",
+                    onclick: (d) ->
+                        return d.quit() unless d.handler
+                        data =
+                            username: (d.find "content1").value
+                            password: (d.find "content3").value
+                        d.handler data
+                        d.quit()
+                },
+                { label: "__(Cancel)", onclick: (d) -> d.quit() }
+            ],
+            filldata: (d) -> 
+                (d.find "content1").value = "demo"
+                (d.find "content3").value = "demo"
+        }
+
 class RemoteDesktop extends this.OS.GUI.BaseApplication
     constructor: ( args ) ->
         super "RemoteDesktop", args
@@ -54,7 +85,7 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         @container = @find "container"
         @client = new WVNC { 
             element: me.canvas,
-            ws: 'wss://localhost:9192/wvnc',
+            ws: 'wss://lxsang.me/wvnc',
             worker: "#{me._api.handler.get}/#{me.meta().path}/decoder.js"   
         }
         @client.onerror = (m) ->
@@ -67,6 +98,12 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
                 me.openDialog "PromptDialog", (d) ->
                     r(d) 
                 , __("VNC password"), { label: __("VNC password"), value: "demopass", type: "password" }
+        
+        @client.oncredential = () ->
+            return new Promise (r,e) ->
+                me.openDialog new CredentialDialog, (d) ->
+                    r(d.username, d.password)
+                , __("User credential")
         @on "resize", (e)-> me.setScale()
         @on "focus", (e) -> $(me.canvas).focus()
         @client.init().then () -> 
@@ -79,6 +116,23 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         sx = w / @client.resolution.w
         sy = h / @client.resolution.h
         if sx > sy then @client.setScale sy else @client.setScale sx
+    
+    menu: () ->
+        me = @
+        [
+            {
+                text: "__(Connection)",
+                child: [
+                    { text: "__(New Connection)", dataid: "#{@name}-new", },
+                    { text: "__(Disconnect)", dataid: "#{@name}-close" }
+                ],
+                onmenuselect: (e) -> me.actionConnection()
+            }
+        ]
+    
+    actionConnection: (e) ->
+        @client.disconnect() if @client
+        @showConnectionDialog()
     
     showConnectionDialog: () ->
         me = @

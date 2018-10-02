@@ -1,0 +1,10 @@
+
+afx-app-window[data-id="RemoteDesktop"] div[data-id="container"]
+{
+    background-color: #272822;
+}
+afx-app-window[data-id="RemoteDesktop"] canvas[data-id="screen"]
+{
+    border:0;
+    margin:0 auto;
+}
