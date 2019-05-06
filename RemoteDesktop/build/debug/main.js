@@ -181,7 +181,7 @@
       this.container = this.find("container");
       this.client = new WVNC({
         element: me.canvas,
-        ws: 'wss://lxsang.me/wvnc',
+        ws: 'wss://localhost:9192/wvnc',
         worker: `${me._api.handler.get}/${(me.meta().path)}/decoder.js`
       });
       this.client.onerror = function(m) {

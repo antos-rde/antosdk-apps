@@ -85,7 +85,7 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         @container = @find "container"
         @client = new WVNC { 
             element: me.canvas,
-            ws: 'wss://lxsang.me/wvnc',
+            ws: 'wss://localhost:9192/wvnc',
             worker: "#{me._api.handler.get}/#{me.meta().path}/decoder.js"   
         }
         @client.onerror = (m) ->

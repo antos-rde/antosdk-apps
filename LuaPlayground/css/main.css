@@ -7,7 +7,7 @@ afx-app-window[data-id="LuaPlayground"] div[data-id="output"] p{
 afx-app-window[data-id="LuaPlayground"] div[data-id="output"]{
     background-color: #2f3129;
     padding: 10px;
-    padding-left: 40px;
+    /*padding-left: 40px;*/
     color:white;
     overflow: auto;
 }
@@ -24,4 +24,9 @@ afx-app-window[data-id="LuaPlayground"] afx-hbox[data-id="bottom-vbox"] afx-butt
     color:white;
     border:0;
     border-radius: 0;
+}
+
+afx-app-window[data-id="LuaPlayground"] canvas.viewer {
+    background-color: white;
+    display: inline;
 }
