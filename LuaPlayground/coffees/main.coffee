@@ -8,7 +8,7 @@ class DataViewer
         @render()
     
     canvasPoint: (v) ->
-        return new paper.Point(v[0] / @target.resolution + @base.x, v[1] / @target.resolution + @base.y)
+        return new paper.Point(v[0] / @target.resolution + @base.x, - v[1] / @target.resolution + @base.y)
     
     getBound: () ->
         peak_tl = { x:0, y:0}
@@ -23,7 +23,7 @@ class DataViewer
             peak_rb.y = y if y > peak_rb.y
         
         @bound = [ peak_tl, peak_rb ]
-        @base = {x: 0 - @bound[0].x + @offset, y: 0- @bound[0].y + @offset}
+        @base = {x: 0 - @bound[0].x+ @offset, y: @bound[1].y  + @offset}
         @width = peak_rb.x - peak_tl.x + 2*@offset
         @height = peak_rb.y - peak_tl.y + 2*@offset
     prepare: () ->

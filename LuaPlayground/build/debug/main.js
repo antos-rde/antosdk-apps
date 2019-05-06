@@ -12,7 +12,7 @@
     }
 
     canvasPoint(v) {
-      return new paper.Point(v[0] / this.target.resolution + this.base.x, v[1] / this.target.resolution + this.base.y);
+      return new paper.Point(v[0] / this.target.resolution + this.base.x, -v[1] / this.target.resolution + this.base.y);
     }
 
     getBound() {
@@ -47,7 +47,7 @@
       this.bound = [peak_tl, peak_rb];
       this.base = {
         x: 0 - this.bound[0].x + this.offset,
-        y: 0 - this.bound[0].y + this.offset
+        y: this.bound[1].y + this.offset
       };
       this.width = peak_rb.x - peak_tl.x + 2 * this.offset;
       return this.height = peak_rb.y - peak_tl.y + 2 * this.offset;
@@ -215,7 +215,6 @@
       if (!(obj && obj.type && this[obj.type])) {
         return false;
       }
-      console.log("rendering object");
       el = this[obj.type](obj).el;
       p = ($("<p>")).attr("class", "info")[0];
       $(p).append(el);
