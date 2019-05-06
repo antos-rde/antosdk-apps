@@ -2,7 +2,9 @@ class DataViewer
     constructor: (data) ->
         @target = data
         @el =  ($ "<canvas>").attr("class", "viewer")[0]
-        @offset = 5
+        @offset = 10
+        @points = []
+        @preprocess()
         @getBound()
         @prepare()
         @render()
@@ -10,11 +12,14 @@ class DataViewer
     canvasPoint: (v) ->
         return new paper.Point(v[0] / @target.resolution + @base.x, - v[1] / @target.resolution + @base.y)
     
+    preprocess: () ->
+        @points = @target.data
+    
     getBound: () ->
         peak_tl = { x:0, y:0}
         peak_rb = { x:0, y:0}
         start = null
-        for v in @target.data
+        for v in @points
             x = v[0] / @target.resolution
             y = v[1] / @target.resolution
             peak_tl.x = x if x < peak_tl.x
@@ -37,10 +42,10 @@ class DataViewer
     drawGrid: (size, color) ->
         wgridsize = @target.resolution*size
         # draw y line
-        i = Math.ceil(@bound[0].x / wgridsize)
-        while i*wgridsize < @bound[1].x
-            start = @canvasPoint [i*wgridsize, @bound[0].y]
-            end = @canvasPoint [i*wgridsize, @bound[1].y]
+        i = Math.ceil(@bound[0].x / size)
+        while i*size < @bound[1].x
+            start = new paper.Point(i*size + @base.x, -@bound[0].y + @base.y )
+            end = new paper.Point(i*size + @base.x, -@bound[1].y + @base.y )
             path = new paper.Path()
             path.strokeColor = color
             path.moveTo start
@@ -48,29 +53,35 @@ class DataViewer
             i++
         
         # draw x line
-        i = Math.ceil(@bound[0].y / wgridsize)
-        while i*wgridsize < @bound[1].y
-            start = @canvasPoint [@bound[0].x,i*wgridsize]
-            end = @canvasPoint [@bound[1].x, i*wgridsize]
+        i = Math.ceil(@bound[0].y / size)
+        while i*size < @bound[1].y
+            start = new paper.Point(@bound[0].x  + @base.x,-i*size + @base.y )
+            end = new paper.Point(@bound[1].x  + @base.x, -i*size + @base.y )
             path = new paper.Path()
             path.strokeColor = color
             path.moveTo start
             path.lineTo end
             i++
         
+        # draw text
+        text = new paper.PointText(@bound[0].x + @base.x, @base.y - @bound[1].y + @offset)
+        text.justification = 'left'
+        text.fillColor = '#494949'
+        text.content = "Resolution: #{@target.resolution}, grid size: #{wgridsize} mm"
+        
     drawAxis: (color) ->
          # x axis
         path = new paper.Path()
         path.strokeColor = color
-        start = @canvasPoint [@bound[0].x, 0]
-        end = @canvasPoint [@bound[1].x, 0]
+        start = new paper.Point( @bound[0].x + @base.x, @base.y)
+        end = new paper.Point( @bound[1].x + @base.x, @base.y)
         path.moveTo(start)
         path.lineTo(end)
         # y axis
         path = new paper.Path()
         path.strokeColor = color
-        start = @canvasPoint [0, @bound[0].y]
-        end = @canvasPoint [0, @bound[1].y]
+        start = new paper.Point(@base.x, -@bound[0].y + @base.y)
+        end = new paper.Point(@base.x, -@bound[1].y + @base.y)
         path.moveTo(start)
         path.lineTo(end)
         @drawPoint [0,0], color, 3
@@ -100,21 +111,31 @@ class PointCloudViewer extends DataViewer
     constructor: (data) ->
         super data
     
+    p2c: (length, angle) ->
+        rad = angle*Math.PI / 180
+        return [length*Math.cos(rad), length*Math.sin(rad)]
+    
+    preprocess: () ->
+        return @points = @target.data unless @target.coordinate is "polar"
+        @point = []
+        i = 0
+        for v in @target.data
+            @points.push @p2c v, @target.start + i*@target.angularResolution
+            i = i+1
+    
      # point clound render
     render: () ->
         @drawGrid 20, "#DBDBDB" # 20 px
         @drawAxis("#0A84FF")
-        path = new paper.Path()
-        path.strokeColor = 'black'
-        start = null
-        for v in @target.data
-            point = @canvasPoint v
-            if not start
-                start = point
-                path.moveTo(start)
-            else
-                path.lineTo point
-            @drawPoint v, "black", 4
+        for v in @points
+            if @target.coordinate is "polar"
+                path = new paper.Path()
+                path.strokeColor = '#c2a10e'
+                start = @canvasPoint [0,0]
+                end = @canvasPoint v
+                path.moveTo start
+                path.lineTo end
+            @drawPoint v, "red", 3
         paper.view.draw()
 
     
