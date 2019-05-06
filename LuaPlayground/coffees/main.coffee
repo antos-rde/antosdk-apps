@@ -26,28 +26,73 @@ class DataViewer
         @base = {x: 0 - @bound[0].x+ @offset, y: @bound[1].y  + @offset}
         @width = peak_rb.x - peak_tl.x + 2*@offset
         @height = peak_rb.y - peak_tl.y + 2*@offset
-    prepare: () ->
-        ctx = @el.getContext "2d"
-        ctx.translate(@base.x, @base.y)
-        ctx.canvas.width = @width
-        ctx.canvas.height = @height
-        paper.setup @el
-        # draw the base
-        # x axis
+    
+    drawPoint: (v, color, size) ->
+        # center
+        new paper.Path.Circle {
+            center: @canvasPoint(v),
+            radius: size,
+            fillColor: color
+        }
+    drawGrid: (size, color) ->
+        wgridsize = @target.resolution*size
+        # draw y line
+        i = Math.ceil(@bound[0].x / wgridsize)
+        while i*wgridsize < @bound[1].x
+            start = @canvasPoint [i*wgridsize, @bound[0].y]
+            end = @canvasPoint [i*wgridsize, @bound[1].y]
+            path = new paper.Path()
+            path.strokeColor = color
+            path.moveTo start
+            path.lineTo end
+            i++
+        
+        # draw x line
+        i = Math.ceil(@bound[0].y / wgridsize)
+        while i*wgridsize < @bound[1].y
+            start = @canvasPoint [@bound[0].x,i*wgridsize]
+            end = @canvasPoint [@bound[1].x, i*wgridsize]
+            path = new paper.Path()
+            path.strokeColor = color
+            path.moveTo start
+            path.lineTo end
+            i++
+        
+    drawAxis: (color) ->
+         # x axis
         path = new paper.Path()
-        path.strokeColor = '#BBBBBB'
+        path.strokeColor = color
         start = @canvasPoint [@bound[0].x, 0]
         end = @canvasPoint [@bound[1].x, 0]
         path.moveTo(start)
         path.lineTo(end)
         # y axis
         path = new paper.Path()
-        path.strokeColor = '#BBBBBB'
+        path.strokeColor = color
         start = @canvasPoint [0, @bound[0].y]
         end = @canvasPoint [0, @bound[1].y]
         path.moveTo(start)
         path.lineTo(end)
+        @drawPoint [0,0], color, 3
         
+    prepare: () ->
+        ctx = @el.getContext "2d"
+        ctx.translate @base.x, @base.y
+        ctx.canvas.width = @width
+        ctx.canvas.height = @height
+        paper.setup @el
+        #tool = new paper.Tool()
+        #hitOptions = {
+        #    segments: true,
+        #    stroke: true,
+        #    fill: true,
+        #    tolerance: 5
+        #}
+        #tool.onMouseMove = (event) ->
+        #    hitResult = paper.project.hitTest event.point, hitOptions
+        #    return unless hitResult
+        #    console.log hitResult
+       
     render:() ->
         # sub class responsibility
 
@@ -57,6 +102,8 @@ class PointCloudViewer extends DataViewer
     
      # point clound render
     render: () ->
+        @drawGrid 20, "#DBDBDB" # 20 px
+        @drawAxis("#0A84FF")
         path = new paper.Path()
         path.strokeColor = 'black'
         start = null
@@ -67,6 +114,7 @@ class PointCloudViewer extends DataViewer
                 path.moveTo(start)
             else
                 path.lineTo point
+            @drawPoint v, "black", 4
         paper.view.draw()
 
     

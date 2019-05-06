@@ -1,1 +1,1 @@
-{"name":"LuaPlayground","root":"home://workspace/LuaPlayground","css":["css/main.css"],"javascripts":[],"coffees":["coffees/main.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}
+{"name":"LuaPlayground","root":"home://myws/antosdk-apps/LuaPlayground","css":["css/main.css"],"javascripts":["javascripts/paper-core.min.js"],"coffees":["coffees/main.coffee"],"copies":["assets/scheme.html","package.json","README.md"]}

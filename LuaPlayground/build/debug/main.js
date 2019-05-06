@@ -16,7 +16,7 @@
     }
 
     getBound() {
-      var i, len, peak_rb, peak_tl, ref, start, v, x, y;
+      var j, len, peak_rb, peak_tl, ref, start, v, x, y;
       peak_tl = {
         x: 0,
         y: 0
@@ -27,8 +27,8 @@
       };
       start = null;
       ref = this.target.data;
-      for (i = 0, len = ref.length; i < len; i++) {
-        v = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        v = ref[j];
         x = v[0] / this.target.resolution;
         y = v[1] / this.target.resolution;
         if (x < peak_tl.x) {
@@ -53,30 +53,84 @@
       return this.height = peak_rb.y - peak_tl.y + 2 * this.offset;
     }
 
-    prepare() {
-      var ctx, end, path, start;
-      ctx = this.el.getContext("2d");
-      ctx.translate(this.base.x, this.base.y);
-      ctx.canvas.width = this.width;
-      ctx.canvas.height = this.height;
-      paper.setup(this.el);
-      // draw the base
+    drawPoint(v, color, size) {
+      // center
+      return new paper.Path.Circle({
+        center: this.canvasPoint(v),
+        radius: size,
+        fillColor: color
+      });
+    }
+
+    drawGrid(size, color) {
+      var end, i, path, results, start, wgridsize;
+      wgridsize = this.target.resolution * size;
+      // draw y line
+      i = Math.ceil(this.bound[0].x / wgridsize);
+      while (i * wgridsize < this.bound[1].x) {
+        start = this.canvasPoint([i * wgridsize, this.bound[0].y]);
+        end = this.canvasPoint([i * wgridsize, this.bound[1].y]);
+        path = new paper.Path();
+        path.strokeColor = color;
+        path.moveTo(start);
+        path.lineTo(end);
+        i++;
+      }
+      
+      // draw x line
+      i = Math.ceil(this.bound[0].y / wgridsize);
+      results = [];
+      while (i * wgridsize < this.bound[1].y) {
+        start = this.canvasPoint([this.bound[0].x, i * wgridsize]);
+        end = this.canvasPoint([this.bound[1].x, i * wgridsize]);
+        path = new paper.Path();
+        path.strokeColor = color;
+        path.moveTo(start);
+        path.lineTo(end);
+        results.push(i++);
+      }
+      return results;
+    }
+
+    drawAxis(color) {
+      var end, path, start;
       // x axis
       path = new paper.Path();
-      path.strokeColor = '#BBBBBB';
+      path.strokeColor = color;
       start = this.canvasPoint([this.bound[0].x, 0]);
       end = this.canvasPoint([this.bound[1].x, 0]);
       path.moveTo(start);
       path.lineTo(end);
       // y axis
       path = new paper.Path();
-      path.strokeColor = '#BBBBBB';
+      path.strokeColor = color;
       start = this.canvasPoint([0, this.bound[0].y]);
       end = this.canvasPoint([0, this.bound[1].y]);
       path.moveTo(start);
-      return path.lineTo(end);
+      path.lineTo(end);
+      return this.drawPoint([0, 0], color, 3);
     }
 
+    prepare() {
+      var ctx;
+      ctx = this.el.getContext("2d");
+      ctx.translate(this.base.x, this.base.y);
+      ctx.canvas.width = this.width;
+      ctx.canvas.height = this.height;
+      return paper.setup(this.el);
+    }
+
+    //tool = new paper.Tool()
+    //hitOptions = {
+    //    segments: true,
+    //    stroke: true,
+    //    fill: true,
+    //    tolerance: 5
+    //}
+    //tool.onMouseMove = (event) ->
+    //    hitResult = paper.project.hitTest event.point, hitOptions
+    //    return unless hitResult
+    //    console.log hitResult
     render() {}
 
   };
@@ -90,13 +144,15 @@
     
     // point clound render
     render() {
-      var i, len, path, point, ref, start, v;
+      var j, len, path, point, ref, start, v;
+      this.drawGrid(20, "#DBDBDB"); // 20 px
+      this.drawAxis("#0A84FF");
       path = new paper.Path();
       path.strokeColor = 'black';
       start = null;
       ref = this.target.data;
-      for (i = 0, len = ref.length; i < len; i++) {
-        v = ref[i];
+      for (j = 0, len = ref.length; j < len; j++) {
+        v = ref[j];
         point = this.canvasPoint(v);
         if (!start) {
           start = point;
@@ -104,6 +160,7 @@
         } else {
           path.lineTo(point);
         }
+        this.drawPoint(v, "black", 4);
       }
       return paper.view.draw();
     }
