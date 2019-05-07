@@ -163,6 +163,12 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
             me.editor.resize()
         (@find "log-clear").set "onbtclick", (e) ->
             me.log "clean"
+        (@find "code-run").set "onbtclick", (e) ->
+            me.run()
+        
+        (@find "code-stop").set "onbtclick", (e) ->
+            me.socket.close() if me.socket
+        
         @socket = null
         @bindKey "CTRL-R", () -> me.run()
     menu: () ->

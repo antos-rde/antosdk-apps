@@ -223,6 +223,14 @@
       (this.find("log-clear")).set("onbtclick", function(e) {
         return me.log("clean");
       });
+      (this.find("code-run")).set("onbtclick", function(e) {
+        return me.run();
+      });
+      (this.find("code-stop")).set("onbtclick", function(e) {
+        if (me.socket) {
+          return me.socket.close();
+        }
+      });
       this.socket = null;
       return this.bindKey("CTRL-R", function() {
         return me.run();
