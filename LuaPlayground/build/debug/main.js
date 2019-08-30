@@ -270,14 +270,13 @@
     }
 
     run() {
-      var me, proto, value;
+      var me, value;
       me = this;
       value = this.editor.getValue().trim();
       if (!(value && value !== "")) {
         return;
       }
-      proto = window.location.protocol === "https:" ? "wss://" : "ws://";
-      this.socket = new WebSocket(proto + this._api.HOST + "/system/apigateway?ws=1");
+      this.socket = this.stream();
       this.socket.onopen = function() {
         //send data to server
         return me.socket.send(JSON.stringify({
