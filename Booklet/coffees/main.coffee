@@ -3,8 +3,46 @@ class Booklet extends this.OS.GUI.BaseApplication
         super "Booklet", args
     
     main: () ->
+        me = @
+        @tree = @find "toc-ui"
+        @currentToc = undefined
+        @tree.set "ontreeselect", (e) ->
+            me.saveContext()
+            me.currfile = e.target.descFile
+            me.reloadEditor()
+            me.currentToc  = e
         @initEditor()
         @resizeContent()
+        @tree.contextmenuHandler = (e, m) ->
+            menus = me.contextMenu()
+            return unless menus
+            m.set "items", menus
+            m.set "onmenuselect", (evt) ->
+                me[evt.item.data.dataid]()
+            m.show e
+    
+    newChapter: () ->
+        console.log @currentToc
+    
+    contextMenu: () ->
+        return undefined unless @currentToc
+        switch @currentToc.type
+            when "book"
+                return [
+                    { text: __("New chapter"), dataid: "newChapter" },
+                    { text: __("Delete book"), dataid: "deleteBook" }
+                ]
+            when "chapter"
+                return [
+                    { text: __("New section"), dataid: "newSection" },
+                    { text: __("Delete chapter"), dataid: "deleteChapter" }
+                ]
+            when "section"
+                return [
+                    { text: __("New file"), dataid: "newFile" },
+                    { text: __("Delete section"), dataid: "deleteSection" }
+                ]
+        return undefined
     
     initEditor: ()->
         markarea = @find "markarea"
@@ -45,21 +83,12 @@ class Booklet extends this.OS.GUI.BaseApplication
         @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
         @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
         
-        @createBook()
+    reloadEditor: () ->
+        @editor.value @currfile.cache
+        @scheme.set "apptitle", "Booklet - #{@currfile.basename}"
     
-    createBook: () ->
-        book = new Book("home://test", "mybook")
-        c1 = new BookletChapter(book, "Chapter one")
-        c2 = new BookletChapter(book, "Chapter two")
-        sec1 = new BookletSection(c1, "section 1 in c1")
-        sec2 = new BookletSection(c1, "section 2 in c1")
-        sec3 = new BookletSection(c2, "section 1 in c2")
-        f1 = new BookletFile(sec1)
-        f2 = new BookletFile(sec2)
-        f3 = new BookletFile(sec3)
-        f4 = new BookletFile(sec1)
-        
-        console.log(book.toc())
+    saveContext: () ->
+        @currfile.cache = @editor.value()
 
     resizeContent: () ->
         children = ($ @container).children()
@@ -83,20 +112,29 @@ class Booklet extends this.OS.GUI.BaseApplication
         menu
     
     actionFile: (e) ->
-        console.log "Action file fired"
-        ###
         me = @
         switch e
             when "#{@name}-Open"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.open "#{d}/#{f}".asFileHandler()
-                , __("Open file")
-                
+                , __("Open file"), { mimes: me.meta().mimes }
              when "#{@name}-New"
-                @currfile = "Untitled".asFileHandler()
-                @currfile.cache = ""
-                @editor.value("")
-        ###
+                @openDialog "FileDiaLog", ( d, f ) ->
+                    me.newAt d
+                , __("Open file"), { mimes: ['dir'] }
+    
+    open: (file) ->
+        
+    
+    newAt: (folder) ->
+        @book = new Book(folder)
+        @displayToc()
+    
+    displayToc: () ->
+        toc = @book.toc()
+        console.log toc
+        @tree.set "data", toc
+    
 Booklet.dependencies = [ "mde/simplemde.min" ]
 
 this.OS.register "Booklet", Booklet

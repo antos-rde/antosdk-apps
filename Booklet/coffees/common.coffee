@@ -1,5 +1,5 @@
 class BookletEntry
-    constructor: (@name) ->
+    constructor: () ->
         @markAsDirty()
     save: () ->
     
@@ -9,10 +9,16 @@ class BookletEntry
     markAsClean: () -> @dirty = false
     
     toc: () ->
+    
+    titleFromFile:(file) ->
+        content = file.cache
+        title = (new RegExp "^#+(.*)\n", "g").exec content
+        return "Untitled" unless title and title.length is 2
+        return title[1].trim()
 
 class BookletFolder extends BookletEntry
-    constructor: (name) ->
-        super name
+    constructor: () ->
+        super()
 
     save: (apif) ->
     
@@ -22,8 +28,8 @@ class BookletFolder extends BookletEntry
     
 
 class Book extends BookletFolder
-    constructor: (@path, name) ->
-        super name
+    constructor: (@path) ->
+        super()
         @chapters = []
         @metaFile = "#{@path}/meta.json".asFileHandler()
         @descFile = "#{@path}/book.md".asFileHandler()
@@ -51,16 +57,15 @@ class Book extends BookletFolder
 
     toc: () ->
         return {
-            name: @name,
-            path: @path,
-            description: @descFile.path,
-            meta: @metaFile.path,
-            entries: v.toc() for v in @chapters
+            target: @,
+            name: @titleFromFile(@descFile),
+            nodes: v.toc() for v in @chapters,
+            type: 'book'
         }
 
 class BookletChapter extends BookletFolder
-    constructor: (@book, name) ->
-        super name
+    constructor: (@book) ->
+        super()
         @book.addChapter @
         @sections = []
         @path = "#{@book.path}/#{@book.size()}"
@@ -76,16 +81,30 @@ class BookletChapter extends BookletFolder
     
     toc: () ->
         return {
-            name: @name,
-            path: @path,
-            meta: @metaFile.path,
-            description: @descFile.path,
-            entries: v.toc() for v in @sections
+            target: @,
+            name: @titleFromFile(@descFile),
+            nodes: v.toc() for v in @sections,
+            type: 'chapter'
         }
+    
+    save:(handle) ->
+        v.save handle for v in @sections
+        me = @
+        if @dirty
+            if @descFile.dirty
+                @descFile.write "text/plain", (r) ->
+                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
+            @metaFile.cache = @toc()
+            @metaFile.dirty = true
+            @metaFile.write "object", (r) ->
+                return handle.error __("Fail to write book meta: {0}", r.error)
+                me.markAsClean
+                handle.notify __("chapter saved")
+                
 
 class BookletSection extends BookletFolder
-    constructor: (@chapter, name) ->
-        super name
+    constructor: (@chapter) ->
+        super()
         @chapter.addSection @
         @path = "#{@chapter.path}/#{@chapter.size()}"
         @files = []
@@ -97,26 +116,46 @@ class BookletSection extends BookletFolder
     
     toc: () ->
         return {
-            name: @name,
-            path: @path,
-            description: @descFile.path,
-            entries: v.toc() for v in @files
+            target: @,
+            name: @titleFromFile(@descFile),
+            nodes: v.toc() for v in @files,
+            type: 'section'
         }
+    
+    save: () ->
+        v.save handle for v in @sections
+        me = @
+        if @dirty
+            if @descFile.dirty
+                @descFile.write "text/plain", (r) ->
+                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
+                    me.markAsClean
+                    handle.notify __("section saved")
     
     size: () ->
         return @files.length
 
 class BookletFile extends BookletEntry
     constructor: (@section) ->
-        super ""
+        super()
         @section.addFile @
         @path = "#{@section.path}/#{@section.size()}.md"
-        @handle = @path.asFileHandler()
+        @descFile = @path.asFileHandler()
         
     getTitle: () ->
-        
+        console.log "hello"
+    save: (handle) ->
+        v.save @descFile for v in @sections
+        me = @
+        if @dirty
+            if @descFile.dirty
+                @descFile.write "text/plain", (r) ->
+                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
+                    me.markAsClean
+                    handle.notify __("Book saved")
     toc: () ->
         return {
-            name: @name,
-            path: @path
+            target: @,
+            name: @titleFromFile(@handle),
+            type: 'file'
         }

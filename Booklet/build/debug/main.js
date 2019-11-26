@@ -7,8 +7,76 @@
     }
 
     main() {
+      var me;
+      me = this;
+      this.tree = this.find("toc-ui");
+      this.currentToc = void 0;
+      this.tree.set("ontreeselect", function(e) {
+        me.saveContext();
+        me.currfile = e.target.descFile;
+        me.reloadEditor();
+        return me.currentToc = e;
+      });
       this.initEditor();
-      return this.resizeContent();
+      this.resizeContent();
+      return this.tree.contextmenuHandler = function(e, m) {
+        var menus;
+        menus = me.contextMenu();
+        if (!menus) {
+          return;
+        }
+        m.set("items", menus);
+        m.set("onmenuselect", function(evt) {
+          return me[evt.item.data.dataid]();
+        });
+        return m.show(e);
+      };
+    }
+
+    newChapter() {
+      return console.log(this.currentToc);
+    }
+
+    contextMenu() {
+      if (!this.currentToc) {
+        return void 0;
+      }
+      switch (this.currentToc.type) {
+        case "book":
+          return [
+            {
+              text: __("New chapter"),
+              dataid: "newChapter"
+            },
+            {
+              text: __("Delete book"),
+              dataid: "deleteBook"
+            }
+          ];
+        case "chapter":
+          return [
+            {
+              text: __("New section"),
+              dataid: "newSection"
+            },
+            {
+              text: __("Delete chapter"),
+              dataid: "deleteChapter"
+            }
+          ];
+        case "section":
+          return [
+            {
+              text: __("New file"),
+              dataid: "newFile"
+            },
+            {
+              text: __("Delete section"),
+              dataid: "deleteSection"
+            }
+          ];
+      }
+      return void 0;
     }
 
     initEditor() {
@@ -66,25 +134,18 @@
       this.bindKey("ALT-N", function() {
         return me.actionFile(`${me.name}-New`);
       });
-      this.bindKey("ALT-O", function() {
+      return this.bindKey("ALT-O", function() {
         return me.actionFile(`${me.name}-Open`);
       });
-      return this.createBook();
     }
 
-    createBook() {
-      var book, c1, c2, f1, f2, f3, f4, sec1, sec2, sec3;
-      book = new Book("home://test", "mybook");
-      c1 = new BookletChapter(book, "Chapter one");
-      c2 = new BookletChapter(book, "Chapter two");
-      sec1 = new BookletSection(c1, "section 1 in c1");
-      sec2 = new BookletSection(c1, "section 2 in c1");
-      sec3 = new BookletSection(c2, "section 1 in c2");
-      f1 = new BookletFile(sec1);
-      f2 = new BookletFile(sec2);
-      f3 = new BookletFile(sec3);
-      f4 = new BookletFile(sec1);
-      return console.log(book.toc());
+    reloadEditor() {
+      this.editor.value(this.currfile.cache);
+      return this.scheme.set("apptitle", `Booklet - ${this.currfile.basename}`);
+    }
+
+    saveContext() {
+      return this.currfile.cache = this.editor.value();
     }
 
     resizeContent() {
@@ -124,31 +185,46 @@
     }
 
     actionFile(e) {
-      return console.log("Action file fired");
+      var me;
+      me = this;
+      switch (e) {
+        case `${this.name}-Open`:
+          return this.openDialog("FileDiaLog", function(d, f) {
+            return me.open(`${d}/${f}`.asFileHandler());
+          }, __("Open file"), {
+            mimes: me.meta().mimes
+          });
+        case `${this.name}-New`:
+          return this.openDialog("FileDiaLog", function(d, f) {
+            return me.newAt(d);
+          }, __("Open file"), {
+            mimes: ['dir']
+          });
+      }
+    }
+
+    open(file) {}
+
+    newAt(folder) {
+      this.book = new Book(folder);
+      return this.displayToc();
+    }
+
+    displayToc() {
+      var toc;
+      toc = this.book.toc();
+      console.log(toc);
+      return this.tree.set("data", toc);
     }
 
   };
 
-  /*
-  me = @
-  switch e
-      when "#{@name}-Open"
-          @openDialog "FileDiaLog", ( d, f ) ->
-              me.open "#{d}/#{f}".asFileHandler()
-          , __("Open file")
-
-       when "#{@name}-New"
-          @currfile = "Untitled".asFileHandler()
-          @currfile.cache = ""
-          @editor.value("")
-  */
   Booklet.dependencies = ["mde/simplemde.min"];
 
   this.OS.register("Booklet", Booklet);
 
   BookletEntry = class BookletEntry {
-    constructor(name1) {
-      this.name = name1;
+    constructor() {
       this.markAsDirty();
     }
 
@@ -166,11 +242,21 @@
 
     toc() {}
 
+    titleFromFile(file) {
+      var content, title;
+      content = file.cache;
+      title = (new RegExp("^#+(.*)\n", "g")).exec(content);
+      if (!(title && title.length === 2)) {
+        return "Untitled";
+      }
+      return title[1].trim();
+    }
+
   };
 
   BookletFolder = class BookletFolder extends BookletEntry {
-    constructor(name) {
-      super(name);
+    constructor() {
+      super();
     }
 
     save(apif) {}
@@ -182,11 +268,12 @@
   };
 
   Book = class Book extends BookletFolder {
-    constructor(path, name) {
-      super(name);
+    constructor(path) {
+      super();
       this.path = path;
       this.chapters = [];
       this.metaFile = `${this.path}/meta.json`.asFileHandler();
+      this.descFile = `${this.path}/book.md`.asFileHandler();
     }
 
     addChapter(chap) {
@@ -198,13 +285,38 @@
       return this.chapters.length;
     }
 
+    save(handle) {
+      var i, len, me, ref, v;
+      ref = this.chapters;
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
+        v.save(handle);
+      }
+      me = this;
+      if (this.dirty) {
+        if (this.descFile.dirty) {
+          this.descFile.write("text/plain", function(r) {
+            if (r.error) {
+              return handle.error(__("Fail to save file {0}: {1}", me.descFile.path, r.error));
+            }
+          });
+        }
+        this.metaFile.cache = this.toc();
+        this.metaFile.dirty = true;
+        return this.metaFile.write("object", function(r) {
+          return handle.error(__("Fail to write book meta: {0}", r.error));
+          me.markAsClean;
+          return handle.notify(__("Book saved"));
+        });
+      }
+    }
+
     toc() {
       var v;
       return {
-        name: this.name,
-        path: this.path,
-        meta: this.metaFile.path,
-        entries: (function() {
+        target: this,
+        name: this.titleFromFile(this.descFile),
+        nodes: (function() {
           var i, len, ref, results;
           ref = this.chapters;
           results = [];
@@ -213,16 +325,17 @@
             results.push(v.toc());
           }
           return results;
-        }).call(this)
+        }).call(this),
+        type: 'book'
       };
     }
 
   };
 
   BookletChapter = class BookletChapter extends BookletFolder {
-    constructor(book1, name) {
-      super(name);
-      this.book = book1;
+    constructor(book) {
+      super();
+      this.book = book;
       this.book.addChapter(this);
       this.sections = [];
       this.path = `${this.book.path}/${this.book.size()}`;
@@ -242,11 +355,9 @@
     toc() {
       var v;
       return {
-        name: this.name,
-        path: this.path,
-        meta: this.metaFile.path,
-        description: this.descFile.path,
-        entries: (function() {
+        target: this,
+        name: this.titleFromFile(this.descFile),
+        nodes: (function() {
           var i, len, ref, results;
           ref = this.sections;
           results = [];
@@ -255,15 +366,42 @@
             results.push(v.toc());
           }
           return results;
-        }).call(this)
+        }).call(this),
+        type: 'chapter'
       };
+    }
+
+    save(handle) {
+      var i, len, me, ref, v;
+      ref = this.sections;
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
+        v.save(handle);
+      }
+      me = this;
+      if (this.dirty) {
+        if (this.descFile.dirty) {
+          this.descFile.write("text/plain", function(r) {
+            if (r.error) {
+              return handle.error(__("Fail to save file {0}: {1}", me.descFile.path, r.error));
+            }
+          });
+        }
+        this.metaFile.cache = this.toc();
+        this.metaFile.dirty = true;
+        return this.metaFile.write("object", function(r) {
+          return handle.error(__("Fail to write book meta: {0}", r.error));
+          me.markAsClean;
+          return handle.notify(__("chapter saved"));
+        });
+      }
     }
 
   };
 
   BookletSection = class BookletSection extends BookletFolder {
-    constructor(chapter, name) {
-      super(name);
+    constructor(chapter) {
+      super();
       this.chapter = chapter;
       this.chapter.addSection(this);
       this.path = `${this.chapter.path}/${this.chapter.size()}`;
@@ -279,10 +417,9 @@
     toc() {
       var v;
       return {
-        name: this.name,
-        path: this.path,
-        description: this.descFile.path,
-        entries: (function() {
+        target: this,
+        name: this.titleFromFile(this.descFile),
+        nodes: (function() {
           var i, len, ref, results;
           ref = this.files;
           results = [];
@@ -291,8 +428,30 @@
             results.push(v.toc());
           }
           return results;
-        }).call(this)
+        }).call(this),
+        type: 'section'
       };
+    }
+
+    save() {
+      var i, len, me, ref, v;
+      ref = this.sections;
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
+        v.save(handle);
+      }
+      me = this;
+      if (this.dirty) {
+        if (this.descFile.dirty) {
+          return this.descFile.write("text/plain", function(r) {
+            if (r.error) {
+              handle.error(__("Fail to save file {0}: {1}", me.descFile.path, r.error));
+            }
+            me.markAsClean;
+            return handle.notify(__("section saved"));
+          });
+        }
+      }
     }
 
     size() {
@@ -303,19 +462,43 @@
 
   BookletFile = class BookletFile extends BookletEntry {
     constructor(section) {
-      super("");
+      super();
       this.section = section;
       this.section.addFile(this);
       this.path = `${this.section.path}/${this.section.size()}.md`;
-      this.handle = this.path.asFileHandler();
+      this.descFile = this.path.asFileHandler();
     }
 
-    getTitle() {}
+    getTitle() {
+      return console.log("hello");
+    }
+
+    save(handle) {
+      var i, len, me, ref, v;
+      ref = this.sections;
+      for (i = 0, len = ref.length; i < len; i++) {
+        v = ref[i];
+        v.save(this.descFile);
+      }
+      me = this;
+      if (this.dirty) {
+        if (this.descFile.dirty) {
+          return this.descFile.write("text/plain", function(r) {
+            if (r.error) {
+              handle.error(__("Fail to save file {0}: {1}", me.descFile.path, r.error));
+            }
+            me.markAsClean;
+            return handle.notify(__("Book saved"));
+          });
+        }
+      }
+    }
 
     toc() {
       return {
-        name: this.name,
-        path: this.path
+        target: this,
+        name: this.titleFromFile(this.handle),
+        type: 'file'
       };
     }
 
