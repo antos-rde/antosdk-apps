@@ -14,9 +14,9 @@ class BookletFolder extends BookletEntry
     constructor: (name) ->
         super name
 
-    save: () ->
+    save: (apif) ->
     
-    remove: () ->
+    remove: (apif) ->
     
     rename: (newname) ->
     
@@ -26,6 +26,7 @@ class Book extends BookletFolder
         super name
         @chapters = []
         @metaFile = "#{@path}/meta.json".asFileHandler()
+        @descFile = "#{@path}/book.md".asFileHandler()
     
     addChapter: (chap) ->
         chap.book = @
@@ -33,11 +34,26 @@ class Book extends BookletFolder
 
     size: () ->
         return @chapters.length
+    
+    save:(handle) ->
+        v.save handle for v in @chapters
+        me = @
+        if @dirty
+            if @descFile.dirty
+                @descFile.write "text/plain", (r) ->
+                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
+            @metaFile.cache = @toc()
+            @metaFile.dirty = true
+            @metaFile.write "object", (r) ->
+                return handle.error __("Fail to write book meta: {0}", r.error)
+                me.markAsClean
+                handle.notify __("Book saved")
 
     toc: () ->
         return {
             name: @name,
             path: @path,
+            description: @descFile.path,
             meta: @metaFile.path,
             entries: v.toc() for v in @chapters
         }

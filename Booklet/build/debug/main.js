@@ -74,7 +74,7 @@
 
     createBook() {
       var book, c1, c2, f1, f2, f3, f4, sec1, sec2, sec3;
-      book = new Book("home://test");
+      book = new Book("home://test", "mybook");
       c1 = new BookletChapter(book, "Chapter one");
       c2 = new BookletChapter(book, "Chapter two");
       sec1 = new BookletSection(c1, "section 1 in c1");
@@ -173,9 +173,9 @@
       super(name);
     }
 
-    save() {}
+    save(apif) {}
 
-    remove() {}
+    remove(apif) {}
 
     rename(newname) {}
 

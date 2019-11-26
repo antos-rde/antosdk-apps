@@ -48,7 +48,7 @@ class Booklet extends this.OS.GUI.BaseApplication
         @createBook()
     
     createBook: () ->
-        book = new Book("home://test", "mybook",  @)
+        book = new Book("home://test", "mybook")
         c1 = new BookletChapter(book, "Chapter one")
         c2 = new BookletChapter(book, "Chapter two")
         sec1 = new BookletSection(c1, "section 1 in c1")
