@@ -1,161 +1,112 @@
 class BookletEntry
     constructor: () ->
-        @markAsDirty()
+        @name = "Untitled"
+        
     save: () ->
     
     remove: () ->
-        
-    markAsDirty: () -> @dirty = true
-    markAsClean: () -> @dirty = false
     
     toc: () ->
+
     
-    titleFromFile:(file) ->
-        content = file.cache
-        title = (new RegExp "^#+(.*)\n", "g").exec content
-        return "Untitled" unless title and title.length is 2
-        return title[1].trim()
+    updateName:() ->
+        return @name unless @descFile.dirty
+        t = (new RegExp "^\s*#+(.*)[\n,$]", "g").exec @descFile.cache
+        return @name unless t and t.length is 2
+        @name =  t[1].trim()
+        
 
 class BookletFolder extends BookletEntry
-    constructor: () ->
+    constructor: (@type, @path, @hasMeta) ->
         super()
+        @nodes = []
+        @metaFile = "#{@path}/meta.json".asFileHandler() if @hasMeta
+        @descFile = "#{@path}/#{@type}.md".asFileHandler()
 
-    save: (apif) ->
+    add: (chap) ->
+        chap.parent = @
+        @nodes.push chap
+
+    size: () ->
+        return @nodes.length
+    
+    mkdir: () ->
+        me = @
+        console.log "making:" + me.path
+        return new Promise (r, e) ->
+            dir = me.path.asFileHandler()
+            dir.meta (d) ->
+                return r() unless d.error
+                bname = dir.basename
+                dir = dir.parent().asFileHandler()
+                dir.mk bname, (result) ->
+                    e __("Error when create directory: {0}", result.error) if result.error
+                    r()
+    
+    mkdirs: () ->
+        me = @
+        return new Promise (r, e) ->
+            list = []
+            list[i] = v for v, i in me.nodes if me.hasMeta
+            console.log list
+            me.mkdir().then () ->
+                fn = (l) ->
+                    return r() if l.length is 0
+                    el = (l.splice 0, 1)[0]
+                    el.mkdirs().then () ->
+                        fn l
+                return fn list
+            
+    
+    save:(handle) ->
+        @mkdirs().then ()->
+            handle.notify __("All directories are created")
+        .catch (msg) ->
+            handle.error msg
+
+    toc: () ->
+        @updateName()
+        v.toc() for v in @nodes
+        @
     
     remove: (apif) ->
     
-    rename: (newname) ->
-    
 
 class Book extends BookletFolder
-    constructor: (@path) ->
-        super()
-        @chapters = []
-        @metaFile = "#{@path}/meta.json".asFileHandler()
-        @descFile = "#{@path}/book.md".asFileHandler()
+    constructor: (path) ->
+        super 'book', path, true
     
-    addChapter: (chap) ->
-        chap.book = @
-        @chapters.push chap
-
-    size: () ->
-        return @chapters.length
     
-    save:(handle) ->
-        v.save handle for v in @chapters
-        me = @
-        if @dirty
-            if @descFile.dirty
-                @descFile.write "text/plain", (r) ->
-                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
-            @metaFile.cache = @toc()
-            @metaFile.dirty = true
-            @metaFile.write "object", (r) ->
-                return handle.error __("Fail to write book meta: {0}", r.error)
-                me.markAsClean
-                handle.notify __("Book saved")
-
-    toc: () ->
-        return {
-            target: @,
-            name: @titleFromFile(@descFile),
-            nodes: v.toc() for v in @chapters,
-            type: 'book'
-        }
 
 class BookletChapter extends BookletFolder
-    constructor: (@book) ->
-        super()
-        @book.addChapter @
-        @sections = []
-        @path = "#{@book.path}/#{@book.size()}"
-        @metaFile = "#{@path}/meta.json".asFileHandler()
-        @descFile = "#{@path}/chapter.md".asFileHandler()
-        
-    addSection: (sec) ->
-        sec.chapter = @
-        @sections.push sec
-    
-    size: () ->
-        return @sections.length
-    
-    toc: () ->
-        return {
-            target: @,
-            name: @titleFromFile(@descFile),
-            nodes: v.toc() for v in @sections,
-            type: 'chapter'
-        }
-    
-    save:(handle) ->
-        v.save handle for v in @sections
-        me = @
-        if @dirty
-            if @descFile.dirty
-                @descFile.write "text/plain", (r) ->
-                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
-            @metaFile.cache = @toc()
-            @metaFile.dirty = true
-            @metaFile.write "object", (r) ->
-                return handle.error __("Fail to write book meta: {0}", r.error)
-                me.markAsClean
-                handle.notify __("chapter saved")
+    constructor: (book) ->
+        path = "#{book.path}/c_#{book.size()}"
+        super 'chapter', path, true
+        book.add @
                 
 
 class BookletSection extends BookletFolder
-    constructor: (@chapter) ->
-        super()
-        @chapter.addSection @
-        @path = "#{@chapter.path}/#{@chapter.size()}"
-        @files = []
-        @descFile = "#{@path}/section.md".asFileHandler()
-
-    addFile: (file) ->
-        file.section = @
-        @files.push file
-    
-    toc: () ->
-        return {
-            target: @,
-            name: @titleFromFile(@descFile),
-            nodes: v.toc() for v in @files,
-            type: 'section'
-        }
-    
-    save: () ->
-        v.save handle for v in @sections
-        me = @
-        if @dirty
-            if @descFile.dirty
-                @descFile.write "text/plain", (r) ->
-                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
-                    me.markAsClean
-                    handle.notify __("section saved")
-    
-    size: () ->
-        return @files.length
+    constructor: (chapter) ->
+        path = "#{chapter.path}/s_#{chapter.size()}"
+        super "section", path,  false
+        chapter.add @
+        
 
 class BookletFile extends BookletEntry
     constructor: (@section) ->
         super()
-        @section.addFile @
-        @path = "#{@section.path}/#{@section.size()}.md"
+        @section.add @
+        @path = "#{@section.path}/f_#{@section.size()}.md"
         @descFile = @path.asFileHandler()
         
-    getTitle: () ->
-        console.log "hello"
     save: (handle) ->
         v.save @descFile for v in @sections
         me = @
-        if @dirty
-            if @descFile.dirty
-                @descFile.write "text/plain", (r) ->
-                    handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
-                    me.markAsClean
-                    handle.notify __("Book saved")
+        if @descFile.dirty
+            @descFile.write "text/plain", (r) ->
+                handle.error __("Fail to save file {0}: {1}", me.descFile.path, r.error) if r.error
+                @descFile.dirty = false
+                handle.notify __("Book saved")
     toc: () ->
-        return {
-            target: @,
-            name: @titleFromFile(@handle),
-            type: 'file'
-        }
+        @updateName()
+        @
