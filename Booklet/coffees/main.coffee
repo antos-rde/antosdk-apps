@@ -6,8 +6,9 @@ class Booklet extends this.OS.GUI.BaseApplication
         me = @
         @tree = @find "toc-ui"
         @currentToc = undefined
+        @emux = false
         @on "treeselect", (e) ->
-            return if (me.currentToc is e) or (e is undefined) or (e.treepath is 0)
+            return me.reloadEditor() if (me.currentToc is e) or (e is undefined) or (e.treepath is 0)
             me.open e
         
         @initEditor()
@@ -20,6 +21,7 @@ class Booklet extends this.OS.GUI.BaseApplication
                 me[evt.item.data.dataid]()
             m.show e
         @editor.codemirror.on "change", () ->
+            return if me.emux
             return unless me.currentToc
             me.currentToc.descFile.dirty = true
     
@@ -27,34 +29,55 @@ class Booklet extends this.OS.GUI.BaseApplication
         return @error __("No book selected") unless @currentToc and @currentToc.type is "book"
         ch = new BookletChapter(@book)
         @displayToc()
+        ch.treepath = ch.path
     
     newSection: () ->
         return @error __("No chapter selected") unless @currentToc and @currentToc.type is "chapter"
         sec = new BookletSection(@currentToc)
         @displayToc()
+        sec.treepath = sec.path
     
     newFile: () ->
         return @error __("No section selected") unless @currentToc and @currentToc.type is "section"
         file = new BookletFile(@currentToc)
         @displayToc()
-        
+        file.treepath = file.path
+    
+    delete: () ->
+        me = @
+        return @error __("No entrie select") unless @currentToc
+        fn = () ->
+            me.currentToc = undefined
+            me.displayToc()
+            me.reloadEditor()
+        @currentToc.remove().then () ->
+            me.notify __("Entrie deleted")
+            fn()
+        .catch (e) ->
+            me.error e
+            fn()
+    
     contextMenu: () ->
         return undefined unless @currentToc
         switch @currentToc.type
             when "book"
                 return [
                     { text: __("New chapter"), dataid: "newChapter" },
-                    { text: __("Delete book"), dataid: "deleteBook" }
+                    { text: __("Delete book"), dataid: "delete" }
                 ]
             when "chapter"
                 return [
                     { text: __("New section"), dataid: "newSection" },
-                    { text: __("Delete chapter"), dataid: "deleteChapter" }
+                    { text: __("Delete chapter"), dataid: "delete" }
                 ]
             when "section"
                 return [
                     { text: __("New file"), dataid: "newFile" },
-                    { text: __("Delete section"), dataid: "deleteSection" }
+                    { text: __("Delete section"), dataid: "delete" }
+                ]
+            when "file"
+                return [
+                    { text: __("Delete file"), dataid: "delete" }
                 ]
         return undefined
     
@@ -142,13 +165,24 @@ class Booklet extends this.OS.GUI.BaseApplication
                     me.newAt "#{d}/#{f}"
                 , __("Open file"), { mimes: ['dir'], file: { basename: __("BookName") }}
             when "#{@name}-Save"
-                me.book.save(me)
+                return unless me.book
+                me.saveContext() if me.currentToc
+                me.displayToc()
+                me.book.save().then () ->
+                    me.notify __("Book saved")
+                .catch (e) ->
+                    me.error __("Can't save the book : {0}", e)
     
     open: (toc) ->
+        @emux = true
         @saveContext()
         @currentToc  = toc
         @reloadEditor()
         @displayToc()
+        @emux = false
+    
+    openBook: (metaFile) ->
+        
     
     newAt: (folder) ->
         @tree.set "selectedItem", false
