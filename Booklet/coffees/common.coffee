@@ -1,6 +1,7 @@
+
 class BookletEntry
-    constructor: () ->
-        @name = "Untitled"
+    constructor: (@name) ->
+        @loaded = true
         
     save: () ->
     
@@ -13,6 +14,8 @@ class BookletEntry
         return @name unless @descFile.dirty
         t = (new RegExp "^\s*#+(.*)\n", "g").exec @descFile.cache
         return @name unless t and t.length is 2
+        @metaFile.dirty = true if @hasMeta and @metaFile
+        @parent.metaFile.dirty = true if @parent and @parent.hasMeta and @parent.metaFile
         @name =  t[1].trim()
     
     remove: () ->
@@ -35,7 +38,10 @@ class BookletEntry
 
 class BookletFolder extends BookletEntry
     constructor: (@type, @path, @hasMeta) ->
-        super()
+        super "Untitle"
+        @init()
+    
+    init: () ->
         @cnt = 0
         @nodes = []
         @metaFile = "#{@path}/meta.json".asFileHandler() if @hasMeta
@@ -60,7 +66,34 @@ class BookletFolder extends BookletEntry
                 r()
             .catch (msg) ->
                 e msg
-            
+    read: (folderPath) ->
+        me = @
+        return new Promise (r, e) ->
+            me.path = folderPath
+            me.init()
+            me.loaded = false
+            me.metaFile.meta (d) ->
+                return e d.error if d.error
+                me.metaFile.read (data) ->
+                    # load all child
+                    me.name = data.name
+                    list = []
+                    list[i] = v for v,i in data.entries
+                    fn = (l) ->
+                        if l.length is 0
+                            me.cnt = data.cnt
+                            return r() 
+                        el = (l.splice 0, 1)[0]
+                        #console.log "create", el.type
+                        obj = new NS[el.type]( me )
+                        obj.name = el.name
+                        obj.read(el.path).then () ->
+                            fn l
+                        .catch (msg) ->
+                            fn l
+                            
+                    return fn list
+                , "json"
 
     size: () ->
         return @nodes.length
@@ -81,7 +114,7 @@ class BookletFolder extends BookletEntry
         me = @
         return new Promise (r, e) ->
             list = []
-            list[i] = v for v, i in me.nodes if me.type isnt 'section'
+            list[i] = v for v, i in me.nodes if me.type isnt 'Section'
             me.mkdir().then () ->
                 fn = (l) ->
                     return r() if l.length is 0
@@ -98,12 +131,18 @@ class BookletFolder extends BookletEntry
         return new Promise (r, e) ->
             return r() unless me.metaFile.dirty
             entries = []
-            entries[i] = v.path for v,i in me.nodes
-            me.metaFile.cache = entries
+            entries[i] = {name: v.name, path:v.path, type:v.type} for v,i in me.nodes
+            data = {
+                name: me.name,
+                entries: entries,
+                cnt: me.cnt,
+                meta: me.hasMeta
+            }
+            me.metaFile.cache = data
             me.metaFile.write "object", (d) ->
                 return e d.error if d.error
                 me.metaFile.dirty = false
-                console.log "saved " + me.metaFile.path
+                #console.log "saved " + me.metaFile.path
                 r()
             
     
@@ -115,7 +154,7 @@ class BookletFolder extends BookletEntry
                 me.descFile.write "text/plain", (d) ->
                     return e d.error if d.error
                     me.descFile.dirty = false
-                    console.log "saved " + me.descFile.path
+                    #console.log "saved " + me.descFile.path
                     r()
             .catch (msg) -> e msg
                 
@@ -141,9 +180,9 @@ class BookletFolder extends BookletEntry
         @
     
 
-class Book extends BookletFolder
+class BookletBook extends BookletFolder
     constructor: (path) ->
-        super 'book', path, true
+        super 'Book', path, true
         
     save:() ->
         me = @
@@ -158,22 +197,22 @@ class Book extends BookletFolder
 class BookletChapter extends BookletFolder
     constructor: (book) ->
         path = "#{book.path}/c_#{book.cnt}"
-        super 'chapter', path, true
+        super 'Chapter', path, true
         book.add @
                 
 
 class BookletSection extends BookletFolder
     constructor: (chapter) ->
         path = "#{chapter.path}/s_#{chapter.cnt}"
-        super "section", path,  true
+        super "Section", path,  true
         chapter.add @
         
 
 class BookletFile extends BookletEntry
     constructor: (@section) ->
-        super()
+        super "Untitle file"
         @hasMeta = false
-        @type = "file"
+        @type = "File"
         @path = "#{@section.path}/f_#{@section.cnt}.md"
         @descFile = @path.asFileHandler()
         @section.add @
@@ -185,9 +224,22 @@ class BookletFile extends BookletEntry
             me.descFile.write "text/plain", (d) ->
                 return e d.error if d.error
                 me.descFile.dirty = false
-                console.log "saved" + me.descFile.path
+                #console.log "saved" + me.descFile.path
                 r()
+    
+    read: (p) ->
+        me = @
+        return new Promise (r, e) ->
+            me.loaded = false
+            me.treepath = p
+            r() 
     
     toc: () ->
         @updateName()
         @
+
+NS =
+    Book: BookletBook
+    Chapter: BookletChapter
+    Section: BookletSection
+    File: BookletFile

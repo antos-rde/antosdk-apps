@@ -6,10 +6,17 @@ class Booklet extends this.OS.GUI.BaseApplication
         me = @
         @tree = @find "toc-ui"
         @currentToc = undefined
+        @dirty = false
         @emux = false
         @on "treeselect", (e) ->
             return me.reloadEditor() if (me.currentToc is e) or (e is undefined) or (e.treepath is 0)
-            me.open e
+            e.treepath = e.path
+            me.load(e).then ()->
+                me.open e
+            .catch (msg) ->
+                e.loaded = true
+                me.open e
+                me.error __("Error when loading '{0}': {1}", e.name, msg)
         
         @initEditor()
         @resizeContent()
@@ -24,21 +31,22 @@ class Booklet extends this.OS.GUI.BaseApplication
             return if me.emux
             return unless me.currentToc
             me.currentToc.descFile.dirty = true
+            me.dirty = true
     
     newChapter: () ->
-        return @error __("No book selected") unless @currentToc and @currentToc.type is "book"
+        return @error __("No book selected") unless @currentToc and @currentToc.type is "Book"
         ch = new BookletChapter(@book)
         @displayToc()
         ch.treepath = ch.path
     
     newSection: () ->
-        return @error __("No chapter selected") unless @currentToc and @currentToc.type is "chapter"
+        return @error __("No chapter selected") unless @currentToc and @currentToc.type is "Chapter"
         sec = new BookletSection(@currentToc)
         @displayToc()
         sec.treepath = sec.path
     
     newFile: () ->
-        return @error __("No section selected") unless @currentToc and @currentToc.type is "section"
+        return @error __("No section selected") unless @currentToc and @currentToc.type is "Section"
         file = new BookletFile(@currentToc)
         @displayToc()
         file.treepath = file.path
@@ -57,25 +65,37 @@ class Booklet extends this.OS.GUI.BaseApplication
             me.error e
             fn()
     
+    load: (entry) ->
+        me = @
+        return new Promise (r, e) ->
+            return r() if entry.loaded
+            entry.descFile.meta (d) ->
+                return e d.error if d.error
+                entry.descFile.read (data) ->
+                    entry.descFile.cache = data
+                    entry.loaded = true
+                    entry.descFile.dirty = false
+                    r()
+    
     contextMenu: () ->
         return undefined unless @currentToc
         switch @currentToc.type
-            when "book"
+            when "Book"
                 return [
                     { text: __("New chapter"), dataid: "newChapter" },
                     { text: __("Delete book"), dataid: "delete" }
                 ]
-            when "chapter"
+            when "Chapter"
                 return [
                     { text: __("New section"), dataid: "newSection" },
                     { text: __("Delete chapter"), dataid: "delete" }
                 ]
-            when "section"
+            when "Section"
                 return [
                     { text: __("New file"), dataid: "newFile" },
                     { text: __("Delete section"), dataid: "delete" }
                 ]
-            when "file"
+            when "File"
                 return [
                     { text: __("Delete file"), dataid: "delete" }
                 ]
@@ -157,9 +177,17 @@ class Booklet extends this.OS.GUI.BaseApplication
         me = @
         switch e
             when "#{@name}-Open"
-                @openDialog "FileDiaLog", ( d, f ) ->
-                    console.log "#{d}/#{f}".asFileHandler()
-                , __("Open file"), { mimes: me.meta().mimes }
+                @checkForDirty () ->
+                    me.openDialog "FileDiaLog", ( d, f ) ->
+                        me.book = new BookletBook(d)
+                        me.book.read(d).then () ->
+                            me.book.treepath = me.book.path
+                            me.tree.set "selectedItem", undefined
+                            me.displayToc()
+                            me.notify __("Book loaded")
+                        .catch (msg) ->
+                            me.error __("Cannot load book: {0}", msg)
+                    , __("Open file"), { mimes: ['dir'] }
              when "#{@name}-New"
                 @openDialog "FileDiaLog", ( d, f ) ->
                     me.newAt "#{d}/#{f}"
@@ -169,24 +197,34 @@ class Booklet extends this.OS.GUI.BaseApplication
                 me.saveContext() if me.currentToc
                 me.displayToc()
                 me.book.save().then () ->
+                    me.dirty = false
                     me.notify __("Book saved")
                 .catch (e) ->
                     me.error __("Can't save the book : {0}", e)
     
+    checkForDirty: (f) ->
+        return f() unless @dirty
+        @_gui.openDialog "YesNoDialog", (d) ->
+            # console.log d
+            if d
+                f()
+        , __("Continue ?"), { text: __("Book is unsaved, you want to continue ?") }
+    
     open: (toc) ->
-        @emux = true
-        @saveContext()
-        @currentToc  = toc
-        @reloadEditor()
-        @displayToc()
-        @emux = false
+        me = @
+        me.emux = true
+        me.saveContext()
+        me.currentToc  = toc
+        me.reloadEditor()
+        me.displayToc()
+        me.emux = false
     
     openBook: (metaFile) ->
         
     
     newAt: (folder) ->
         @tree.set "selectedItem", false
-        @book = new Book(folder)
+        @book = new BookletBook(folder)
         @book.treepath = @book.path
         @currentToc = undefined
         @reloadEditor()

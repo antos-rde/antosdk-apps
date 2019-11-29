@@ -1,5 +1,5 @@
 (function() {
-  var Book, Booklet, BookletChapter, BookletEntry, BookletFile, BookletFolder, BookletSection;
+  var Booklet, BookletBook, BookletChapter, BookletEntry, BookletFile, BookletFolder, BookletSection, NS;
 
   Booklet = class Booklet extends this.OS.GUI.BaseApplication {
     constructor(args) {
@@ -11,13 +11,20 @@
       me = this;
       this.tree = this.find("toc-ui");
       this.currentToc = void 0;
+      this.dirty = false;
       this.emux = false;
       this.on("treeselect", function(e) {
-        console.log(e.treepath);
         if ((me.currentToc === e) || (e === void 0) || (e.treepath === 0)) {
           return me.reloadEditor();
         }
-        return me.open(e);
+        e.treepath = e.path;
+        return me.load(e).then(function() {
+          return me.open(e);
+        }).catch(function(msg) {
+          e.loaded = true;
+          me.open(e);
+          return me.error(__("Error when loading '{0}': {1}", e.name, msg));
+        });
       });
       this.initEditor();
       this.resizeContent();
@@ -40,13 +47,14 @@
         if (!me.currentToc) {
           return;
         }
-        return me.currentToc.descFile.dirty = true;
+        me.currentToc.descFile.dirty = true;
+        return me.dirty = true;
       });
     }
 
     newChapter() {
       var ch;
-      if (!(this.currentToc && this.currentToc.type === "book")) {
+      if (!(this.currentToc && this.currentToc.type === "Book")) {
         return this.error(__("No book selected"));
       }
       ch = new BookletChapter(this.book);
@@ -56,7 +64,7 @@
 
     newSection() {
       var sec;
-      if (!(this.currentToc && this.currentToc.type === "chapter")) {
+      if (!(this.currentToc && this.currentToc.type === "Chapter")) {
         return this.error(__("No chapter selected"));
       }
       sec = new BookletSection(this.currentToc);
@@ -66,7 +74,7 @@
 
     newFile() {
       var file;
-      if (!(this.currentToc && this.currentToc.type === "section")) {
+      if (!(this.currentToc && this.currentToc.type === "Section")) {
         return this.error(__("No section selected"));
       }
       file = new BookletFile(this.currentToc);
@@ -94,12 +102,33 @@
       });
     }
 
+    load(entry) {
+      var me;
+      me = this;
+      return new Promise(function(r, e) {
+        if (entry.loaded) {
+          return r();
+        }
+        return entry.descFile.meta(function(d) {
+          if (d.error) {
+            return e(d.error);
+          }
+          return entry.descFile.read(function(data) {
+            entry.descFile.cache = data;
+            entry.loaded = true;
+            entry.descFile.dirty = false;
+            return r();
+          });
+        });
+      });
+    }
+
     contextMenu() {
       if (!this.currentToc) {
         return void 0;
       }
       switch (this.currentToc.type) {
-        case "book":
+        case "Book":
           return [
             {
               text: __("New chapter"),
@@ -110,7 +139,7 @@
               dataid: "delete"
             }
           ];
-        case "chapter":
+        case "Chapter":
           return [
             {
               text: __("New section"),
@@ -121,7 +150,7 @@
               dataid: "delete"
             }
           ];
-        case "section":
+        case "Section":
           return [
             {
               text: __("New file"),
@@ -132,7 +161,7 @@
               dataid: "delete"
             }
           ];
-        case "file":
+        case "File":
           return [
             {
               text: __("Delete file"),
@@ -267,10 +296,20 @@
       me = this;
       switch (e) {
         case `${this.name}-Open`:
-          return this.openDialog("FileDiaLog", function(d, f) {
-            return console.log(`${d}/${f}`.asFileHandler());
-          }, __("Open file"), {
-            mimes: me.meta().mimes
+          return this.checkForDirty(function() {
+            return me.openDialog("FileDiaLog", function(d, f) {
+              me.book = new BookletBook(d);
+              return me.book.read(d).then(function() {
+                me.book.treepath = me.book.path;
+                me.tree.set("selectedItem", void 0);
+                me.displayToc();
+                return me.notify(__("Book loaded"));
+              }).catch(function(msg) {
+                return me.error(__("Cannot load book: {0}", msg));
+              });
+            }, __("Open file"), {
+              mimes: ['dir']
+            });
           });
         case `${this.name}-New`:
           return this.openDialog("FileDiaLog", function(d, f) {
@@ -290,6 +329,7 @@
           }
           me.displayToc();
           return me.book.save().then(function() {
+            me.dirty = false;
             return me.notify(__("Book saved"));
           }).catch(function(e) {
             return me.error(__("Can't save the book : {0}", e));
@@ -297,18 +337,36 @@
       }
     }
 
-    open(toc) {
-      this.emux = true;
-      this.saveContext();
-      this.currentToc = toc;
-      this.reloadEditor();
-      this.displayToc();
-      return this.emux = false;
+    checkForDirty(f) {
+      if (!this.dirty) {
+        return f();
+      }
+      return this._gui.openDialog("YesNoDialog", function(d) {
+        console.log(d);
+        if (d) {
+          return f();
+        }
+      }, __("Continue ?"), {
+        text: __("Book is unsaved, you want to continue ?")
+      });
     }
+
+    open(toc) {
+      var me;
+      me = this;
+      me.emux = true;
+      me.saveContext();
+      me.currentToc = toc;
+      me.reloadEditor();
+      me.displayToc();
+      return me.emux = false;
+    }
+
+    openBook(metaFile) {}
 
     newAt(folder) {
       this.tree.set("selectedItem", false);
-      this.book = new Book(folder);
+      this.book = new BookletBook(folder);
       this.book.treepath = this.book.path;
       this.currentToc = void 0;
       this.reloadEditor();
@@ -327,8 +385,9 @@
   this.OS.register("Booklet", Booklet);
 
   BookletEntry = class BookletEntry {
-    constructor() {
-      this.name = "Untitled";
+    constructor(name) {
+      this.name = name;
+      this.loaded = true;
     }
 
     save() {}
@@ -345,6 +404,12 @@
       t = (new RegExp("^\s*#+(.*)\n", "g")).exec(this.descFile.cache);
       if (!(t && t.length === 2)) {
         return this.name;
+      }
+      if (this.hasMeta && this.metaFile) {
+        this.metaFile.dirty = true;
+      }
+      if (this.parent && this.parent.hasMeta && this.parent.metaFile) {
+        this.parent.metaFile.dirty = true;
       }
       return this.name = t[1].trim();
     }
@@ -388,16 +453,20 @@
 
   BookletFolder = class BookletFolder extends BookletEntry {
     constructor(type, path1, hasMeta) {
-      super();
+      super("Untitle");
       this.type = type;
       this.path = path1;
       this.hasMeta = hasMeta;
+      this.init();
+    }
+
+    init() {
       this.cnt = 0;
       this.nodes = [];
       if (this.hasMeta) {
         this.metaFile = `${this.path}/meta.json`.asFileHandler();
       }
-      this.descFile = `${this.path}/INTRO.md`.asFileHandler();
+      return this.descFile = `${this.path}/INTRO.md`.asFileHandler();
     }
 
     add(chap) {
@@ -427,6 +496,49 @@
           return r();
         }).catch(function(msg) {
           return e(msg);
+        });
+      });
+    }
+
+    read(folderPath) {
+      var me;
+      me = this;
+      return new Promise(function(r, e) {
+        me.path = folderPath;
+        me.init();
+        me.loaded = false;
+        return me.metaFile.meta(function(d) {
+          if (d.error) {
+            return e(d.error);
+          }
+          return me.metaFile.read(function(data) {
+            var fn, i, j, len, list, ref, v;
+            // load all child
+            me.name = data.name;
+            list = [];
+            ref = data.entries;
+            for (i = j = 0, len = ref.length; j < len; i = ++j) {
+              v = ref[i];
+              list[i] = v;
+            }
+            fn = function(l) {
+              var el, obj;
+              if (l.length === 0) {
+                me.cnt = data.cnt;
+                return r();
+              }
+              el = (l.splice(0, 1))[0];
+              console.log("create", el.type);
+              obj = new NS[el.type](me);
+              obj.name = el.name;
+              return obj.read(el.path).then(function() {
+                return fn(l);
+              }).catch(function(msg) {
+                return fn(l);
+              });
+            };
+            return fn(list);
+          }, "json");
         });
       });
     }
@@ -464,7 +576,7 @@
       return new Promise(function(r, e) {
         var i, j, len, list, ref, v;
         list = [];
-        if (me.type !== 'section') {
+        if (me.type !== 'Section') {
           ref = me.nodes;
           for (i = j = 0, len = ref.length; j < len; i = ++j) {
             v = ref[i];
@@ -496,7 +608,7 @@
       var me;
       me = this;
       return new Promise(function(r, e) {
-        var entries, i, j, len, ref, v;
+        var data, entries, i, j, len, ref, v;
         if (!me.metaFile.dirty) {
           return r();
         }
@@ -504,9 +616,19 @@
         ref = me.nodes;
         for (i = j = 0, len = ref.length; j < len; i = ++j) {
           v = ref[i];
-          entries[i] = v.path;
+          entries[i] = {
+            name: v.name,
+            path: v.path,
+            type: v.type
+          };
         }
-        me.metaFile.cache = entries;
+        data = {
+          name: me.name,
+          entries: entries,
+          cnt: me.cnt,
+          meta: me.hasMeta
+        };
+        me.metaFile.cache = data;
         return me.metaFile.write("object", function(d) {
           if (d.error) {
             return e(d.error);
@@ -585,9 +707,9 @@
 
   };
 
-  Book = class Book extends BookletFolder {
+  BookletBook = class BookletBook extends BookletFolder {
     constructor(path) {
-      super('book', path, true);
+      super('Book', path, true);
     }
 
     save() {
@@ -612,7 +734,7 @@
     constructor(book) {
       var path;
       path = `${book.path}/c_${book.cnt}`;
-      super('chapter', path, true);
+      super('Chapter', path, true);
       book.add(this);
     }
 
@@ -622,7 +744,7 @@
     constructor(chapter) {
       var path;
       path = `${chapter.path}/s_${chapter.cnt}`;
-      super("section", path, true);
+      super("Section", path, true);
       chapter.add(this);
     }
 
@@ -630,10 +752,10 @@
 
   BookletFile = class BookletFile extends BookletEntry {
     constructor(section) {
-      super();
+      super("Untitle file");
       this.section = section;
       this.hasMeta = false;
-      this.type = "file";
+      this.type = "File";
       this.path = `${this.section.path}/f_${this.section.cnt}.md`;
       this.descFile = this.path.asFileHandler();
       this.section.add(this);
@@ -657,11 +779,28 @@
       });
     }
 
+    read(p) {
+      var me;
+      me = this;
+      return new Promise(function(r, e) {
+        me.loaded = false;
+        me.treepath = p;
+        return r();
+      });
+    }
+
     toc() {
       this.updateName();
       return this;
     }
 
+  };
+
+  NS = {
+    Book: BookletBook,
+    Chapter: BookletChapter,
+    Section: BookletSection,
+    File: BookletFile
   };
 
 }).call(this);
