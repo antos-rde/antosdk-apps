@@ -101,6 +101,14 @@ class Booklet extends this.OS.GUI.BaseApplication
                 ]
         return undefined
     
+    shareFile: (mimes,f) ->
+        me = @
+        me.openDialog "FileDiaLog", (d, n, p) ->
+            p.asFileHandler().publish (r) ->
+                return me.error __("Cannot export file for embedding to text") if r.error
+                f r.result
+        , __("Select a file"), { mimes: mimes }
+    
     initEditor: ()->
         markarea = @find "markarea"
         @container = @find "mycontainer"
@@ -115,24 +123,38 @@ class Booklet extends this.OS.GUI.BaseApplication
             toolbar: [
                 "bold", "italic", "heading", "|", "quote", "code",
                 "unordered-list", "ordered-list", "|", "link",
-                "image", "table", "horizontal-rule", "|",
+                "image", "table", "horizontal-rule",
                 {
-                    name: "preview",
+                    name: "image",
+                    className: "fa fa-file-image-o",
+                    action: (e) ->
+                        me.shareFile ["image/.*"], (path) ->
+                            doc = me.editor.codemirror.getDoc()
+                            doc.replaceSelection "![](#{me._api.handler.shared}/#{path})"
+                },
+                {
+                    name:"Youtube",
+                    className: "fa fa-youtube",
+                    action: (e) ->
+                        doc = me.editor.codemirror.getDoc()
+                        doc.replaceSelection "[[youtube:]]"
+                },
+                {
+                    name: "3d object",
+                    className: "fa fa-file-image-o",
+                    action: (e) ->
+                        me.shareFile ["text/wavefront-obj"], (path) ->
+                            doc = me.editor.codemirror.getDoc()
+                            doc.replaceSelection "[[3DModel:#{me._api.handler.shared}/#{path}]]"
+                },
+                "|",
+                {
+                    name: __("Preview"),
                     className: "fa fa-eye no-disable",
                     action: (e) ->
-                        me.previewOn = !me.previewOn
                         SimpleMDE.togglePreview e
-                        #if(self.previewOn) toggle the highlight
-                        #{
-                        #    var container = self._scheme.find(self,"Text")
-                        #                        .$element.getElementsByClassName("editor-preview");
-                        #    if(container.length == 0) return;
-                        #    var codes = container[0].getElementsByTagName('pre');
-                        #    codes.forEach(function(el){
-                        #        hljs.highlightBlock(el);
-                        #    });
-                        #    //console.log(code);
-                        #}
+                        #/console.log me.select ".editor-preview editor-preview-active"
+                        renderMathInElement me.find "mycontainer"
                 }
             ]
         @on "hboxchange", (e) -> me.resizeContent()
@@ -233,6 +255,14 @@ class Booklet extends this.OS.GUI.BaseApplication
     displayToc: () ->
         @book.toc()
         @tree.set "data", @book
+    
+    cleanup: (evt) ->
+        return unless @dirty
+        me = @
+        evt.preventDefault()
+        @checkForDirty () ->
+            me.dirty = false
+            me.quit()
     
 Booklet.dependencies = [ "mde/simplemde.min" ]
 
