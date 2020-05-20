@@ -1,0 +1,8 @@
+{
+    "name": "wTerm",
+    "root": "home://workspace/antosdk-apps/wTerm",
+    "css": ["xterm.css", "main.css"],
+    "javascripts": ["xterm-addon-fit.js", "xterm.js"],
+    "coffees": ["main.coffee"],
+    "copies": ["scheme.html", "package.json", "README.md"]
+}

@@ -5,10 +5,18 @@ class About extends this.OS.GUI.BaseApplication
     main: () ->
         me = @
         @container = @find "container"
-        "os://README.md".asFileHandler().read (txt) ->
-            converter = new showdown.Converter()
-            ($ me.container).html converter.makeHtml txt
+        path = "os://README.md"
+        path.asFileHandle()
+            .read()
+            .then (txt) ->
+                converter = new showdown.Converter()
+                ($ me.container).html converter.makeHtml txt
+            .catch () =>
+                @notify __("Unable to read: {0}", path)
+        
+        @find("btnclose").set "onbtclick", () =>
+            @quit()
 
 About.singleton = true
-About.dependencies = [ "showdown.min" ]
+About.dependencies = [ "os://scripts/showdown.min.js" ]
 this.OS.register "About", About

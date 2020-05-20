@@ -1,0 +1,8 @@
+{
+    "name": "MarkOn",
+    "root": "home://workspace/antosdk-apps/MarkOn",
+    "css": ["main.css"],
+    "javascripts": [],
+    "coffees": ["main.coffee"],
+    "copies": ["scheme.html", "package.json", "README.md"]
+}

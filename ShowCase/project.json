@@ -1,7 +1,7 @@
 {
-    "name": "About",
-    "root": "home://workspace/About",
-    "css": [],
+    "name": "ShowCase",
+    "root": "home://workspace/antosdk-apps/ShowCase",
+    "css": ["css/main.css"],
     "javascripts": [],
     "coffees": ["coffees/main.coffee"],
     "copies": ["assets/scheme.html", "package.json", "README.md"]

@@ -1,0 +1,11 @@
+[
+    {
+        "pkgname": "wTerm",
+        "name": "Terminal",
+        "description": "https://os.localhost/repo/ProjectName/README.md",
+        "category": "System",
+        "author": "xsang.le@gmail.com",
+        "version": "0.0.3-a",
+        "download": "https://os.localhost/repo/ProjectName/ProjectName.zip"
+    }
+]

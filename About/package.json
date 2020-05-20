@@ -1,6 +1,6 @@
 {
     "app":"About",
-    "name":"About",
+    "name":"__(About AntOS)",
     "description":"AntOS about",
     "info":{
         "author": "Xuan Sang LE",
@@ -9,5 +9,11 @@
     "version":"0.0.1-a",
     "category":"Other",
     "iconclass":"fa fa-question-circle",
-    "mimes":["none"]
+    "mimes":["none"],
+    "locales": {
+        "fr_FR": {
+            "Unable to read: {0}": "Impossible de lire: {0}",
+            "About AntOS": "A propos d'AntOS"
+        }
+    }
 }
