@@ -2,10 +2,10 @@
     {
         "pkgname": "wTerm",
         "name": "Terminal",
-        "description": "https://os.localhost/repo/ProjectName/README.md",
+        "description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/README.md",
         "category": "System",
         "author": "xsang.le@gmail.com",
         "version": "0.0.3-a",
-        "download": "https://os.localhost/repo/ProjectName/ProjectName.zip"
+        "download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/wTerm.zip"
     }
 ]
