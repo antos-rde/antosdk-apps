@@ -41,7 +41,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/README.md",
 		"category": "Other",
 		"author": "Xuan Sang LE",
-		"version": "0.0.1-a",
+		"version": "0.0.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/build/release/ShowCase.zip"
 	},
 	{
@@ -50,7 +50,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.0.1-a",
+		"version": "0.0.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/build/release/wTerm.zip"
 	}
 

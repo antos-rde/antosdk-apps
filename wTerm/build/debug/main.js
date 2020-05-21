@@ -1,6 +1,6 @@
 (function() {
   void 0;
-  var ClipboardDialog, wTerm;
+  var wTerm;
 
   // Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
 
@@ -18,50 +18,7 @@
   // General Public License for more details.
 
     // You should have received a copy of the GNU General Public License
-  //along with this program. If not, see https://www.gnu.org/licenses/.
-  ClipboardDialog = class ClipboardDialog extends this.OS.GUI.BasicDialog {
-    constructor() {
-      super("ClipboardDialog", ClipboardDialog.scheme);
-    }
-
-    init() {
-      this.find("btnOk").set("onbtclick", (e) => {
-        var value;
-        value = $(this.find("txtInput")).val();
-        if (!(value && value !== "")) {
-          return;
-        }
-        if (this.handle) {
-          this.handle(value);
-        }
-        return this.quit();
-      });
-      return this.find("btnCancel").set("onbtclick", (e) => {
-        return this.quit();
-      });
-    }
-
-  };
-
-  ClipboardDialog.scheme = `<afx-app-window data-id = "ClipboardDialog" width='400' height='300' apptitle = "__(Clipboard)">
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" />
-            <afx-vbox>
-                <div data-height="10" />
-                <textarea data-id= "txtInput" />
-                <div data-height="10" />
-                <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
-                </afx-hbox>
-            </afx-vbox>
-            <div data-width = "10" />
-        </afx-hbox>
-    </afx-vbox>
-</afx-app-window>`;
-
+  //along with this program. If not, see https://www.gnu.org/licenses/
   wTerm = class wTerm extends this.OS.GUI.BaseApplication {
     constructor(args) {
       super("wTerm", args);
@@ -122,22 +79,26 @@
       var text;
       switch (data.id) {
         case "paste":
-          return this.openDialog(new ClipboardDialog()).then((d) => {
+          return this._api.getClipboard().then((text) => {
             var i, len, results, v;
+            if (!(text && text !== "")) {
+              return;
+            }
             results = [];
-            for (i = 0, len = d.length; i < len; i++) {
-              v = d[i];
+            for (i = 0, len = text.length; i < len; i++) {
+              v = text[i];
               results.push(this.socket.send(`i${v}`));
             }
             return results;
+          }).catch((e) => {
+            return this.error(__("Unable to paste"), e);
           });
         case "copy":
           text = this.term.getSelection();
           if (!(text && text !== "")) {
             return;
           }
-          this._api.setClipboard(text);
-          return console.log(this._api.getClipboard());
+          return this._api.setClipboard(text);
       }
     }
 

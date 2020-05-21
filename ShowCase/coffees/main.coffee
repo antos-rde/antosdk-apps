@@ -153,7 +153,8 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "YesNo dialog", id: "yesno" },
             { text: "Selection dialog", id: "selection" },
             { text: "About dialog", id: "about" },
-            { text: "File dialog", id: "file" }
+            { text: "File dialog", id: "file" },
+            { text: "Text dialog", id: "text" }
         ]
 
         btrun.set "onbtclick", (e) =>
@@ -216,6 +217,14 @@ class ShowCase extends this.OS.GUI.BaseApplication
                         })
                         .then (f, name) =>
                             @notify f, name
+                
+                when "text"
+                    @openDialog("TextDialog", {
+                            title: "Text dialog review",
+                            value: "txt data"
+                        })
+                        .then (d) =>
+                            @notify d
                 else return
                     
 

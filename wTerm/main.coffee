@@ -14,41 +14,7 @@
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-#along with this program. If not, see https://www.gnu.org/licenses/.
-class ClipboardDialog extends this.OS.GUI.BasicDialog
-    constructor: () ->
-        super "ClipboardDialog", ClipboardDialog.scheme
-    
-    init: () ->
-        @find("btnOk").set "onbtclick", (e) =>
-            value = $(@find "txtInput").val()
-            return unless value and value isnt ""
-            @handle value if @handle
-            @quit()
-        
-        @find("btnCancel").set "onbtclick", (e) =>
-            @quit()
-
-ClipboardDialog.scheme = """
-<afx-app-window data-id = "ClipboardDialog" width='400' height='300' apptitle = "__(Clipboard)">
-    <afx-vbox>
-        <afx-hbox>
-            <div data-width = "10" />
-            <afx-vbox>
-                <div data-height="10" />
-                <textarea data-id= "txtInput" />
-                <div data-height="10" />
-                <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "50" />
-                </afx-hbox>
-            </afx-vbox>
-            <div data-width = "10" />
-        </afx-hbox>
-    </afx-vbox>
-</afx-app-window>
-"""
+#along with this program. If not, see https://www.gnu.org/licenses/
 
 class wTerm extends this.OS.GUI.BaseApplication
     constructor: (args) ->
@@ -89,13 +55,14 @@ class wTerm extends this.OS.GUI.BaseApplication
     mctxHandle: (data) ->
         switch data.id
             when "paste"
-                @openDialog(new ClipboardDialog()).then (d) =>
-                    @socket.send "i#{v}" for v in d
+                @_api.getClipboard().then (text) =>
+                    return unless text and text isnt ""
+                    @socket.send "i#{v}" for v in text
+                .catch (e) => @error __("Unable to paste"), e
             when "copy"
                 text = @term.getSelection()
                 return unless text and text isnt ""
                 @_api.setClipboard text
-                console.log @_api.getClipboard()
             else
     
 

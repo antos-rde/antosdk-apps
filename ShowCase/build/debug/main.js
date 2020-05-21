@@ -349,6 +349,10 @@
         {
           text: "File dialog",
           id: "file"
+        },
+        {
+          text: "Text dialog",
+          id: "text"
         }
       ]);
       return btrun.set("onbtclick", (e) => {
@@ -418,6 +422,13 @@
               file: "Untitled".asFileHandle()
             }).then((f, name) => {
               return this.notify(f, name);
+            });
+          case "text":
+            return this.openDialog("TextDialog", {
+              title: "Text dialog review",
+              value: "txt data"
+            }).then((d) => {
+              return this.notify(d);
             });
         }
       });
