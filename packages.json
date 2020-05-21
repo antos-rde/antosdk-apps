@@ -18,15 +18,6 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
 	{
-		"pkgname": "GraphEditor",
-		"name": "Graph Editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/README.md",
-		"category": "Office",
-		"author": "Xuan Sang LE",
-		"version": "0.0.4-a",
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
-	},
-	{
 		"pkgname": "MarkOn",
 		"name": "Markdown editor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/README.md",
@@ -34,15 +25,6 @@
 		"author": "Xuan Sang LE",
 		"version": "0.0.1-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
-	},
-	{
-		"pkgname": "OpenPage",
-		"name": "OpenPage",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/README.md",
-		"category": "Other",
-		"author": "Xuan Sang LE",
-		"version": "0.0.2-a",
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/build/release/OpenPage.zip"
 	},
 	{
 		"pkgname": "Preview",
@@ -54,15 +36,6 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/build/release/Preview.zip"
 	},
 	{
-		"pkgname": "RemoteDesktop",
-		"name": "WVNC remote desktop",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
-		"category": "Other",
-		"author": "",
-		"version": "0.0.1-a",
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
-	},
-	{
 		"pkgname": "ShowCase",
 		"name": "ShowCase",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/README.md",
@@ -70,15 +43,6 @@
 		"author": "Xuan Sang LE",
 		"version": "0.0.1-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/build/release/ShowCase.zip"
-	},
-	{
-		"pkgname": "TinyEditor",
-		"name": "TinyEditor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/README.md",
-		"category": "Other",
-		"author": "",
-		"version": "0.0.1-a",
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/build/release/TinyEditor.zip"
 	},
 	{
 		"pkgname": "wTerm",
