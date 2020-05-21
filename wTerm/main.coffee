@@ -43,7 +43,7 @@ class wTerm extends this.OS.GUI.BaseApplication
                 return unless e
                 @mctxHandle e.data.item.get "data"
             m.show e
-    
+        @resizeContent()
         @openSession()
         
         # make desktop menu if not exist
@@ -70,6 +70,7 @@ class wTerm extends this.OS.GUI.BaseApplication
         @fitAddon.fit()
         ncol = @term.cols
         nrow = @term.rows
+        return unless @socket
         @socket.send "s#{ncol}:#{nrow}"
 
     openSession: () ->

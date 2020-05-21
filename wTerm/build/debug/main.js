@@ -61,6 +61,7 @@
         });
         return m.show(e);
       };
+      this.resizeContent();
       this.openSession();
       if (!this.systemsetting.desktop.menu[this.name]) {
         
@@ -107,6 +108,9 @@
       this.fitAddon.fit();
       ncol = this.term.cols;
       nrow = this.term.rows;
+      if (!this.socket) {
+        return;
+      }
       return this.socket.send(`s${ncol}:${nrow}`);
     }
 
