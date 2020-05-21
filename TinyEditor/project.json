@@ -1,0 +1,8 @@
+{
+	"name": "TinyEditor",
+	"root": "home://workspace/antosdk-apps/TinyEditor",
+	"css": ["css/main.css"],
+	"javascripts": [],
+	"coffees": ["coffees/main.coffee"],
+	"copies": ["assets/scheme.html", "package.json", "README.md"]
+}

@@ -21,14 +21,46 @@ class Preview extends this.OS.GUI.BaseApplication
         super "Preview", args
     
     main: () ->
+        @currfile = undefined
         @currfile = @args[0].path.asFileHandle() if @args and @args.length > 0
         @view = @find "view"
         @status = @find "status"
+        @zoom = @find "zoom"
+        @btnext = @find "btnext"
+        @btprev = @find "btprev"
+        @btreset = @find "btreset"
+        @txtpage = @find "txtpage"
+        
+        @zoom.set "onchange", (e) => @setViewScale e.data
+        
+        @btreset.set "onbtclick", (e) =>
+                @zoom.set "value", 100
+                @setViewScale 100
+        
+        @btnext.set "onbtclick", (e) =>
+            val = parseInt $(@txtpage).val()
+            return if isNaN val
+            $(@txtpage).val val + 1
+            @gotoPage()
+        @btprev.set "onbtclick", (e) =>
+            val = parseInt $(@txtpage).val()
+            return if isNaN val
+            $(@txtpage).val val - 1
+            @gotoPage()
+        
+        $(@txtpage).keyup (e) =>
+            return unless e.which is 13
+            return unless @pdf
+            @gotoPage()
+        
         PDFJS.workerSrc = "#{@path()}/pdf.worker.js".asFileHandle().getlink()
+        @pdf = undefined
+        @img = undefined
         
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
         @bindKey "CTRL-X", () => @actionFile "#{@name}-Close"
-        
+        @zoom.set "max", 200
+        @zoom.set "value", 100
         @open @currfile
 
     
@@ -37,72 +69,125 @@ class Preview extends this.OS.GUI.BaseApplication
         @currfile = file unless @currfile is file
         file.onready().then () =>
             file.info.size = (file.info.size / 1024).toFixed(2)
-            @renderFile file
+            @renderFile()
         .catch (err) =>
             @error __("File not found {0}", file.path), err
     
-    renderFile: (file) ->
-        mime = file.info.mime
-        return unless mime
+    
+    gotoPage: () ->
+        return unless @pdf
+        val = parseInt $(@txtpage).val()
+        return if  isNaN(val)
+        return if val <= 0 or val > @pdf.numPages
         ($ @view).empty()
+        @renderPDFPages val, (@zoom.get("value") / 100), false
+            .catch (e) => @error __("Unable to render page {0}", val), e
+    
+    renderFile: () ->
+        mime = @currfile.info.mime
+        return unless mime
+        @pdf = undefined
+        @img = undefined
+        ($ @view).empty()
+        @zoom.set "value", 100
         if mime.match /^[^\/]+\/.*pdf.*/g
-            @renderPDF file
+            @renderPDF()
         else if mime.match /image\/.*svg.*/g
-            @renderSVG file
+            @renderSVG()
         else if mime.match /image\/.*/g
-            @renderImage file
+            @renderImage()
         else
             @notify __("Mime type {0} is not supported", file.info.mime)
 
     setStatus: (t) ->
         ($ @status).html t
 
-    renderPDF: (file) ->
+    setViewScale: (value) ->
+        return unless @currfile
+        mime = @currfile.info.mime
+        scale = (value / 100)
+        if mime.match /^[^\/]+\/.*pdf.*/g
+            return unless @pdf
+            ($ @view).empty()
+            @load @renderPDFPages 1, scale
+            .catch (e) => @error __("Unable to set view scale"), e
+                
+        else if mime.match /image\/.*svg.*/g
+            $($(@view).children()[0])
+                .css "width", "#{Math.round(value)}%"
+                .css "height", "#{Math.round(value)}%"
+            
+        else if mime.match /image\/.*/g
+            return unless @img
+            canvas = $(@view).children()[0]
+            context = canvas.getContext '2d'
+            w = @img.width * scale
+            h = @img.height * scale
+            canvas.height = h
+            canvas.width = w
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            context.scale scale, scale
+            context.drawImage @img, 0, 0
+
+    renderPDFPages: (n, scale, recursive) ->
+        new Promise (resolve, reject) =>
+            status = "#{@currfile.info.name} (#{@currfile.info.size} Kb)"
+            return resolve() if n > @pdf.numPages
+            @pdf.getPage(n).then (page) =>
+                viewport = page.getViewport scale
+                div = ($ "<div/>")
+                        .attr("id", "page-" + (page.pageIndex + 1))
+                        .attr("scale", scale)
+                        .addClass "pdf-page"
+                ($ @view).append div
+                canvas = ($ "<canvas>")[0]
+                div.append canvas
+                context = canvas.getContext '2d'
+                canvas.height = viewport.height
+                canvas.width = viewport.width
+                renderContext =
+                    canvasContext: context
+                    viewport: viewport
+                page.render renderContext
+                page._canvas = canvas
+                @setStatus "#{status} - page #{n}/#{@pdf.numPages} loaded"
+                if recursive
+                    @renderPDFPages n + 1, scale, recursive
+                        .then () -> resolve()
+                        .catch (e) -> reject e
+                else
+                    resolve()
+            .catch (e) -> reject e
+
+    renderPDF: () ->
         @load new Promise (resolve, reject) =>
-            status = "#{file.info.name} (#{file.info.size} Kb)"
-            file.read("binary").then (d) =>
+            @currfile.read("binary").then (d) =>
                 ($ @view).removeClass()
                 PDFJS.getDocument { data: d }
                 .then (pdf) =>
-                    fn = (p) =>
-                        if p > pdf.numPages
-                            @setStatus "#{status} - loaded"
-                            return resolve()
-                        pdf.getPage(p).then (page) =>
-                            scale = 1.5
-                            viewport = page.getViewport scale
-                            div = ($ "<div/>").attr("id", "page-" + (page.pageIndex + 1))
-                            ($ @view).append div
-                            canvas = ($ "<canvas>")[0]
-                            div.append canvas
-                            context = canvas.getContext '2d'
-                            canvas.height = viewport.height
-                            canvas.width = viewport.width
-                            renderContext =
-                                canvasContext: context
-                                viewport: viewport
-                            page.render renderContext
-                            @setStatus "#{status} - #{p}/#{pdf.numPages} loaded"
-                            fn(p+1)
+                    @pdf = pdf
+                    @renderPDFPages 1, 1, false
+                        .then () =>
+                            $(@txtpage).val("1")
+                            resolve()
                         .catch (e) -> reject e
-                    fn(1)
                 .catch (e) -> reject e
             .catch (e) -> reject e
-        .catch (e) => @error __("Unable to view file: {}", file.path), e
+        .catch (e) => @error __("Unable to view file: {0}", @currfile.path), e
 
-    renderSVG: (file) ->
+    renderSVG: () ->
         ($ @view).attr("class", "image")
-        file.read().then (d) =>
+        @currfile.read().then (d) =>
             @view.innerHTML = d
             $($(@view).children()[0])
                 .css "width", "100%"
                 .css "height", "100%"
-        .catch (e) => @error __("Unable to read file: {}", file.path), e
+        .catch (e) => @error __("Unable to read file: {0}", @currfile.path), e
 
-    renderImage: (file) ->
+    renderImage: () ->
         ($ @view).attr("class", "image")
 
-        file.read("binary").then (d) =>
+        @currfile.read("binary").then (d) =>
             img = new Image()
             canvas = ($ "<canvas/>")[0]
             ($ @view).append canvas
@@ -112,13 +197,14 @@ class Preview extends this.OS.GUI.BaseApplication
                 context = canvas.getContext '2d'
                 canvas.height = img.height
                 canvas.width = img.width
+                @img = img
                 #console.log canvas.width, canvas.height
                 context.drawImage img, 0, 0
-                @setStatus "#{file.info.name} (#{file.info.size} Kb) - #{img.width}x#{img.height}"
+                @setStatus "#{@currfile.info.name} (#{@currfile.info.size} Kb) - #{img.width}x#{img.height}"
             
-            blob = new Blob [d], { type: file.info.mime }
+            blob = new Blob [d], { type: @currfile.info.mime }
             img.src = URL.createObjectURL blob
-        .catch (e) => @error __("Unable to read file: {}", file.path), e
+        .catch (e) => @error __("Unable to read file: {0}", @currfile.path), e
 
     menu: () ->
         menu = [{

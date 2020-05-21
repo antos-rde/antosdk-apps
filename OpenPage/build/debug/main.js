@@ -1,4 +1,5 @@
 (function() {
+  void 0;
   var FormatDialog, HyperLinkDialog, OpenPage;
 
   OpenPage = class OpenPage extends this.OS.GUI.BaseApplication {
@@ -114,7 +115,7 @@
 
     newdoc() {
       var blank;
-      blank = `${(this.meta().path)}/blank.odt`;
+      blank = `${this.meta().path}/blank.odt`;
       return this.open(blank, true);
     }
 
@@ -1167,7 +1168,119 @@
 
   };
 
-  FormatDialog.scheme = "<afx-app-window apptitle=\"__(Format Dialog)\" width=\"500\" height=\"500\" data-id=\"FormatDialog\">\n    <afx-vbox>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstformats\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-button text=\"clone\" data-id=\"bt-clone\" iconclass = \"fa fa-copy\" data-width=\"65\"></afx-button>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <afx-label text=\"__(Aligment)\" class=\"header\" data-height=\"20\"></afx-label>\n        <afx-hbox data-height=\"23\" data-id=\"aligmentbox\">\n            <div data-width=\"20\" ></div>\n            <afx-switch data-width=\"30\" data-id=\"swleft\"></afx-switch>\n            <afx-label text=\"__(Left)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swright\"></afx-switch>\n            <afx-label text=\"__(Right)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swcenter\"></afx-switch>\n            <afx-label text=\"__(Center)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swjustify\"></afx-switch>\n            <afx-label text=\"__(Justify)\"></afx-label>\n            <div data-width=\"20\" ></div>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n        <afx-label text=\"__(Margin)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Padding)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"spacingbox\">\n            <div ></div>\n            <afx-label data-width=\"50\" text=\"__(Left:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnleft\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Right:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnright\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Top:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspntop\" step=\"0.5\"></afx-nspinner>\n            <div></div>\n            <afx-label data-width=\"50\" text=\"__(Bottom:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"pspnbottom\" step=\"0.5\"></afx-nspinner>\n            <div  ></div>\n        </afx-hbox>\n        \n         <div data-height=\"5\"></div>\n         <afx-label text=\"__(Style)\" class=\"header\" data-height=\"20\"></afx-label>\n         <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"23\" data-id=\"stylebox\">\n            <div data-width=\"5\"></div>\n            <afx-switch data-width=\"30\" data-id=\"swbold\"></afx-switch>\n            <afx-label text=\"__(Bold)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"switalic\"></afx-switch>\n            <afx-label text=\"__(Italic)\"></afx-label>\n            <afx-switch data-width=\"30\" data-id=\"swunderline\"></afx-switch>\n            <afx-label text=\"__(Underline)\"></afx-label>\n            <afx-label data-width=\"35\" text=\"__(Text:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"txtcolor\"></div>\n            <div data-width=\"5\"></div>\n            <afx-label data-width=\"80\" text=\"__(Background:)\"></afx-label>\n            <div data-width=\"30\" data-id=\"bgcolor\"></div>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Font)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\" data-id=\"font-box\">\n            <div data-width=\"5\"></div>\n            <afx-list-view data-id=\"lstfont\" dropdown = \"true\"></afx-list-view>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"35\" text=\"__(Size:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnfsize\"></afx-nspinner>\n            <div data-width=\"5\" ></div>\n            <afx-label data-width=\"80\" text=\"__(Line Height:)\"></afx-label>\n            <afx-nspinner data-width=\"50\" data-id=\"spnlheight\" value=\"4.2\" step=\"0.2\"></afx-nspinner>\n            <div data-width=\"5\"></div>\n        </afx-hbox>\n        <div data-height=\"5\"></div>\n        <afx-label text=\"__(Preview)\" class=\"header\" data-height=\"20\"></afx-label>\n        <div data-height=\"5\"></div>\n        <afx-hbox>\n             <div data-width=\"5\"></div>\n            <div data-id=\"preview\">\n                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>\n            </div>\n             <div data-width=\"5\"></div>\n        </afx-hbox>\n        \n        <div data-height=\"5\"></div>\n        <afx-hbox data-height=\"30\">\n            <div></div>\n            <afx-button text=\"__(Save)\" data-width=\"35\" data-id=\"btok\"></afx-button>\n            <div data-width=\"5\"></div>\n            <afx-button text=\"__(Cancel)\" data-width=\"55\" data-id=\"btx\"></afx-button>\n        </afx-hbox>\n         <div data-height=\"5\"></div>\n    </afx-vbox>\n</afx-app-window>";
+  FormatDialog.scheme = `<afx-app-window apptitle="__(Format Dialog)" width="500" height="500" data-id="FormatDialog">
+    <afx-vbox>
+        <div data-height="5"></div>
+        <afx-hbox data-height="30">
+            <div data-width="5"></div>
+            <afx-list-view data-id="lstformats" dropdown = "true"></afx-list-view>
+            <div data-width="5" ></div>
+            <afx-button text="clone" data-id="bt-clone" iconclass = "fa fa-copy" data-width="65"></afx-button>
+            <div data-width="5"></div>
+        </afx-hbox>
+        <afx-label text="__(Aligment)" class="header" data-height="20"></afx-label>
+        <afx-hbox data-height="23" data-id="aligmentbox">
+            <div data-width="20" ></div>
+            <afx-switch data-width="30" data-id="swleft"></afx-switch>
+            <afx-label text="__(Left)"></afx-label>
+            <afx-switch data-width="30" data-id="swright"></afx-switch>
+            <afx-label text="__(Right)"></afx-label>
+            <afx-switch data-width="30" data-id="swcenter"></afx-switch>
+            <afx-label text="__(Center)"></afx-label>
+            <afx-switch data-width="30" data-id="swjustify"></afx-switch>
+            <afx-label text="__(Justify)"></afx-label>
+            <div data-width="20" ></div>
+        </afx-hbox>
+         <div data-height="5"></div>
+        <afx-label text="__(Margin)" class="header" data-height="20"></afx-label>
+        <div data-height="5"></div>
+        <afx-hbox data-height="23" data-id="spacingbox">
+            <div ></div>
+            <afx-label data-width="50" text="__(Left:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spnleft" step="0.5"></afx-nspinner>
+            <div></div>
+            <afx-label data-width="50" text="__(Right:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spnright" step="0.5"></afx-nspinner>
+            <div></div>
+            <afx-label data-width="50" text="__(Top:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spntop" step="0.5"></afx-nspinner>
+            <div></div>
+            <afx-label data-width="50" text="__(Bottom:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spnbottom" step="0.5"></afx-nspinner>
+            <div  ></div>
+        </afx-hbox>
+        <div data-height="5"></div>
+        <afx-label text="__(Padding)" class="header" data-height="20"></afx-label>
+        <div data-height="5"></div>
+        <afx-hbox data-height="23" data-id="spacingbox">
+            <div ></div>
+            <afx-label data-width="50" text="__(Left:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="pspnleft" step="0.5"></afx-nspinner>
+            <div></div>
+            <afx-label data-width="50" text="__(Right:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="pspnright" step="0.5"></afx-nspinner>
+            <div></div>
+            <afx-label data-width="50" text="__(Top:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="pspntop" step="0.5"></afx-nspinner>
+            <div></div>
+            <afx-label data-width="50" text="__(Bottom:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="pspnbottom" step="0.5"></afx-nspinner>
+            <div  ></div>
+        </afx-hbox>
+        
+         <div data-height="5"></div>
+         <afx-label text="__(Style)" class="header" data-height="20"></afx-label>
+         <div data-height="5"></div>
+        <afx-hbox data-height="23" data-id="stylebox">
+            <div data-width="5"></div>
+            <afx-switch data-width="30" data-id="swbold"></afx-switch>
+            <afx-label text="__(Bold)"></afx-label>
+            <afx-switch data-width="30" data-id="switalic"></afx-switch>
+            <afx-label text="__(Italic)"></afx-label>
+            <afx-switch data-width="30" data-id="swunderline"></afx-switch>
+            <afx-label text="__(Underline)"></afx-label>
+            <afx-label data-width="35" text="__(Text:)"></afx-label>
+            <div data-width="30" data-id="txtcolor"></div>
+            <div data-width="5"></div>
+            <afx-label data-width="80" text="__(Background:)"></afx-label>
+            <div data-width="30" data-id="bgcolor"></div>
+            <div data-width="5"></div>
+        </afx-hbox>
+        <div data-height="5"></div>
+        <afx-label text="__(Font)" class="header" data-height="20"></afx-label>
+        <div data-height="5"></div>
+        <afx-hbox data-height="30" data-id="font-box">
+            <div data-width="5"></div>
+            <afx-list-view data-id="lstfont" dropdown = "true"></afx-list-view>
+            <div data-width="5" ></div>
+            <afx-label data-width="35" text="__(Size:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spnfsize"></afx-nspinner>
+            <div data-width="5" ></div>
+            <afx-label data-width="80" text="__(Line Height:)"></afx-label>
+            <afx-nspinner data-width="50" data-id="spnlheight" value="4.2" step="0.2"></afx-nspinner>
+            <div data-width="5"></div>
+        </afx-hbox>
+        <div data-height="5"></div>
+        <afx-label text="__(Preview)" class="header" data-height="20"></afx-label>
+        <div data-height="5"></div>
+        <afx-hbox>
+             <div data-width="5"></div>
+            <div data-id="preview">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>
+            </div>
+             <div data-width="5"></div>
+        </afx-hbox>
+        
+        <div data-height="5"></div>
+        <afx-hbox data-height="30">
+            <div></div>
+            <afx-button text="__(Save)" data-width="35" data-id="btok"></afx-button>
+            <div data-width="5"></div>
+            <afx-button text="__(Cancel)" data-width="55" data-id="btx"></afx-button>
+        </afx-hbox>
+         <div data-height="5"></div>
+    </afx-vbox>
+</afx-app-window>`;
 
 }).call(this);
 

@@ -147,38 +147,41 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
         super "LuaPlayground", args
         
     main: () ->
-        me = @
         @datarea = @find "editorea"
         @output = @find "output"
         @.editor = ace.edit @datarea
         @.editor.setOptions {
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,
-            fontSize: "10pt"
+            highlightActiveLine: true,
+            highlightSelectedWord: true,
+            behavioursEnabled: true,
+            wrap: true,
+            fontSize: "11pt",
+            showInvisibles: true
         }
         @editor.getSession().setUseWrapMode true
         @editor.session.setMode "ace/mode/lua"
         @editor.setTheme "ace/theme/monokai"
-        @on "vboxchange", () ->
-            me.editor.resize()
-        (@find "log-clear").set "onbtclick", (e) ->
-            me.log "clean"
-        (@find "code-run").set "onbtclick", (e) ->
-            me.run()
+        @on "vboxchange", () =>
+            @editor.resize()
+        (@find "log-clear").set "onbtclick", (e) =>
+            @log "clean"
+        (@find "code-run").set "onbtclick", (e) =>
+            @run()
         
-        (@find "code-stop").set "onbtclick", (e) ->
-            me.socket.close() if me.socket
+        (@find "code-stop").set "onbtclick", (e) =>
+            @socket.close() if @socket
         
         @socket = null
-        @bindKey "CTRL-R", () -> me.run()
+        @bindKey "CTRL-R", () => @run()
     menu: () ->
-        me = @
         menu = [{
                 text: "__(Code)",
                 child: [
                     { text: "__(Run)", dataid: "#{@name}-Run", shortcut: "C-R" }
                 ],
-                onmenuselect: (e) -> me.run()
+                onchildselect: (e) => @run()
             }]
         menu
     
@@ -190,26 +193,27 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
         ($ @output).scrollTop @output.scrollHeight
         
     run: () ->
-        me = @
         value = @editor.getValue().trim()
         return unless value and value isnt ""
-        @socket = @stream()
-        @socket.onopen = () ->
-            #send data to server
-            me.socket.send( JSON.stringify { code: value } )
-
-        @socket.onmessage =  (e) ->
-            return unless e.data
-            try 
-                obj = JSON.parse e.data
-                me.log "INFO", e.data unless me.view obj
-            catch err
-                me.log "INFO", e.data
-                console.log err
-                
-        @socket.onclose = () ->
-            me.socket = null
-            console.log "socket closed"
+        @stream().then (s) =>
+            @socket = s
+            @socket.onopen = () =>
+                #send data to server
+                @socket.send( JSON.stringify { code: value } )
+    
+            @socket.onmessage =  (e) =>
+                return unless e.data
+                try 
+                    obj = JSON.parse e.data
+                    @log "INFO", e.data unless @view obj
+                catch err
+                    @log "INFO", e.data
+                    console.log err
+                    
+            @socket.onclose = () =>
+                @socket = null
+                console.log "socket closed"
+        .catch (e) => @error __("Unable to get websocket stream")
         
     view: (obj) ->
         return false unless obj and obj.type and  @[obj.type]
@@ -226,5 +230,5 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
     cleanup: (e)->
         @socket.close() if @socket
         
-LuaPlayground.dependencies = ["ace/ace"]
+LuaPlayground.dependencies = ["os://scripts/ace/ace.js"]
 this.OS.register "LuaPlayground", LuaPlayground

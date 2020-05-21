@@ -25,18 +25,62 @@
     }
 
     main() {
+      this.currfile = void 0;
       if (this.args && this.args.length > 0) {
         this.currfile = this.args[0].path.asFileHandle();
       }
       this.view = this.find("view");
       this.status = this.find("status");
+      this.zoom = this.find("zoom");
+      this.btnext = this.find("btnext");
+      this.btprev = this.find("btprev");
+      this.btreset = this.find("btreset");
+      this.txtpage = this.find("txtpage");
+      this.zoom.set("onchange", (e) => {
+        return this.setViewScale(e.data);
+      });
+      this.btreset.set("onbtclick", (e) => {
+        this.zoom.set("value", 100);
+        return this.setViewScale(100);
+      });
+      this.btnext.set("onbtclick", (e) => {
+        var val;
+        val = parseInt($(this.txtpage).val());
+        if (isNaN(val)) {
+          return;
+        }
+        $(this.txtpage).val(val + 1);
+        return this.gotoPage();
+      });
+      this.btprev.set("onbtclick", (e) => {
+        var val;
+        val = parseInt($(this.txtpage).val());
+        if (isNaN(val)) {
+          return;
+        }
+        $(this.txtpage).val(val - 1);
+        return this.gotoPage();
+      });
+      $(this.txtpage).keyup((e) => {
+        if (e.which !== 13) {
+          return;
+        }
+        if (!this.pdf) {
+          return;
+        }
+        return this.gotoPage();
+      });
       PDFJS.workerSrc = `${this.path()}/pdf.worker.js`.asFileHandle().getlink();
+      this.pdf = void 0;
+      this.img = void 0;
       this.bindKey("ALT-O", () => {
         return this.actionFile(`${this.name}-Open`);
       });
       this.bindKey("CTRL-X", () => {
         return this.actionFile(`${this.name}-Close`);
       });
+      this.zoom.set("max", 200);
+      this.zoom.set("value", 100);
       return this.open(this.currfile);
     }
 
@@ -49,25 +93,46 @@
       }
       return file.onready().then(() => {
         file.info.size = (file.info.size / 1024).toFixed(2);
-        return this.renderFile(file);
+        return this.renderFile();
       }).catch((err) => {
         return this.error(__("File not found {0}", file.path), err);
       });
     }
 
-    renderFile(file) {
-      var mime;
-      mime = file.info.mime;
-      if (!mime) {
+    gotoPage() {
+      var val;
+      if (!this.pdf) {
+        return;
+      }
+      val = parseInt($(this.txtpage).val());
+      if (isNaN(val)) {
+        return;
+      }
+      if (val <= 0 || val > this.pdf.numPages) {
         return;
       }
       ($(this.view)).empty();
+      return this.renderPDFPages(val, this.zoom.get("value") / 100, false).catch((e) => {
+        return this.error(__("Unable to render page {0}", val), e);
+      });
+    }
+
+    renderFile() {
+      var mime;
+      mime = this.currfile.info.mime;
+      if (!mime) {
+        return;
+      }
+      this.pdf = void 0;
+      this.img = void 0;
+      ($(this.view)).empty();
+      this.zoom.set("value", 100);
       if (mime.match(/^[^\/]+\/.*pdf.*/g)) {
-        return this.renderPDF(file);
+        return this.renderPDF();
       } else if (mime.match(/image\/.*svg.*/g)) {
-        return this.renderSVG(file);
+        return this.renderSVG();
       } else if (mime.match(/image\/.*/g)) {
-        return this.renderImage(file);
+        return this.renderImage();
       } else {
         return this.notify(__("Mime type {0} is not supported", file.info.mime));
       }
@@ -77,44 +142,92 @@
       return ($(this.status)).html(t);
     }
 
-    renderPDF(file) {
-      return this.load(new Promise((resolve, reject) => {
+    setViewScale(value) {
+      var canvas, context, h, mime, scale, w;
+      if (!this.currfile) {
+        return;
+      }
+      mime = this.currfile.info.mime;
+      scale = value / 100;
+      if (mime.match(/^[^\/]+\/.*pdf.*/g)) {
+        if (!this.pdf) {
+          return;
+        }
+        ($(this.view)).empty();
+        return this.load(this.renderPDFPages(1, scale)).catch((e) => {
+          return this.error(__("Unable to set view scale"), e);
+        });
+      } else if (mime.match(/image\/.*svg.*/g)) {
+        return $($(this.view).children()[0]).css("width", `${Math.round(value)}%`).css("height", `${Math.round(value)}%`);
+      } else if (mime.match(/image\/.*/g)) {
+        if (!this.img) {
+          return;
+        }
+        canvas = $(this.view).children()[0];
+        context = canvas.getContext('2d');
+        w = this.img.width * scale;
+        h = this.img.height * scale;
+        canvas.height = h;
+        canvas.width = w;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.scale(scale, scale);
+        return context.drawImage(this.img, 0, 0);
+      }
+    }
+
+    renderPDFPages(n, scale, recursive) {
+      return new Promise((resolve, reject) => {
         var status;
-        status = `${file.info.name} (${file.info.size} Kb)`;
-        return file.read("binary").then((d) => {
+        status = `${this.currfile.info.name} (${this.currfile.info.size} Kb)`;
+        if (n > this.pdf.numPages) {
+          return resolve();
+        }
+        return this.pdf.getPage(n).then((page) => {
+          var canvas, context, div, renderContext, viewport;
+          viewport = page.getViewport(scale);
+          div = ($("<div/>")).attr("id", "page-" + (page.pageIndex + 1)).attr("scale", scale).addClass("pdf-page");
+          ($(this.view)).append(div);
+          canvas = ($("<canvas>"))[0];
+          div.append(canvas);
+          context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          page.render(renderContext);
+          page._canvas = canvas;
+          this.setStatus(`${status} - page ${n}/${this.pdf.numPages} loaded`);
+          if (recursive) {
+            return this.renderPDFPages(n + 1, scale, recursive).then(function() {
+              return resolve();
+            }).catch(function(e) {
+              return reject(e);
+            });
+          } else {
+            return resolve();
+          }
+        }).catch(function(e) {
+          return reject(e);
+        });
+      });
+    }
+
+    renderPDF() {
+      return this.load(new Promise((resolve, reject) => {
+        return this.currfile.read("binary").then((d) => {
           ($(this.view)).removeClass();
           return PDFJS.getDocument({
             data: d
           }).then((pdf) => {
-            var fn;
-            fn = (p) => {
-              if (p > pdf.numPages) {
-                this.setStatus(`${status} - loaded`);
-                return resolve();
-              }
-              return pdf.getPage(p).then((page) => {
-                var canvas, context, div, renderContext, scale, viewport;
-                scale = 1.5;
-                viewport = page.getViewport(scale);
-                div = ($("<div/>")).attr("id", "page-" + (page.pageIndex + 1));
-                ($(this.view)).append(div);
-                canvas = ($("<canvas>"))[0];
-                div.append(canvas);
-                context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                renderContext = {
-                  canvasContext: context,
-                  viewport: viewport
-                };
-                page.render(renderContext);
-                this.setStatus(`${status} - ${p}/${pdf.numPages} loaded`);
-                return fn(p + 1);
-              }).catch(function(e) {
-                return reject(e);
-              });
-            };
-            return fn(1);
+            this.pdf = pdf;
+            return this.renderPDFPages(1, 1, false).then(() => {
+              $(this.txtpage).val("1");
+              return resolve();
+            }).catch(function(e) {
+              return reject(e);
+            });
           }).catch(function(e) {
             return reject(e);
           });
@@ -122,23 +235,23 @@
           return reject(e);
         });
       })).catch((e) => {
-        return this.error(__("Unable to view file: {}", file.path), e);
+        return this.error(__("Unable to view file: {0}", this.currfile.path), e);
       });
     }
 
-    renderSVG(file) {
+    renderSVG() {
       ($(this.view)).attr("class", "image");
-      return file.read().then((d) => {
+      return this.currfile.read().then((d) => {
         this.view.innerHTML = d;
         return $($(this.view).children()[0]).css("width", "100%").css("height", "100%");
       }).catch((e) => {
-        return this.error(__("Unable to read file: {}", file.path), e);
+        return this.error(__("Unable to read file: {0}", this.currfile.path), e);
       });
     }
 
-    renderImage(file) {
+    renderImage() {
       ($(this.view)).attr("class", "image");
-      return file.read("binary").then((d) => {
+      return this.currfile.read("binary").then((d) => {
         var blob, canvas, img;
         img = new Image();
         canvas = ($("<canvas/>"))[0];
@@ -149,16 +262,17 @@
           context = canvas.getContext('2d');
           canvas.height = img.height;
           canvas.width = img.width;
+          this.img = img;
           //console.log canvas.width, canvas.height
           context.drawImage(img, 0, 0);
-          return this.setStatus(`${file.info.name} (${file.info.size} Kb) - ${img.width}x${img.height}`);
+          return this.setStatus(`${this.currfile.info.name} (${this.currfile.info.size} Kb) - ${img.width}x${img.height}`);
         };
         blob = new Blob([d], {
-          type: file.info.mime
+          type: this.currfile.info.mime
         });
         return img.src = URL.createObjectURL(blob);
       }).catch((e) => {
-        return this.error(__("Unable to read file: {}", file.path), e);
+        return this.error(__("Unable to read file: {0}", this.currfile.path), e);
       });
     }
 

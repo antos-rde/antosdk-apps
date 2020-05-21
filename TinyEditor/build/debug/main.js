@@ -1,4 +1,5 @@
 (function() {
+  void 0;
   var TinyEditor;
 
   TinyEditor = class TinyEditor extends this.OS.GUI.BaseApplication {
@@ -7,32 +8,29 @@
     }
 
     main() {
-      var me;
-      me = this;
       this.editor = this.find("editor");
-      this.bindKey("ALT-N", function() {
-        return me.newFile();
+      this.bindKey("ALT-N", () => {
+        return this.newFile();
       });
-      this.bindKey("ALT-O", function() {
-        return me.openFile();
+      this.bindKey("ALT-O", () => {
+        return this.openFile();
       });
-      this.bindKey("CTRL-S", function() {
-        return me.saveFile();
+      this.bindKey("CTRL-S", () => {
+        return this.saveFile();
       });
-      this.filehandler = this.args && this.args.length > 0 ? this.args[0].asFileHandler() : null;
-      $(this.editor).on('input', function(e) {
-        if (me.filehandler.dirty === true) {
+      this.filehandle = this.args && this.args.length > 0 ? this.args[0].asFileHandle() : null;
+      $(this.editor).on('input', (e) => {
+        if (this.filehandle.dirty === true) {
           return;
         }
-        me.filehandler.dirty = true;
-        return me.scheme.set("apptitle", `${me.filehandler.path}*`);
+        this.filehandle.dirty = true;
+        return this.scheme.set("apptitle", `${this.filehandle.path}*`);
       });
       return this.read();
     }
 
     menu() {
-      var m, me;
-      me = this;
+      var m;
       m = [
         {
           text: "__(File)",
@@ -53,14 +51,14 @@
               shortcut: 'C-S'
             }
           ],
-          onmenuselect: function(e) {
-            switch (e.item.data.dataid) {
+          onchildselect: (e) => {
+            switch (e.data.item.get("data").dataid) {
               case "new":
-                return me.newFile();
+                return this.newFile();
               case "open":
-                return me.openFile();
+                return this.openFile();
               case "save":
-                return me.saveFile();
+                return this.saveFile();
             }
           }
         }
@@ -69,71 +67,73 @@
     }
 
     newFile() {
-      this.filehandler = null;
+      this.filehandle = null;
       return this.read();
     }
 
     openFile() {
-      var me;
-      me = this;
-      return this.openDialog("FileDiaLog", function(dir, fname, d) {
-        me.filehandler = `${dir}/${fname}`.asFileHandler();
-        return me.read();
-      }, __("Open file"));
+      return this.openDialog("FileDialog", {
+        title: __("Open file")
+      }).then((d) => {
+        this.filehandle = d.file.path.asFileHandle();
+        return this.read();
+      });
     }
 
     saveFile() {
-      var me;
-      me = this;
-      this.filehandler.cache = this.editor.value;
-      if (this.filehandler.path !== "Untitled") {
+      this.filehandle.cache = this.editor.value;
+      if (this.filehandle.path !== "Untitled") {
         return this.write();
       }
-      return this.openDialog("FileDiaLog", function(dir, fname, d) {
-        me.filehandler.setPath(`${dir}/${fname}`);
-        return me.write();
-      }, __("Save as"), {
-        file: me.filehandler
+      return this.openDialog("FileDialog", {
+        title: __("Save as"),
+        file: this.filehandle
+      }).then((f) => {
+        var d;
+        d = f.file.path.asFileHandle();
+        if (f.file.type === "file") {
+          d = d.parent();
+        }
+        this.filehandle.setPath(`${d.path}/${f.name}`);
+        return this.write();
       });
     }
 
     read() {
-      var me;
-      me = this;
       this.editor.value = "";
-      if (this.filehandler === null) {
-        this.filehandler = "Untitled".asFileHandler();
+      if (this.filehandle === null) {
+        this.filehandle = "Untitled".asFileHandle();
         this.scheme.set("apptitle", "Untitled");
         return;
       }
-      return this.filehandler.read(function(d) {
-        me.scheme.set("apptitle", me.filehandler.path);
-        return me.editor.value = d;
+      return this.filehandle.read().then((d) => {
+        this.scheme.set("apptitle", this.filehandle.path);
+        return this.editor.value = d;
+      }).catch((e) => {
+        return this.error(__("Unable to read file content"));
       });
     }
 
     write() {
-      var me;
-      me = this;
-      return this.filehandler.write("text/plain", function(d) {
-        if (d.error) {
-          return me.error(__("Error saving file {0}", me.filehandler.path));
-        }
-        me.filehandler.dirty = false;
-        return me.scheme.set("apptitle", `${me.filehandler.path}`);
+      return this.filehandle.write("text/plain").then((d) => {
+        this.filehandle.dirty = false;
+        return this.scheme.set("apptitle", `${this.filehandle.path}`);
+      }).catch((e) => {
+        return this.error(__("Error saving file {0}", this.filehandle.path), e);
       });
     }
 
     cleanup(e) {
-      var me;
-      if (!this.filehandler.dirty) {
+      if (!this.filehandle.dirty) {
         return;
       }
-      me = this;
       e.preventDefault();
-      return this.ask("__(Quit)", "__(Quit without saving?)", function() {
-        me.filehandler.dirty = false;
-        return me.quit();
+      return this.ask({
+        title: "__(Quit)",
+        text: "__(Quit without saving?)"
+      }).then(() => {
+        this.filehandle.dirty = false;
+        return this.quit();
       });
     }
 

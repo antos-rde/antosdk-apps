@@ -1,4 +1,5 @@
 (function() {
+  void 0;
   var DataViewer, LuaPlayground, PointCloudViewer;
 
   DataViewer = class DataViewer {
@@ -175,7 +176,7 @@
     }
 
     
-    // point clound render
+      // point clound render
     render() {
       var end, j, len, path, ref, start, v;
       this.drawGrid(20, "#DBDBDB"); // 20 px
@@ -204,42 +205,44 @@
     }
 
     main() {
-      var me;
-      me = this;
       this.datarea = this.find("editorea");
       this.output = this.find("output");
       this.editor = ace.edit(this.datarea);
       this.editor.setOptions({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
-        fontSize: "10pt"
+        highlightActiveLine: true,
+        highlightSelectedWord: true,
+        behavioursEnabled: true,
+        wrap: true,
+        fontSize: "11pt",
+        showInvisibles: true
       });
       this.editor.getSession().setUseWrapMode(true);
       this.editor.session.setMode("ace/mode/lua");
       this.editor.setTheme("ace/theme/monokai");
-      this.on("vboxchange", function() {
-        return me.editor.resize();
+      this.on("vboxchange", () => {
+        return this.editor.resize();
       });
-      (this.find("log-clear")).set("onbtclick", function(e) {
-        return me.log("clean");
+      (this.find("log-clear")).set("onbtclick", (e) => {
+        return this.log("clean");
       });
-      (this.find("code-run")).set("onbtclick", function(e) {
-        return me.run();
+      (this.find("code-run")).set("onbtclick", (e) => {
+        return this.run();
       });
-      (this.find("code-stop")).set("onbtclick", function(e) {
-        if (me.socket) {
-          return me.socket.close();
+      (this.find("code-stop")).set("onbtclick", (e) => {
+        if (this.socket) {
+          return this.socket.close();
         }
       });
       this.socket = null;
-      return this.bindKey("CTRL-R", function() {
-        return me.run();
+      return this.bindKey("CTRL-R", () => {
+        return this.run();
       });
     }
 
     menu() {
-      var me, menu;
-      me = this;
+      var menu;
       menu = [
         {
           text: "__(Code)",
@@ -250,8 +253,8 @@
               shortcut: "C-R"
             }
           ],
-          onmenuselect: function(e) {
-            return me.run();
+          onchildselect: (e) => {
+            return this.run();
           }
         }
       ];
@@ -270,39 +273,42 @@
     }
 
     run() {
-      var me, value;
-      me = this;
+      var value;
       value = this.editor.getValue().trim();
       if (!(value && value !== "")) {
         return;
       }
-      this.socket = this.stream();
-      this.socket.onopen = function() {
-        //send data to server
-        return me.socket.send(JSON.stringify({
-          code: value
-        }));
-      };
-      this.socket.onmessage = function(e) {
-        var err, obj;
-        if (!e.data) {
-          return;
-        }
-        try {
-          obj = JSON.parse(e.data);
-          if (!me.view(obj)) {
-            return me.log("INFO", e.data);
+      return this.stream().then((s) => {
+        this.socket = s;
+        this.socket.onopen = () => {
+          //send data to server
+          return this.socket.send(JSON.stringify({
+            code: value
+          }));
+        };
+        this.socket.onmessage = (e) => {
+          var err, obj;
+          if (!e.data) {
+            return;
           }
-        } catch (error) {
-          err = error;
-          me.log("INFO", e.data);
-          return console.log(err);
-        }
-      };
-      return this.socket.onclose = function() {
-        me.socket = null;
-        return console.log("socket closed");
-      };
+          try {
+            obj = JSON.parse(e.data);
+            if (!this.view(obj)) {
+              return this.log("INFO", e.data);
+            }
+          } catch (error) {
+            err = error;
+            this.log("INFO", e.data);
+            return console.log(err);
+          }
+        };
+        return this.socket.onclose = () => {
+          this.socket = null;
+          return console.log("socket closed");
+        };
+      }).catch((e) => {
+        return this.error(__("Unable to get websocket stream"));
+      });
     }
 
     view(obj) {
@@ -330,7 +336,7 @@
 
   };
 
-  LuaPlayground.dependencies = ["ace/ace"];
+  LuaPlayground.dependencies = ["os://scripts/ace/ace.js"];
 
   this.OS.register("LuaPlayground", LuaPlayground);
 

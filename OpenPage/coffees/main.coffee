@@ -66,6 +66,7 @@ class OpenPage extends this.OS.GUI.BaseApplication
     newdoc: () ->
         blank = "#{@meta().path}/blank.odt"
         @open blank, true
+        
     open: (p,b) ->
         me = @
         @pathAsDataURL(p)

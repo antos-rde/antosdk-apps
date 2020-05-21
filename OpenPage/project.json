@@ -1,0 +1,8 @@
+{
+	"name": "OpenPage",
+	"root": "home://workspace/antosdk-apps/OpenPage",
+	"css": ["css/main.css", "css/dialog.css"],
+	"javascripts": ["javascripts/webodf.js", "javascripts/EditorSession.js"],
+	"coffees": ["coffees/main.coffee", "coffees/dialogs.coffee"],
+	"copies": ["assets/scheme.html", "package.json", "assets/icon.png", "assets/blank.odt"]
+}

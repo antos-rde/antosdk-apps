@@ -8,18 +8,24 @@ afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-i
     background-repeat: repeat;
 }
 
-afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "status"]
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] afx-hbox[data-id = "statcontainer"]
 {
     background-color: transparent;
-    border-top: 1px solid #cbcbcb;
-    padding-left: 10px;
-    padding-top: 3px;
+    border-bottom: 1px solid #cbcbcb;
 }
-
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] afx-hbox[data-id = "statcontainer"] button,
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] afx-hbox[data-id = "statcontainer"] input
+{
+    height: 24px;
+}
 afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] canvas{
     margin-left: auto;
     margin-right: auto;
     display: block;
+}
+
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div.pdf-page {
+    margin-bottom: 5px;
 }
 
 afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "view"].image

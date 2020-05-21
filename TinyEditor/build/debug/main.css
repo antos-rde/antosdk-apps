@@ -1,8 +1,6 @@
 
 afx-app-window[data-id="TinyEditor"] textarea[data-id="editor"]
 {
-    background-color: #272822;
-    color:white;
     margin: 0;
     padding:10px;
     border: 0;
