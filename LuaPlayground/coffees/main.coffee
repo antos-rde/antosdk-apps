@@ -149,6 +149,7 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
     main: () ->
         @datarea = @find "editorea"
         @output = @find "output"
+        ace.config.set('basePath', '/scripts/ace')
         @.editor = ace.edit @datarea
         @.editor.setOptions {
             enableBasicAutocompletion: true,

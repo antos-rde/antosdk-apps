@@ -7,7 +7,7 @@ class TinyEditor extends this.OS.GUI.BaseApplication
         @bindKey "ALT-N", () => @newFile()
         @bindKey "ALT-O", () => @openFile()
         @bindKey "CTRL-S", () => @saveFile()
-        @filehandle = if @args and @args.length > 0 then @args[0].asFileHandle() else null
+        @filehandle = if @args and @args.length > 0 then @args[0].path.asFileHandle() else null
         $(@editor).on 'input', (e) =>
             return if @filehandle.dirty is true
             @filehandle.dirty = true

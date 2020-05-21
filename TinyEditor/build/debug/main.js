@@ -18,7 +18,7 @@
       this.bindKey("CTRL-S", () => {
         return this.saveFile();
       });
-      this.filehandle = this.args && this.args.length > 0 ? this.args[0].asFileHandle() : null;
+      this.filehandle = this.args && this.args.length > 0 ? this.args[0].path.asFileHandle() : null;
       $(this.editor).on('input', (e) => {
         if (this.filehandle.dirty === true) {
           return;

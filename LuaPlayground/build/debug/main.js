@@ -207,6 +207,7 @@
     main() {
       this.datarea = this.find("editorea");
       this.output = this.find("output");
+      ace.config.set('basePath', '/scripts/ace');
       this.editor = ace.edit(this.datarea);
       this.editor.setOptions({
         enableBasicAutocompletion: true,
