@@ -23,7 +23,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
 		"category": "System",
 		"author": "Xuan Sang LEs",
-		"version": "0.0.1-a",
+		"version": "0.0.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/build/release/LuaPlayground.zip"
 	},
 	{
@@ -59,7 +59,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/README.md",
 		"category": "Other",
 		"author": "Xuan Sang LE",
-		"version": "0.0.1-a",
+		"version": "0.0.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/build/release/TinyEditor.zip"
 	},
 	{
