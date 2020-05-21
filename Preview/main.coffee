@@ -58,40 +58,37 @@ class Preview extends this.OS.GUI.BaseApplication
         ($ @status).html t
 
     renderPDF: (file) ->
-        status = "#{file.info.name} (#{file.info.size} Kb)"
-        q = @_api.mid()
-        file.read("binary").then (d) =>
-            @_api.loading q, "RENDERING"
-            ($ @view).removeClass()
-            PDFJS.getDocument { data: d }
-            .then (pdf) =>
-                fn = (p) =>
-                    if p > pdf.numPages
-                        @setStatus "#{status} - loaded"
-                        return @_api.loaded q, "OK"
-                    pdf.getPage(p).then (page) =>
-                        scale = 1.5
-                        viewport = page.getViewport scale
-                        div = ($ "<div/>").attr("id", "page-" + (page.pageIndex + 1))
-                        ($ @view).append div
-                        canvas = ($ "<canvas>")[0]
-                        div.append canvas
-                        context = canvas.getContext '2d'
-                        canvas.height = viewport.height
-                        canvas.width = viewport.width
-                        renderContext =
-                            canvasContext: context
-                            viewport: viewport
-                        page.render renderContext
-                        @setStatus "#{status} - #{p}/#{pdf.numPages} loaded"
-                        fn(p+1)
-                fn(1)
-            .catch (err) =>
-                @error __("Cannot render the PDF file")
-                @_api.loaded q, "FAIL"
-        .catch (e) =>
-                @_api.loaded q, "FAIL"
-                @error __("Unable to read file: {}", file.path), e
+        @load new Promise (resolve, reject) =>
+            status = "#{file.info.name} (#{file.info.size} Kb)"
+            file.read("binary").then (d) =>
+                ($ @view).removeClass()
+                PDFJS.getDocument { data: d }
+                .then (pdf) =>
+                    fn = (p) =>
+                        if p > pdf.numPages
+                            @setStatus "#{status} - loaded"
+                            return resolve()
+                        pdf.getPage(p).then (page) =>
+                            scale = 1.5
+                            viewport = page.getViewport scale
+                            div = ($ "<div/>").attr("id", "page-" + (page.pageIndex + 1))
+                            ($ @view).append div
+                            canvas = ($ "<canvas>")[0]
+                            div.append canvas
+                            context = canvas.getContext '2d'
+                            canvas.height = viewport.height
+                            canvas.width = viewport.width
+                            renderContext =
+                                canvasContext: context
+                                viewport: viewport
+                            page.render renderContext
+                            @setStatus "#{status} - #{p}/#{pdf.numPages} loaded"
+                            fn(p+1)
+                        .catch (e) -> reject e
+                    fn(1)
+                .catch (e) -> reject e
+            .catch (e) -> reject e
+        .catch (e) => @error __("Unable to view file: {}", file.path), e
 
     renderSVG: (file) ->
         ($ @view).attr("class", "image")

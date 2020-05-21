@@ -78,49 +78,51 @@
     }
 
     renderPDF(file) {
-      var q, status;
-      status = `${file.info.name} (${file.info.size} Kb)`;
-      q = this._api.mid();
-      return file.read("binary").then((d) => {
-        this._api.loading(q, "RENDERING");
-        ($(this.view)).removeClass();
-        return PDFJS.getDocument({
-          data: d
-        }).then((pdf) => {
-          var fn;
-          fn = (p) => {
-            if (p > pdf.numPages) {
-              this.setStatus(`${status} - loaded`);
-              return this._api.loaded(q, "OK");
-            }
-            return pdf.getPage(p).then((page) => {
-              var canvas, context, div, renderContext, scale, viewport;
-              scale = 1.5;
-              viewport = page.getViewport(scale);
-              div = ($("<div/>")).attr("id", "page-" + (page.pageIndex + 1));
-              ($(this.view)).append(div);
-              canvas = ($("<canvas>"))[0];
-              div.append(canvas);
-              context = canvas.getContext('2d');
-              canvas.height = viewport.height;
-              canvas.width = viewport.width;
-              renderContext = {
-                canvasContext: context,
-                viewport: viewport
-              };
-              page.render(renderContext);
-              this.setStatus(`${status} - ${p}/${pdf.numPages} loaded`);
-              return fn(p + 1);
-            });
-          };
-          return fn(1);
-        }).catch((err) => {
-          this.error(__("Cannot render the PDF file"));
-          return this._api.loaded(q, "FAIL");
+      return this.load(new Promise((resolve, reject) => {
+        var status;
+        status = `${file.info.name} (${file.info.size} Kb)`;
+        return file.read("binary").then((d) => {
+          ($(this.view)).removeClass();
+          return PDFJS.getDocument({
+            data: d
+          }).then((pdf) => {
+            var fn;
+            fn = (p) => {
+              if (p > pdf.numPages) {
+                this.setStatus(`${status} - loaded`);
+                return resolve();
+              }
+              return pdf.getPage(p).then((page) => {
+                var canvas, context, div, renderContext, scale, viewport;
+                scale = 1.5;
+                viewport = page.getViewport(scale);
+                div = ($("<div/>")).attr("id", "page-" + (page.pageIndex + 1));
+                ($(this.view)).append(div);
+                canvas = ($("<canvas>"))[0];
+                div.append(canvas);
+                context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                renderContext = {
+                  canvasContext: context,
+                  viewport: viewport
+                };
+                page.render(renderContext);
+                this.setStatus(`${status} - ${p}/${pdf.numPages} loaded`);
+                return fn(p + 1);
+              }).catch(function(e) {
+                return reject(e);
+              });
+            };
+            return fn(1);
+          }).catch(function(e) {
+            return reject(e);
+          });
+        }).catch(function(e) {
+          return reject(e);
         });
-      }).catch((e) => {
-        this._api.loaded(q, "FAIL");
-        return this.error(__("Unable to read file: {}", file.path), e);
+      })).catch((e) => {
+        return this.error(__("Unable to view file: {}", file.path), e);
       });
     }
 
