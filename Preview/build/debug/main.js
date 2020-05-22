@@ -203,13 +203,13 @@
             return this.renderPDFPages(n + 1, scale, recursive).then(function() {
               return resolve();
             }).catch(function(e) {
-              return reject(e);
+              return reject(__e(e));
             });
           } else {
             return resolve();
           }
         }).catch(function(e) {
-          return reject(e);
+          return reject(__e(e));
         });
       });
     }
@@ -226,13 +226,13 @@
               $(this.txtpage).val("1");
               return resolve();
             }).catch(function(e) {
-              return reject(e);
+              return reject(__e(e));
             });
           }).catch(function(e) {
-            return reject(e);
+            return reject(__e(e));
           });
         }).catch(function(e) {
-          return reject(e);
+          return reject(__e(e));
         });
       })).catch((e) => {
         return this.error(__("Unable to view file: {0}", this.currfile.path), e);

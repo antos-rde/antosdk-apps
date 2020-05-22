@@ -154,10 +154,10 @@ class Preview extends this.OS.GUI.BaseApplication
                 if recursive
                     @renderPDFPages n + 1, scale, recursive
                         .then () -> resolve()
-                        .catch (e) -> reject e
+                        .catch (e) -> reject __e e
                 else
                     resolve()
-            .catch (e) -> reject e
+            .catch (e) -> reject __e e
 
     renderPDF: () ->
         @load new Promise (resolve, reject) =>
@@ -170,9 +170,9 @@ class Preview extends this.OS.GUI.BaseApplication
                         .then () =>
                             $(@txtpage).val("1")
                             resolve()
-                        .catch (e) -> reject e
-                .catch (e) -> reject e
-            .catch (e) -> reject e
+                        .catch (e) -> reject __e e
+                .catch (e) -> reject __e e
+            .catch (e) -> reject __e e
         .catch (e) => @error __("Unable to view file: {0}", @currfile.path), e
 
     renderSVG: () ->
