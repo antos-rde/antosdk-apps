@@ -150,11 +150,13 @@ class MarkOn extends this.OS.GUI.BaseApplication
     cleanup: (evt) ->
         return unless @currfile.dirty
         evt.preventDefault()
-        @.openDialog "YesNoDialog", (d) =>
+        @.openDialog("YesNoDialog", {
+            title: __("Quit"),
+            text: __("Quit without saving ?")
+        }).then (d) =>
             if d
                 @currfile.dirty = false
                 @quit()
-        , __("Quit"), { text: __("Quit without saving ?") }
 
 MarkOn.dependencies = [
     "os://scripts/mde/simplemde.min.js",
