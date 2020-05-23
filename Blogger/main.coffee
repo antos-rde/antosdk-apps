@@ -170,6 +170,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             
         @editor = new SimpleMDE
             element: @find "markarea"
+            autoDownloadFontAwesome: false
             autofocus: true
             tabSize: 4
             indentWithTabs: true

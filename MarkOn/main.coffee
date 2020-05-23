@@ -31,6 +31,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
         @editormux = false
         @editor = new SimpleMDE
             element: markarea
+            autoDownloadFontAwesome: false
             autofocus: true
             tabSize: 4
             indentWithTabs: true

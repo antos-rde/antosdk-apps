@@ -23,7 +23,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.0.6-a",
+		"version": "0.0.7-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
 	},
 	{
@@ -41,7 +41,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/README.md",
 		"category": "Utils",
 		"author": "Xuan Sang LE",
-		"version": "0.0.3-a",
+		"version": "0.0.4-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
 	},
 	{

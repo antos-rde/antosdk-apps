@@ -80,6 +80,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BasicDialog
     main: () ->
         super.main()
         @editor = new SimpleMDE
+            autoDownloadFontAwesome: false
             element: @find "contentarea"
             status: false
             toolbar: false
