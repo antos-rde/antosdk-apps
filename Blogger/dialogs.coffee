@@ -17,141 +17,151 @@
 #along with this program. If not, see https://www.gnu.org/licenses/.
 class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
-        super "BloggerCategoryDialog", {
-            tags: [
-                { tag: "afx-label", att: "data-height = '20', text = 'Pick a parent'" },
-                { tag: "afx-tree-view" },
-                { tag: "afx-label", att: "data-height = '20', text = 'Category name'" },
-                { tag: "input", att: "type = 'text' data-height = '20'" }
-            ],
-            width: 200,
-            height: 300,
-            resizable: true,
-            buttons: [
-                {
-                    label: "0k",
-                    onclick: (d) ->
-                        sel = (d.find "content1").get "selectedItem"
-                        return d.notify __("Please select a parent category") unless sel
-                        val = (d.find "content3").value
-                        return d.notify __("Please enter category name") if val is "" and not d.data.selonly
-                        return d.notify __("Parent can not be the category itself") if d.data.cat and d.data.cat.id is sel.id
-                        d.handler { p: sel, value: val } if d.handler
-                        d.quit()
-                },
-                {
-                    label: "Cancel",
-                    onclick: (d) -> d.quit()
-                }
-            ],
-            filldata: (d) ->
-                return unless d.data
-                #console.log d.data
-                tree = d.find "content1"
-                tree.set "data", d.data.tree if d.data.tree
-                if d.data.cat
-                    it = (tree.find "id", d.data.cat.pid)[0]
-                    tree.set "selectedItem", it
-                    (d.find "content3").value = d.data.cat.name
-                #(d.find "content0").set "text", d.data.label
-                #(d.find "content1").value = d.data.value if d.data.value
-            xtra: (d) ->
-                $( d.find "content3" ).keyup (e) ->
-                    (d.find "bt0").trigger() if e.which is 13
-        }
+        super "BloggerCategoryDialog"
+        
+    main: () ->
+        super.main()
+        @tree = @find "tree"
+        @txtinput = @find "txtinput"
+        
+        (@find "bt-ok").set "onbtclick", (e) =>
+            sel = @tree.get "selectedItem"
+            return @notify __("Please select a parent category") unless sel
+            seldata = sel.get "data"
+            val = @txtinput.value
+            return @notify __("Please enter category name") if val is "" and not @data.selonly
+            return @notify __("Parent can not be the category itself") if @data.cat and @data.cat.id is seldata.id
+            @handle { p: seldata, value: val } if @handle
+            @quit()
+            
+        (@find "bt-cancel").set "onbtclick", (e) =>
+            @quit()
+        if @data and @data.tree
+            if @data and @data.cat
+                @txtinput.value = @data.cat.name
+                if @data.cat.pid is "0"
+                    seldata = @data.tree
+                else
+                    seldata = @findDataByID @data.cat.pid, @data.tree.nodes
+                seldata.selected = true if seldata
+            @tree.set "data", @data.tree
+            @tree.expandAll()
+            # TODO set selected category name
+
+    findDataByID: (id, list) ->
+        for data in list
+            return data if data.id is id
+            if data.nodes
+                @findDataByID id, data.nodes
+        return undefined
+            
+BloggerCategoryDialog.scheme = """
+<afx-app-window width='300' height='400'>
+    <afx-vbox>
+        <afx-label text="__(Pick a parent)" data-height="25" class="lbl-header" ></afx-label>
+        <afx-tree-view data-id="tree" ></afx-tree-view>
+        <afx-label text="__(Category name)" data-height="25" class="lbl-header" ></afx-label>
+        <input type="text" data-height="25" data-id = "txtinput"/ >
+        <div data-height = '30' style=' text-align:right;padding:3px;'>
+            <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+            <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+        </div>
+    </afx-vbox>
+</afx-app-window>
+"""
 
 # This dialog is use for cv section editing
 
-class BloggerCVSectionDiaglog extends this.OS.GUI.BaseDialog
-    constructor: () ->
-        super "BloggerCVSectionDiaglog"
-
-    init: () ->
-        @render "#{@path()}/cvsection.html"
+class BloggerCVSectionDiaglog extends this.OS.GUI.BasicDialog
+    constructor: (parent) ->
+        file = "#{parent.meta().path}/cvsection.html".asFileHandle()
+        super "BloggerCVSectionDiaglog", file
 
     main: () ->
-        me = @
-        @scheme.set "apptitle", @title
+        super.main()
         @editor = new SimpleMDE
             element: @find "contentarea"
             status: false
             toolbar: false
         ($ (@select '[class = "CodeMirror-scroll"]')[0]).css "min-height", "50px"
         ($ (@select '[class="CodeMirror cm-s-paper CodeMirror-wrap"]')[0]).css "min-height", "50px"
-        @on "vboxchange", () ->
-            me.resizeContent()
-            
-        inputs = me.select "[input-class='user-input']"
-        (($ v).val me.data[v.name] for v in inputs ) if me.data
-        @editor.value me.data.content if me.data and me.data.content
-        (me.find "section-publish").set "swon", (if Number(me.data.publish) then true else false)
-        (@find "bt-cv-sec-save").set "onbtclick", (e) ->
+        inputs = @select "[input-class='user-input']"
+        (($ v).val @data.section[v.name] for v in inputs ) if @data and @data.section
+        @editor.value @data.section.content if @data and @data.section
+        (@find "section-publish").set "swon", (if @data and @data.section and Number(@data.section.publish) then true else false)
+        (@find "bt-cv-sec-save").set "onbtclick", (e) =>
             data = {}
-            console.log inputs
             data[v.name] = ($ v).val() for v in inputs
-            data.content = me.editor.value()
-            return me.notify __("Title or content must not be blank") if data.title is "" and data.content is ""
-            #return me.notify "Content must not be blank" if data.content is ""
-            data.id = me.data.id if me.data and me.data.id
-            if (me.find "section-publish").get "swon"
+            data.content = @editor.value()
+            return @notify __("Title or content must not be blank") if data.title is "" and data.content is ""
+            #return @notify "Content must not be blank" if data.content is ""
+            data.id = @data.section.id if @data and @data.section
+            val = (@find "section-publish").get "swon"
+            if val is true
                 data.publish = 1
             else
                 data.publish = 0
+            @handle data if @handle
+            @quit()
             
-            me.handler data if me.handler
-            me.quit()
-        me.resizeContent()
+        @on "vboxchange", () => @resizeContent()
+        @resizeContent()
+    
     resizeContent: () ->
         container = @find "editor-container"
         children = ($ container).children()
         cheight = ($ container).height() - 30
         ($ children[1]).css("height", cheight + "px")
+    
 
 # this dialog is for send mail
-class BloggerSendmailDiaglog extends this.OS.GUI.BaseDialog
-    constructor: () ->
-        super "BloggerCVSectionDiaglog"
-
-    init: () ->
-        @render "#{@path()}/sendmail.html"
-        @subdb = new @.parent._api.DB("subscribers")
+class BloggerSendmailDiaglog extends this.OS.GUI.BasicDialog
+    constructor: (parent) ->
+        file = "#{parent.meta().path}/sendmail.html".asFileHandle()
+        super "BloggerSendmailDiaglog", file
 
     main: () ->
-        # get db
-        me = @
+        super.main()
+        @subdb = new @.parent._api.DB("subscribers")
         @maillinglist = @find "email-list"
         title = (new RegExp "^#+(.*)\n", "g").exec @data.content
         (@find "mail-title").value = title[1]
         content = (@data.content.substring 0, 500) + "..."
-        (@find "contentarea").value = BloggerSendmailDiaglog.template.format @data.id, content, @data.id
+        (@find "contentarea").value = BloggerSendmailDiaglog.template.format @data.id, content
 
-        @subdb.find {}, (d) ->
-            return me.error __("Cannot fetch subscribers data: {0}", d.error) if d.error
-            for v in d.result
-                v.text = v.name
-                v.switch = true
-                v.checked = true
+        @subdb.find {}
+            .then (d) =>
+                for v in d
+                    v.text = v.name
+                    v.switch = true
+                    v.checked = true
+                @maillinglist.set "items", d
+            .catch (e) =>
+                @error __("Cannot fetch subscribers data: {0}", e.toString()), e
 
-            me.maillinglist.set "items", d.result
-
-        (@find "bt-sendmail").set "onbtclick", (e) ->
-            items = me.maillinglist.get "items"
+        (@find "bt-sendmail").set "onbtclick", (e) =>
+            items = @maillinglist.get "items"
             emails = []
-            emails.push v.email for v in items when v.checked is true
-            return me.notify __("No email selected") if emails.length is 0
+            for v in items
+                if v.checked is true
+                    console.log v.email
+                    emails.push v.email
+            
+            return @notify __("No email selected") if emails.length is 0
             # send the email
             data =
-                path: "#{me.parent.path()}/sendmail.lua",
+                path: "#{@parent.path()}/sendmail.lua",
                 parameters:
                     to: emails,
-                    title: (me.find "mail-title").value,
-                    content: (me.find "contentarea").value
-            me._api.post "system/apigateway", data, (d) ->
-                me.notify "Sendmail: {0}".format d
-                me.quit()
-            , (e, s) ->
-                console.log e
-                me.error __("Error sending mail: {0}", e.responseText)
+                    title: (@find "mail-title").value,
+                    content: (@find "contentarea").value
+            @_api.apigateway data, false
+                .then (d) =>
+                    return @notify __("Unable to send mail to: {0}", d.result.join(", ")) if d.error
+                    @quit()
+                .catch (e) =>
+                    console.log e
+                    @error __("Error sending mail: {0}", e.toString()), e
 
             
 
@@ -166,7 +176,7 @@ Xuan Sang LE has just published a new post on his blog: https://blog.lxsang.me/p
 
 
 Read the full article via:
-https://blog.lxsang.me/post/id/{2}
+https://blog.lxsang.me/post/id/{0}
 
 You receive this email because you have been subscribed to his blog.
 

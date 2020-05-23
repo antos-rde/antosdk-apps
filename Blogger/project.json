@@ -1,0 +1,16 @@
+{
+    "name": "Blogger",
+    "root": "home://workspace/antosdk-apps/Blogger",
+    "css": ["main.css", "katex/katex.css"],
+    "javascripts": ["katex/katex.js", "katex/auto-render.js"],
+    "coffees": ["main.coffee", "dialogs.coffee", "tags.coffee"],
+    "copies": [
+        "scheme.html",
+        "cvsection.html",
+        "api/sendmail.lua",
+        "sendmail.html",
+        "package.json",
+        "README.md",
+        "katex/fonts"
+    ]
+}

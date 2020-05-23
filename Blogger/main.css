@@ -1,94 +1,92 @@
-afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"]  {
+afx-app-window[data-id="blogger-win"] afx-tab-container[data-id="tabcontainer"] afx-tab-bar afx-list-view > div.list-container   {
     padding: 0;
     margin: 0;
-    background-color: #333333;
+    border-right: 1px solid #292929;
 }
 
-afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] > div > ul > li {
-    background-color: #333333;
-    font-size: 20px;
-    color: #929292;
+afx-app-window[data-id="blogger-win"] afx-tab-container[data-id="tabcontainer"] afx-tab-bar afx-list-view > div.list-container > ul li{
+    font-size: 15px;
+    padding:0;
+    width: 100%;
+    border-radius: 0;
+    border:0;
+    margin: 0;
+    text-align: center;
 }
-
-afx-app-window[data-id="blogger-win"] afx-list-view[data-id="tabbar"] > div > ul > li.selected{
+afx-app-window[data-id="blogger-win"] afx-tab-container[data-id="tabcontainer"] afx-tab-bar afx-list-view > div.list-container > ul li.selected {
+    background-color: #116cd6;
     color:white;
 }
-afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] {
-    padding: 10px;
-}
-afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-hbox{
-    margin-bottom: 5px;
-    margin-top: 5px;
-}
-afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-label{
+
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-label i.label-text{
     font-weight: bold;
 }
-afx-app-window[data-id="blogger-win"] afx-hbox.cv-side-bar-btn{
-    padding-left:3px;
-    padding-top:3px;
-    background-color: #f6F6F6;
-    border-top: 1px solid #cbcbcb;
-    color:#414339;
-}
-afx-app-window[data-id="blogger-win"] afx-resizer{
-    border-left: 1px solid #cbcbcb;
-    background-color: transparent;
+
+afx-app-window .lbl-header i.label-text{
+    font-weight: bold;
 }
 afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"]  afx-label.cat-header{
-    background-color: #f6F6F6;
     border-bottom: 1px solid #cbcbcb;
     text-align: center;
 }
 
-afx-app-window[data-id="blogger-cv-sec-win"] afx-hbox{
-    padding-left:5px;
-    padding-right:5px;
-}
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li{
-    padding-bottom: 10px;
-    padding-top:10px;
-    /*border-bottom: 1px solid  #cbcbcb;*/
-}
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul  afx-label{
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > .list-container > ul  .afx-cv-sec-title .label-text{
     font-weight: bold;
     
 }
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul >li:nth-child(odd){
-    background-color: white;
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item afx-label {
+    display: block;
+    
 }
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li.selected  {
-    border: 2px solid  #116cd6;
-    color: #414339;
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item p {
+    padding: 0;
+    margin: 0;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item .afx-cv-sec-period,
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item .afx-cv-sec-loc {
+    text-align: right;
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item afx-cv-sec-content{
+    text-align: justify;
+    overflow-wrap: break-word;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul  li.selected  {
+    border: 1px solid  #116cd6;
     background-color: transparent;
     border-radius: 5px;
 }
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul > li.selected ul.complex-content li{
-    color: #414339;
-}
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-content{
-    text-align: justify;
-}
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-period, .cv-loc{
-    text-align: right;
-    clear: both;
-}
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .cv-subtitle{
-    font-style: italic;
-    float:left;
-} 
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] i.closable::before{
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .closable::before{
     content: "\f014";
-    font-size: 15px; 
+    font-size: 14px; 
 }
 
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul  afx-label{
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .period-end::before{
+    content: "-";
+}
+
+afx-app-window[data-id ='blogger-win'] .editor-toolbar{
+    background-color: white;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul li afx-label {
+    display: block;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul .afx-blogpost-title .label-text{
     font-weight: bold;
 }
 
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul  .blog-dates{
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul  .blog-dates .label-text{
     font-size: 10px;
+    font-weight: normal;
 }
 
-afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul > li.selected  .blog-dates{
-    color: white;
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul li.selected {
+    background-color: #116cd6;
+    color:white;
 }

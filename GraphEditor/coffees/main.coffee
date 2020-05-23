@@ -259,6 +259,6 @@ graph TD;
     C-->D;
 """
 GraphEditor.dependencies = [
-    "ace/ace"
+    "os://scripts/ace/ace.js"
 ]
 this.OS.register "GraphEditor", GraphEditor

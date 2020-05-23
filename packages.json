@@ -18,6 +18,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
 	{
+		"pkgname": "Blogger",
+		"name": "Blogging application",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
+		"category": "Internet",
+		"author": "Xuan Sang LE",
+		"version": "0.0.6-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
