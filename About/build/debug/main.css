@@ -5,3 +5,12 @@ afx-app-window[data-id = "About"] a:hover
 {
     color:#df3154;
 }
+afx-app-window[data-id = "About"] afx-hbox[data-id="wrapper"]
+{
+    overflow-x: hidden;
+    overflow-y:auto;
+}
+afx-app-window[data-id = "About"] div[data-id="container"]
+{
+    text-align: justify;
+}
