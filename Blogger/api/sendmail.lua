@@ -6,7 +6,7 @@ local iserror = false
 for k,v in pairs(data.to) do
     print("sent to:"..v)
     local to = v
-    local from = "From: xsang.le@gmail.com\n"
+    local from = "From: mrsang@lxsang.me\n"
     local suject = "Subject: " .. data.title .. "\n"
     local content = data.content.."\n"
     local cmd = 'echo "' .. utils.escape(from .. suject .. content) .. '"| sendmail ' .. to
