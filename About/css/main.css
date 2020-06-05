@@ -1,0 +1,6 @@
+afx-app-window[data-id = "About"] a:link,
+afx-app-window[data-id = "About"] a:visited,
+afx-app-window[data-id = "About"] a:hover
+{
+    color:#df3154;
+}
