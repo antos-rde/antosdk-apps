@@ -17,24 +17,24 @@
 #along with this program. If not, see https://www.gnu.org/licenses/.
 class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
-        super "BloggerCategoryDialog"
+        super "BloggerCategoryDialog", BloggerCategoryDialog.scheme
         
     main: () ->
         super.main()
         @tree = @find "tree"
         @txtinput = @find "txtinput"
         
-        (@find "bt-ok").set "onbtclick", (e) =>
-            sel = @tree.get "selectedItem"
+        (@find "bt-ok").onbtclick = (e) =>
+            sel = @tree.selectedItem
             return @notify __("Please select a parent category") unless sel
-            seldata = sel.get "data"
+            seldata = sel.data
             val = @txtinput.value
             return @notify __("Please enter category name") if val is "" and not @data.selonly
             return @notify __("Parent can not be the category itself") if @data.cat and @data.cat.id is seldata.id
             @handle { p: seldata, value: val } if @handle
             @quit()
             
-        (@find "bt-cancel").set "onbtclick", (e) =>
+        (@find "bt-cancel").onbtclick = (e) =>
             @quit()
         if @data and @data.tree
             if @data and @data.cat
@@ -44,7 +44,7 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
                 else
                     seldata = @findDataByID @data.cat.pid, @data.tree.nodes
                 seldata.selected = true if seldata
-            @tree.set "data", @data.tree
+            @tree.data = @data.tree
             @tree.expandAll()
             # TODO set selected category name
 
@@ -62,10 +62,13 @@ BloggerCategoryDialog.scheme = """
         <afx-tree-view data-id="tree" ></afx-tree-view>
         <afx-label text="__(Category name)" data-height="25" class="lbl-header" ></afx-label>
         <input type="text" data-height="25" data-id = "txtinput"/ >
-        <div data-height = '30' style=' text-align:right;padding:3px;'>
-            <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
-            <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
-        </div>
+        <afx-hbox data-height = '30'>
+            <div  style=' text-align:right;'>
+                <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+            <div data-width="5"></div>
+        </afx-hbox>
     </afx-vbox>
 </afx-app-window>
 """
@@ -89,15 +92,15 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BasicDialog
         inputs = @select "[input-class='user-input']"
         (($ v).val @data.section[v.name] for v in inputs ) if @data and @data.section
         @editor.value @data.section.content if @data and @data.section
-        (@find "section-publish").set "swon", (if @data and @data.section and Number(@data.section.publish) then true else false)
-        (@find "bt-cv-sec-save").set "onbtclick", (e) =>
+        (@find "section-publish").swon = (if @data and @data.section and Number(@data.section.publish) then true else false)
+        (@find "bt-cv-sec-save").onbtclick = (e) =>
             data = {}
             data[v.name] = ($ v).val() for v in inputs
             data.content = @editor.value()
             return @notify __("Title or content must not be blank") if data.title is "" and data.content is ""
             #return @notify "Content must not be blank" if data.content is ""
             data.id = @data.section.id if @data and @data.section
-            val = (@find "section-publish").get "swon"
+            val = (@find "section-publish").swon
             if val is true
                 data.publish = 1
             else
@@ -136,12 +139,12 @@ class BloggerSendmailDiaglog extends this.OS.GUI.BasicDialog
                     v.text = v.name
                     v.switch = true
                     v.checked = true
-                @maillinglist.set "items", d
+                @maillinglist. items = d
             .catch (e) =>
                 @error __("Cannot fetch subscribers data: {0}", e.toString()), e
 
-        (@find "bt-sendmail").set "onbtclick", (e) =>
-            items = @maillinglist.get "items"
+        (@find "bt-sendmail").onbtclick = (e) =>
+            items = @maillinglist.items
             emails = []
             for v in items
                 if v.checked is true

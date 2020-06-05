@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-class MarkOn extends this.OS.GUI.BaseApplication
+class MarkOn extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "MarkOn", args
     
@@ -63,7 +63,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
             return if @editormux
             if @currfile.dirty is false
                 @currfile.dirty = true
-                @scheme.set "apptitle", "#{@currfile.basename}*"
+                @scheme.apptitle = "#{@currfile.basename}*"
         @on "hboxchange", (e) => @resizeContent()
         @bindKey "ALT-N", () => @actionFile "#{@name}-New"
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
@@ -89,7 +89,7 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 @currfile = file
                 @editormux = true
                 @editor.value d
-                @scheme.set "apptitle", "#{@currfile.basename}"
+                @scheme.apptitle = "#{@currfile.basename}"
                 @editormux = false
             .catch (e) => @error __("Unable to open: {0}", file.path), e
             
@@ -100,19 +100,19 @@ class MarkOn extends this.OS.GUI.BaseApplication
                 return @error __("Error saving file {0}: {1}", file.basename, d.error) if d.error
                 file.dirty = false
                 file.text = file.basename
-                @scheme.set "apptitle", "#{@currfile.basename}"
+                @scheme.apptitle = "#{@currfile.basename}"
             .catch (e) => @error __("Unable to save file: {0}", file.path), e
     
     menu: () ->
         menu = [{
                 text: "__(File)",
-                child: [
+                nodes: [
                     { text: "__(New)", dataid: "#{@name}-New", shortcut: "A-N" },
                     { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O" },
                     { text: "__(Save)", dataid: "#{@name}-Save", shortcut: "C-S" },
                     { text: "__(Save as)", dataid: "#{@name}-Saveas", shortcut: "A-W" }
                 ],
-                onchildselect: (e) => @actionFile e.data.item.get("data").dataid
+                onchildselect: (e) => @actionFile e.data.item.data.dataid
             }]
         menu
     

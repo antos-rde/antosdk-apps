@@ -1,4 +1,4 @@
-class TinyEditor extends this.OS.GUI.BaseApplication
+class TinyEditor extends this.OS.application.BaseApplication
     constructor: ( args ) ->
         super "TinyEditor", args
     
@@ -11,20 +11,20 @@ class TinyEditor extends this.OS.GUI.BaseApplication
         $(@editor).on 'input', (e) =>
             return if @filehandle.dirty is true
             @filehandle.dirty = true
-            @scheme.set "apptitle", "#{@filehandle.path}*"
+            @scheme.apptitle = "#{@filehandle.path}*"
         @read()
         
     menu: () ->
         m = [ 
             {
                 text: "__(File)",
-                child: [
+                nodes: [
                     { text: "__(New)", dataid :"new", shortcut: 'A-N' },
                     { text: "__(Open)", dataid :"open", shortcut: 'A-O' },
                     { text: "__(Save)", dataid :"save", shortcut: 'C-S' }
                 ],
                 onchildselect: (e) =>
-                    switch e.data.item.get("data").dataid
+                    switch e.data.item.data.dataid
                         when "new" then @newFile()
                         when "open" then @openFile()
                         when "save" then @saveFile()
@@ -59,17 +59,17 @@ class TinyEditor extends this.OS.GUI.BaseApplication
         @editor.value = ""
         if @filehandle is null
             @filehandle = "Untitled".asFileHandle()
-            @scheme.set "apptitle", "Untitled"
+            @scheme.apptitle = "Untitled"
             return
         @filehandle.read().then (d) =>
-            @scheme.set "apptitle", @filehandle.path
+            @scheme.apptitle = @filehandle.path
             @editor.value = d
         .catch (e) => @error __("Unable to read file content")
     
     write: () ->
         @filehandle.write("text/plain").then (d) =>
             @filehandle.dirty = false
-            @scheme.set "apptitle", "#{@filehandle.path}"
+            @scheme.apptitle = "#{@filehandle.path}"
         .catch (e) => @error __("Error saving file {0}", @filehandle.path), e
             
     
@@ -77,7 +77,8 @@ class TinyEditor extends this.OS.GUI.BaseApplication
         return unless @filehandle.dirty
         e.preventDefault()
         @ask { title: "__(Quit)", text: "__(Quit without saving?)" }
-        .then () =>
+        .then (d) =>
+            return unless d
             @filehandle.dirty = false
             @quit()
     

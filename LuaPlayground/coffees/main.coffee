@@ -142,7 +142,7 @@ class PointCloudViewer extends DataViewer
     
 
 
-class LuaPlayground extends this.OS.GUI.BaseApplication
+class LuaPlayground extends this.OS.application.BaseApplication
     constructor: ( args ) ->
         super "LuaPlayground", args
         
@@ -166,12 +166,12 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
         @editor.setTheme "ace/theme/monokai"
         @on "vboxchange", () =>
             @editor.resize()
-        (@find "log-clear").set "onbtclick", (e) =>
+        (@find "log-clear").onbtclick = (e) =>
             @log "clean"
-        (@find "code-run").set "onbtclick", (e) =>
+        (@find "code-run").onbtclick = (e) =>
             @run()
         
-        (@find "code-stop").set "onbtclick", (e) =>
+        (@find "code-stop").onbtclick = (e) =>
             @socket.close() if @socket
         
         @socket = null
@@ -179,7 +179,7 @@ class LuaPlayground extends this.OS.GUI.BaseApplication
     menu: () ->
         menu = [{
                 text: "__(Code)",
-                child: [
+                nodes: [
                     { text: "__(Run)", dataid: "#{@name}-Run", shortcut: "C-R" }
                 ],
                 onchildselect: (e) => @run()

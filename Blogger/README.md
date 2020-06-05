@@ -1,4 +1,4 @@
 # Blogger
-Blackend for my blog at 
 
-"katex/fonts",
+Blackend for my blog at https://blog.iohub.dev
+

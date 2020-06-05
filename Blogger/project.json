@@ -10,7 +10,7 @@
         "api/sendmail.lua",
         "sendmail.html",
         "package.json",
-        "README.md",
-        "katex/fonts"
+        "katex/fonts",
+        "README.md"
     ]
 }

@@ -16,18 +16,18 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 _PM = this.OS.PM
-_APP = this.OS.APP
-class ActivityMonitor extends this.OS.GUI.BaseApplication
+_APP = this.OS.application
+class ActivityMonitor extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "ActivityMonitor", args
     main: () ->
-        @scheme.set "apptitle", "Activity Monitor"
+        @scheme.apptitle = "Activity Monitor"
         @grid = @find "mygrid"
         @on "btclick", (e) =>
             return unless e.id == "btkill"
-            item = @grid.get "selectedRow"
+            item = @grid.selectedRow
             return unless item
-            data = item.get("data")[0]
+            data = item.data[0]
             app = _PM.appByPid data.text
             app.quit(true) if app
 
@@ -52,7 +52,7 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
             processes: {}
             alive: []
         }
-        @grid.set "header", header
+        @grid.header = header
         @monitor()
     
     monitor: () ->
@@ -84,7 +84,7 @@ class ActivityMonitor extends this.OS.GUI.BaseApplication
         
         $.each @gdata.processes, (i, e) =>
             if ($.inArray (Number i), @gdata.alive) < 0
-                @grid.remove @gdata.processes[i].domel
+                @grid.delete @gdata.processes[i].domel
                 @gdata.processes[i] = undefined
                 delete @gdata.processes[i]
 

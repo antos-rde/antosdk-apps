@@ -1,4 +1,4 @@
-class About extends this.OS.GUI.BaseApplication
+class About extends this.OS.application.BaseApplication
     constructor: ( args ) ->
         super "About", args
         
@@ -14,7 +14,7 @@ class About extends this.OS.GUI.BaseApplication
             .catch () =>
                 @notify __("Unable to read: {0}", path)
         
-        @find("btnclose").set "onbtclick", () =>
+        @find("btnclose").onbtclick = () =>
             @quit()
 
 About.singleton = true

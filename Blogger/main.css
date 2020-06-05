@@ -25,7 +25,7 @@ afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-lab
 afx-app-window .lbl-header i.label-text{
     font-weight: bold;
 }
-afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"]  afx-label.cat-header{
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"] .cat-header{
     border-bottom: 1px solid #cbcbcb;
     text-align: center;
 }

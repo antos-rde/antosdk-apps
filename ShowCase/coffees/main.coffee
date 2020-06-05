@@ -1,23 +1,18 @@
 Ant = this
-class ShowCase extends this.OS.GUI.BaseApplication
+class ShowCase extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "ShowCase", args
     
     main: () ->
         
         bt = @find 'bttest'
-        bt.set "onbtclick", (e) =>
-            @error "test error"
         
         @observable.on "btclick", (e) =>
             @notify "button clicked"
 
-        @observable.on "menuselect", (e) =>
-            @notify e.id
-
         list = @find 'list'
 
-        list.set "data", [
+        list.data = [
             { text: "some thing with avery long text" },
             { text: "some thing 1", closable: true },
             { text: "some thing 2", iconclass: "fa fa-camera-retro fa-lg" },
@@ -25,70 +20,60 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "some thing 4" },
             { text: "some thing 5" }
         ]
-        list.unshift { text: "shifted el" }
-        list.set "onlistselect", (e) => @notify(e.data.items)
+        
+        list.onlistselect = (e) => @notify(e.data.items)
 
         sw = @find 'switch'
-        sw.set "onchange", (e) =>
+        sw.onswchange = (e) =>
             @notify e.data
         
         spin = @find 'spin'
-        spin.set "onchange", (e) =>
+        spin.onvaluechange = (e) =>
             @notify e.data
 
         menu = @find 'menu'
-        menu.set "items", @menu()
+        menu.items = @menu()
 
         list.contextmenuHandle = (e, m) =>
-            m.set "items", @menu()
+            m.items = @menu()
             m.show e
         
         grid = @find 'grid'
-        grid.set "oncelldbclick", (e) =>
+        grid.oncelldbclick = (e) =>
             @notify  "on dbclick", e
-        grid.set "onrowselect", (e) =>
-            @notify  "on rowselect", e.data.items
+        grid.onrowselect = (e) =>
+            @notify  "on rowselect"
         
-        @observable.on "cellselect", (e) ->
-            console.log  "observable", e
-        
-        grid.set "header", [{ text: "header1", width: 80 }, { text: "header2" }, { text: "header3" }]
-        grid.set "rows", [
+        grid.header = [{ text: "header1", width: 80 }, { text: "header2" }, { text: "header3" }]
+        grid.rows = [
             [{ text: "text 1" }, { text: "text 2" }, { text: "text 3" }],
             [{ text: "text 4" }, { text: "text 5" }, { text: "text 6" }],
             [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "Subgrid on columns and rows. Subgrid on columns, implicit grid rows. Subgrid on rows, defined column tracks" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }],
-            [{ text: "text 7" }, { text: "text 8" }, { text: "text 9" }]
+            [{ text: "text 10" }, { text: "this is a long text" }, { text: "text 11" }]
         ]
 
         tdata = {
-            name: 'My Tree',
+            text: 'Tree root',
             nodes: [
-                { name: 'hello', iconclass:'fa fa-car'},
-                { name: 'wat' },
+                { text: 'leaf 1', iconclass:'fa fa-car'},
+                { text: 'leaf 2' },
                 {
-                    name: 'child folder',
+                    text: 'sub tree 1',
                     nodes: [
                         {
-                            name: 'child folder',
+                            text: 'sub sub tree 1',
                             nodes: [
-                                { name: 'hello' },
-                                { name: 'wat' }
+                                { text: 'leaf 1 of sub sub tree 1' },
+                                { text: 'leaf 2 of sub sub tree 1' }
                             ]
                         },
-                        { name: 'hello' },
-                        { name: 'wat' },
+                        { text: 'leaf 1 of sub tree' },
+                        { text: 'leaf 2 of sub tree' },
                         {
-                            name: 'child folder',
+                            text: 'sub sub tree 2',
                             nodes: [
-                                { name: 'hello' },
-                                { name: 'wat' }
+                                { text: 'leaf 1 of sub sub tree 2' },
+                                { text: 'leaf 2 of sub sub tree 2' }
                             ]
                         }
                     ]
@@ -97,30 +82,28 @@ class ShowCase extends this.OS.GUI.BaseApplication
         }
 
         tree = @find 'tree'
-        tree.set "data", tdata
-        tree.set "ontreeselect", (e) =>
-            @notify e.data.item.get "treepath"
-        tree.set "ontreedbclick", (e) =>
-            @notify "treedbclick", e
+        tree.data = tdata
+        tree.ontreeselect = (e) =>
+            @notify e.data.item.treepath
+        tree.ontreedbclick = (e) =>
+            @notify "treedbclick"
         @observable.on "treedbclick", (e) =>
-            @notify "observable treedbclick", e
+            @notify "observable treedbclick"
         
         slider = @find 'slider'
-        slider.set "onchange", (v) =>
+        slider.onvaluechange = (v) =>
             @notify v
 
         cal = @find 'cal'
-        cal.set "ondateselect", (e) =>
-            @notify e
+        cal.ondateselect = (e) =>
+            @notify e.data.toString()
         
         pk = @find 'cpk'
-        pk.set "oncolorselect", (e) =>
-            @notify e
-        pk.set "oncolorselect", (e) =>
-            @notify e
+        pk.oncolorselect = (e) =>
+            @notify JSON.stringify(e)
 
         fileview = @find 'fileview'
-        fileview.set "fetch", (path) ->
+        fileview.fetch = (path) ->
             new Promise (resolve, reject) ->
                 dir = path.asFileHandle()
                 dir.read().then (d) ->
@@ -130,22 +113,22 @@ class ShowCase extends this.OS.GUI.BaseApplication
                     return reject d.error if d.error
                     d.result.unshift p
                     resolve d.result
-        fileview.set "path", "home:///"
+        fileview.path = "home:///"
 
         viewoption =  @find 'viewoption'
-        viewoption.set "data", [
+        viewoption.data = [
             { text: "icon" },
             { text: "list" },
             { text: "tree" }
         ]
-        viewoption.set "onlistselect", (e) =>
-            @notify e.data.item.get("data").text
-            fileview.set "view", e.data.item.get("data").text
+        viewoption.onlistselect = (e) =>
+            @notify e.data.item.data.text
+            fileview.view = e.data.item.data.text
 
         dllist = @find "dialoglist"
         btrun = @find "btrundia"
 
-        dllist.set "data", [
+        dllist.data = [
             { text: "Prompt dialog", id: "prompt" },
             { text: "Calendar dialog", id: "calendar" },
             { text: "Color picker dialog", id: "colorpicker" },
@@ -157,10 +140,10 @@ class ShowCase extends this.OS.GUI.BaseApplication
             { text: "Text dialog", id: "text" }
         ]
 
-        btrun.set "onbtclick", (e) =>
-            item = dllist.get "selectedItem"
+        btrun.onbtclick = (e) =>
+            item = dllist.selectedItem
             return unless item
-            switch item.get("data").id
+            switch item.data.id
                 when "prompt"
                     @openDialog("PromptDialog", {
                             title: "Prompt review",
@@ -171,14 +154,14 @@ class ShowCase extends this.OS.GUI.BaseApplication
                             @notify d
                 when "calendar"
                     @openDialog("CalendarDialog", {
-                            title: "Calendar"
+                            title: "Calendar dialog"
                     })
                         .then (d) =>
-                            @notify d
+                            @notify d.toString()
                 when "colorpicker"
                     @openDialog("ColorPickerDialog")
                         .then (d) =>
-                            @notify d
+                            @notify JSON.stringify(d)
                 when "info"
                     @openDialog("InfoDialog", {
                         title: "Info application",
@@ -233,7 +216,7 @@ class ShowCase extends this.OS.GUI.BaseApplication
         #@notify file
         arr = {
             text: "__(File)",
-            child: [
+            nodes: [
                 { text: "__(New file)", dataid: "#{@name}-mkf", shortcut: 'C-F' },
                 { text: "__(New folder)", dataid: "#{@name}-mkdir", shortcut: 'C-D' },
                 { text: "__(Open with)", dataid: "#{@name}-open", child: @apps },
@@ -241,20 +224,20 @@ class ShowCase extends this.OS.GUI.BaseApplication
                 { text: "__(Download)", dataid: "#{@name}-download" },
                 { text: "__(Share file)", dataid: "#{@name}-share", shortcut: 'C-S' },
                 { text: "__(Properties)", dataid: "#{@name}-info", shortcut: 'C-I' }
-            ], onchildselect: (e) => @notify "child", e
+            ], onchildselect: (e) => @notify e.data.item.data.text
         }
         return arr
     mnEdit: () ->
 
         {
             text: "__(Edit)",
-            child: [
+            nodes: [
                 { text: "__(Rename)", dataid: "#{@name}-mv", shortcut: 'C-R' },
                 { text: "__(Delete)", dataid: "#{@name}-rm", shortcut: 'C-M' },
                 { text: "__(Cut)", dataid: "#{@name}-cut", shortcut: 'C-X' },
                 { text: "__(Copy)", dataid: "#{@name}-copy", shortcut: 'C-C' },
                 { text: "__(Paste)", dataid: "#{@name}-paste", shortcut: 'C-P' }
-            ], onchildselect: (e) => console.log  "child", e
+            ], onchildselect: (e) => @notify e.data.item.data.text
         }
 
     menu: () ->
@@ -263,8 +246,8 @@ class ShowCase extends this.OS.GUI.BaseApplication
             @mnEdit(),
             {
                 text: "__(View)",
-                child: [
-                    { text: "__(Refresh)", dataid: "#{@name}-refresh", onmenuselect: (e) -> console.log "select", e },
+                nodes: [
+                    { text: "__(Refresh)", dataid: "#{@name}-refresh"},
                     { text: "__(Sidebar)", switch: true, checked: true },
                     { text: "__(Navigation bar)", switch: true, checked: false },
                     { text: "__(Hidden files)", switch: true, checked: true, dataid: "#{@name}-hidden" },
@@ -272,9 +255,9 @@ class ShowCase extends this.OS.GUI.BaseApplication
                         { text: "__(Icon view)", radio: true, checked: true, dataid: "#{@name}-icon", type: 'icon' },
                         { text: "__(List view)", radio:true, checked: false, dataid: "#{@name}-list", type: 'list' },
                         { text: "__(Tree view)", radio:true, checked: false, dataid: "#{@name}-tree", type: 'tree' }
-                     ], onchildselect: (e) -> console.log "child", e
+                     ], onchildselect: (e) -> @notify e.data.item.data.text
                     },
-                ], onchildselect: (e) => console.log "child", e
+                ], onchildselect: (e) => @notify e.data.item.data.text
             },
         ]
         menu

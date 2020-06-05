@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/
 
-class wTerm extends this.OS.GUI.BaseApplication
+class wTerm extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "wTerm", args
     
@@ -35,13 +35,13 @@ class wTerm extends this.OS.GUI.BaseApplication
         @on "focus", () => @term.focus()
         
         @mterm.contextmenuHandle = (e, m) =>
-            m.set "items", [
+            m.items = [
                 { text: "__(Copy)", id: "copy" },
                 { text: "__(Paste)", id: "paste"}
             ]
-            m.set "onmenuselect", (e) =>
+            m.onmenuselect = (e) =>
                 return unless e
-                @mctxHandle e.data.item.get "data"
+                @mctxHandle e.data.item.data
             m.show e
         @resizeContent()
         @openSession()
@@ -100,7 +100,7 @@ class wTerm extends this.OS.GUI.BaseApplication
     menu: () ->
         {
             text: "__(Edit)",
-            child: [
+            nodes: [
                 { text: "__(Terminal URI)", dataid: "#{@name}-termuri" }
             ],
             onchildselect: (e) => @configure()

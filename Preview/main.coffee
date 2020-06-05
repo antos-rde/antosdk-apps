@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
 
-class Preview extends this.OS.GUI.BaseApplication
+class Preview extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "Preview", args
     
@@ -31,18 +31,18 @@ class Preview extends this.OS.GUI.BaseApplication
         @btreset = @find "btreset"
         @txtpage = @find "txtpage"
         
-        @zoom.set "onchange", (e) => @setViewScale e.data
+        @zoom.onvaluechange = (e) => @setViewScale e.data
         
-        @btreset.set "onbtclick", (e) =>
-                @zoom.set "value", 100
+        @btreset.onbtclick = (e) =>
+                @zoom.value = 100
                 @setViewScale 100
         
-        @btnext.set "onbtclick", (e) =>
+        @btnext.onbtclick = (e) =>
             val = parseInt $(@txtpage).val()
             return if isNaN val
             $(@txtpage).val val + 1
             @gotoPage()
-        @btprev.set "onbtclick", (e) =>
+        @btprev.onbtclick = (e) =>
             val = parseInt $(@txtpage).val()
             return if isNaN val
             $(@txtpage).val val - 1
@@ -59,8 +59,8 @@ class Preview extends this.OS.GUI.BaseApplication
         
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
         @bindKey "CTRL-X", () => @actionFile "#{@name}-Close"
-        @zoom.set "max", 200
-        @zoom.set "value", 100
+        @zoom.max = 200
+        @zoom.value = 100
         @open @currfile
 
     
@@ -80,7 +80,7 @@ class Preview extends this.OS.GUI.BaseApplication
         return if  isNaN(val)
         return if val <= 0 or val > @pdf.numPages
         ($ @view).empty()
-        @renderPDFPages val, (@zoom.get("value") / 100), false
+        @renderPDFPages val, (@zoom.value / 100), false
             .catch (e) => @error __("Unable to render page {0}", val), e
     
     renderFile: () ->
@@ -89,7 +89,7 @@ class Preview extends this.OS.GUI.BaseApplication
         @pdf = undefined
         @img = undefined
         ($ @view).empty()
-        @zoom.set "value", 100
+        @zoom.value = 100
         if mime.match /^[^\/]+\/.*pdf.*/g
             @renderPDF()
         else if mime.match /image\/.*svg.*/g
@@ -209,11 +209,11 @@ class Preview extends this.OS.GUI.BaseApplication
     menu: () ->
         menu = [{
                 text: "__(File)",
-                child: [
+                nodes: [
                     { text: "__(Open)", dataid: "#{@name}-Open", shortcut: "A-O" },
                     { text: "__(Close)", dataid: "#{@name}-Close", shortcut: "C-X" },
                 ],
-                onchildselect: (e) => @actionFile e.data.item.get("data").dataid
+                onchildselect: (e) => @actionFile e.data.item.data.dataid
             }]
         menu
     

@@ -15,16 +15,16 @@
 
 # You should have received a copy of the GNU General Public License
 #along with this program. If not, see https://www.gnu.org/licenses/.
-class Blogger extends this.OS.GUI.BaseApplication
+class Blogger extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "Blogger", args
     
     main: () ->
         @user = {}
         @cvlist = @find "cv-list"
-        @cvlist.set "ontreeselect", (d) =>
+        @cvlist.ontreeselect = (d) =>
             return unless d
-            data = d.data.item.get "data"
+            data = d.data.item.data
             @CVSectionByCID Number(data.id)
             
         @inputtags = @.find "input-tags"
@@ -38,13 +38,13 @@ class Blogger extends this.OS.GUI.BaseApplication
         
         
         @tabcontainer = @find "tabcontainer"
-        @tabcontainer.set "ontabselect", (e) =>
-            @fetchData e.data.container.aid()
+        @tabcontainer.ontabselect = (e) =>
+            @fetchData e.data.container.aid
         
-        (@find "bt-user-save").set "onbtclick", (e) =>
+        (@find "bt-user-save").onbtclick = (e) =>
             @saveUser()
 
-        (@find "cv-cat-add").set "onbtclick", (e) =>
+        (@find "cv-cat-add").onbtclick = (e) =>
             @fetchCVCat().then (tree) =>
                 @openDialog(new BloggerCategoryDialog(), {
                     title: __("Add category"),
@@ -61,10 +61,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                 .catch (e) => @error e.toString(), e
             .catch (e) => @error __("Unable to fetch categories"), e
             
-        (@find "cv-cat-edit").set "onbtclick", (e) =>
-            sel = @cvlist.get "selectedItem"
+        (@find "cv-cat-edit").onbtclick = (e) =>
+            sel = @cvlist.selectedItem
             return unless sel
-            cat = sel.get "data"
+            cat = sel.data
             return unless cat
             @fetchCVCat().then (tree) =>
                 @openDialog(new BloggerCategoryDialog(), {
@@ -84,10 +84,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                             @error __("Cannot Edit category"), e
             .catch (e) => @error __("Unable to fetch categories"), e
 
-        (@find "cv-cat-del").set "onbtclick", (e) =>
-            sel = @cvlist.get "selectedItem"
+        (@find "cv-cat-del").onbtclick = (e) =>
+            sel = @cvlist.selectedItem
             return unless sel
-            cat = sel.get "data"
+            cat = sel.data
             return unless cat
             @openDialog("YesNoDialog", {
                 title: __("Delete category") ,
@@ -98,10 +98,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                 @deleteCVCat cat
             .catch (e) => @error e.toString(), e
     
-        (@find "cv-sec-add").set "onbtclick", (e) =>
-            sel = @cvlist.get "selectedItem"
+        (@find "cv-sec-add").onbtclick = (e) =>
+            sel = @cvlist.selectedItem
             return unless sel
-            cat = sel.get "data"
+            cat = sel.data
             return @notify __("Please select a category") unless cat and cat.id isnt "0"
             @openDialog(new BloggerCVSectionDiaglog(@), {
                 title: __("New section entry for {0}", cat.name)
@@ -115,10 +115,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                         @CVSectionByCID Number(cat.id)
                     .catch (e) => @error __("Cannot save section: {0}", e.toString()), e
 
-        (@find "cv-sec-move").set "onbtclick", (e) =>
-            sel = (@find "cv-sec-list").get "selectedItem"
+        (@find "cv-sec-move").onbtclick = (e) =>
+            sel = (@find "cv-sec-list").selectedItem
             return @notify __("Please select a section to move") unless sel
-            sec = sel.get "data"
+            sec = sel.data
             
             @fetchCVCat().then (tree) =>
                 @openDialog(new BloggerCategoryDialog(),{
@@ -136,10 +136,10 @@ class Blogger extends this.OS.GUI.BaseApplication
                             (@find "cv-sec-list").unselect()
                         .catch (e) => @error __("Cannot move section"), e
 
-        (@find "cv-sec-edit").set "onbtclick", (e) =>
-            sel = (@find "cv-sec-list").get "selectedItem"
+        (@find "cv-sec-edit").onbtclick = (e) =>
+            sel = (@find "cv-sec-list").selectedItem
             return @notify __("Please select a section to edit") unless sel
-            sec = sel.get "data"
+            sec = sel.data
             @openDialog(new BloggerCVSectionDiaglog(@), {
                 title: __("Modify section entry"),
                 section: sec
@@ -153,10 +153,9 @@ class Blogger extends this.OS.GUI.BaseApplication
                         @CVSectionByCID Number(sec.cid)
                     .catch (e) => return @error __("Cannot save section: {0}", e.toString()), e
 
-        @seclist .set "onitemclose", (e) =>
+        @seclist.onitemclose = (e) =>
             return unless e
-            data = e.data.item.get "data"
-            console.log data
+            data = e.data.item.data
             @openDialog("YesNoDialog", {
                 iconclass: "fa fa-question-circle",
                 text: __("Do you really want to delete: {0}?", data.title)
@@ -164,7 +163,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 return unless b
                 @cvsecdb.delete data.id
                     .then (r) =>
-                        @seclist.remove e.data.item
+                        @seclist.delete e.data.item
                     .catch (e) => @error __("Cannot delete the section: {0}", e.toString()), e
             return false
             
@@ -227,35 +226,35 @@ class Blogger extends this.OS.GUI.BaseApplication
                     name: __("Send mail"),
                     className: "fa fa-paper-plane",
                     action: (e) =>
-                        sel = @bloglist.get "selectedItem"
+                        sel = @bloglist.selectedItem
                         return @error __("No post selected") unless sel
-                        data = sel.get "data"
+                        data = sel.data
                         @openDialog(new BloggerSendmailDiaglog(@), {
                             title: __("Send mail"),
                             content: @editor.value(),
                             id: data.id
                         })
                         .then (d) ->
-                            console.log "test"
+                            console.log "Email sent"
                 }
             ]
-        @bloglist.set "onlistselect", (e) =>
-            el = @bloglist.get "selectedItem"
+        @bloglist.onlistselect = (e) =>
+            el = @bloglist.selectedItem
             return unless el
-            sel = el.get "data"
+            sel = el.data
             return unless sel
             @blogdb.get Number(sel.id)
                 .then (r) =>
                     @editor.value atob(r.content)
                     @inputtags.value = r.tags
-                    (@find "blog-publish").set "swon", (if Number(r.publish) then true else false)
+                    (@find "blog-publish").swon = if Number(r.publish) then true else false
                 .catch (e) =>
                     @error __("Cannot fetch the entry content"), e
 
-        @bloglist.set "onitemclose", (e) =>
+        @bloglist.onitemclose = (e) =>
             return unless e
             el = e.data.item
-            data = el.get "data"
+            data = el.data
             @openDialog("YesNoDialog", {
                 title: __("Delete a post"),
                 iconclass: "fa fa-question-circle",
@@ -264,15 +263,15 @@ class Blogger extends this.OS.GUI.BaseApplication
                 return unless b
                 @blogdb.delete data.id
                     .then (r) =>
-                        @bloglist.remove el
+                        @bloglist.delete el
                         @bloglist.unselect()
                         @clearEditor()
             return false
             
 
         @bindKey "CTRL-S", () =>
-            sel = @tabcontainer.get "selectedTab"
-            return unless sel and sel.container.aid() is "blog-container"
+            sel = @tabcontainer.selectedTab
+            return unless sel and sel.container.aid is "blog-container"
             @saveBlog()
         @on "vboxchange", () =>
             @resizeContent()
@@ -310,14 +309,14 @@ class Blogger extends this.OS.GUI.BaseApplication
     # PORFOLIO TAB
     refreshCVCat: () ->
         @fetchCVCat().then (data) =>
-            @cvlist.set "data", data
+            @cvlist.data = data
             @cvlist.expandAll()
         .catch (e) => @error __("Unable to load categories"), e
     
     fetchCVCat: () ->
         new Promise (resolve, reject) =>
             data =
-                name: "Porfolio",
+                text: "Porfolio",
                 id:"0",
                 nodes: []
             cnd =
@@ -336,6 +335,7 @@ class Blogger extends this.OS.GUI.BaseApplication
         return data.nodes = null if result.length is 0
         for v in result
             v.nodes = []
+            v.text = v.name
             @catListToTree table, v, v.id
             #v.nodes = null if v.nodes.length is 0
             data.nodes.push v
@@ -354,7 +354,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             cond = ({ "=": { id: v } } for v in ids)
             @cvcatdb.delete({ "or": cond }).then (re) =>
                 @refreshCVCat()
-                @seclist.set "data", []
+                @seclist.data=[]
             .catch (e) =>
                 @error __("Cannot delete the category: {0} [{1}]", cat.name, e.toString()), e
         .catch (e) =>
@@ -369,7 +369,7 @@ class Blogger extends this.OS.GUI.BaseApplication
                 start: "DESC"
         @cvsecdb.find(cond).then (d) =>
             items = []
-            (@find "cv-sec-status").set "text", __("Found {0} sections", d.length)
+            (@find "cv-sec-status").text = __("Found {0} sections", d.length)
             for  v in d
                 v.closable = true
                 v.tag = "afx-blogger-cvsection-item"
@@ -378,14 +378,14 @@ class Blogger extends this.OS.GUI.BaseApplication
                 v.start = undefined if v.start < 1000
                 v.end = undefined if v.end < 1000
                 items.push v
-            @seclist.set "data", items
+            @seclist.data = items
         .catch (e) => @error e.toString(), e
 
     # blog
     saveBlog: () ->
         sel = undefined
-        selel = @bloglist.get "selectedItem"
-        sel = selel.get "data" if selel
+        selel = @bloglist.selectedItem
+        sel = selel.data if selel
         tags = @inputtags.value
         content = @editor.value()
         title = (new RegExp "^#+(.*)\n", "g").exec content
@@ -401,7 +401,7 @@ class Blogger extends this.OS.GUI.BaseApplication
             utime: d.timestamp()
             utimestr: d.toString()
             rendered: @process(@editor.options.previewRender(content))
-            publish: if ((@find "blog-publish").get "swon") then 1 else 0
+            publish: if (@find "blog-publish").swon then 1 else 0
         data.id = sel.id if sel
         #save the data
         @blogdb.save data
@@ -438,11 +438,11 @@ class Blogger extends this.OS.GUI.BaseApplication
     clearEditor:() ->
         @.editor.value ""
         @.inputtags.value = ""
-        (@.find "blog-publish").set "swon", false
+        (@.find "blog-publish").swon = false
     # load blog
     loadBlogs: () ->
         selidx = -1
-        el = @bloglist.get "selectedItem"
+        el = @bloglist.selectedItem
         selidx = $(el).index()
         cond =
             order:
@@ -458,12 +458,12 @@ class Blogger extends this.OS.GUI.BaseApplication
         @blogdb.find cond
             .then (r) =>
                 v.tag = "afx-blogger-post-item" for v in r
-                @bloglist.set "data", r
+                @bloglist.data = r
                 if selidx isnt -1
-                    @bloglist.set "selected", selidx
+                    @bloglist.selected = selidx
                 else
                     @clearEditor()
-                    @bloglist.set "selected", -1
+                    @bloglist.selected = -1
             .catch (e) => @error __("No post found: {0}", e.toString()), e
             
     resizeContent: () ->

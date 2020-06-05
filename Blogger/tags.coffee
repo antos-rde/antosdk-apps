@@ -1,22 +1,24 @@
 Ant = this
 
-class CVSectionListItemTag extends this.OS.GUI.tag["afx-list-item-proto"]
-    constructor: (r, o) ->
-        super r, o
+class CVSectionListItemTag extends this.OS.GUI.tag.ListViewItemTag
+    constructor: () ->
+        super()
     
-    __data__: (v) ->
-        return unless v
+    ondatachange: () ->
+        return unless @data
+        v = @data
         nativel = ["content", "start", "end" ]
-        @set "closable", v.closable
+        @closable = v.closable
         for k, el of @refs
             if v[k] and v[k] isnt ""
                 if nativel.includes k
                     $(el).text v[k]
                 else
-                    el.set "text", v[k]
-
-    __selected: (v) ->
-        @get("data").selected = v
+                    el.text = v[k]
+    
+    reload: () ->
+        
+    init:() -> 
 
 
     itemlayout: () ->
@@ -31,25 +33,26 @@ class CVSectionListItemTag extends this.OS.GUI.tag["afx-list-item-proto"]
             { el: "afx-label", ref: "location", class: "afx-cv-sec-loc" }
         ] }
 
-this.OS.GUI.define "afx-blogger-cvsection-item", CVSectionListItemTag
+this.OS.GUI.tag.define "afx-blogger-cvsection-item", CVSectionListItemTag
 
 
-class BlogPostListItemTag extends this.OS.GUI.tag["afx-list-item-proto"]
-    constructor: (r, o) ->
-        super r, o
+class BlogPostListItemTag extends this.OS.GUI.tag.ListViewItemTag
+    constructor: () ->
+        super()
     
-    __data__: (v) ->
-        return unless v
+    ondatachange: (v) ->
+        return unless @data
+        v = @data
         v.closable = true
-        @set "closable", v.closable
-        @refs.title.set "text", v.title
-        @refs.ctimestr.set "text", __("Created: {0}", v.ctimestr)
-        @refs.utimestr.set "text", __("Updated: {0}", v.utimestr)
+        @closable = v.closable
+        @refs.title.text = v.title
+        @refs.ctimestr.text = __("Created: {0}", v.ctimestr)
+        @refs.utimestr.text = __("Updated: {0}", v.utimestr)
 
-    __selected: (v) ->
-        @get("data").selected = v
-
-
+    reload: () ->
+        
+    init:() ->
+        
     itemlayout: () ->
         { el: "div", children: [
             { el: "afx-label", ref: "title", class: "afx-blogpost-title" },
@@ -57,4 +60,4 @@ class BlogPostListItemTag extends this.OS.GUI.tag["afx-list-item-proto"]
             { el: "afx-label", ref: "utimestr", class: "blog-dates" },
         ] }
 
-this.OS.GUI.define "afx-blogger-post-item", BlogPostListItemTag
+this.OS.GUI.tag.define "afx-blogger-post-item", BlogPostListItemTag
