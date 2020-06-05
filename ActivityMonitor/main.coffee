@@ -68,8 +68,8 @@ class ActivityMonitor extends this.OS.application.BaseApplication
                     @gdata.processes[a.pid] = [
                         { text: a.pid },
                         {
-                            icon: if _APP[a.name].type == 1 then _APP[a.name].meta.icon else a.icon,
-                            iconclass: if _APP[a.name].type == 1 then _APP[a.name].meta.iconclass else a.iconclass,
+                            icon: if _APP[a.name].type == 0 then _APP[a.name].meta.icon else a.icon,
+                            iconclass: if _APP[a.name].type == 0 then _APP[a.name].meta.iconclass else a.iconclass,
                             text: a.name
                         },
                         {
