@@ -73,7 +73,7 @@ class ActivityMonitor extends this.OS.application.BaseApplication
                             text: a.name
                         },
                         {
-                            text: if _APP[a.name].type == 1 then "__(Application)" else "__(Service)"
+                            text: if _APP[a.name].type == 0 then "__(Application)" else "__(Service)"
                         },
                         {
                             text: now - a.birth
