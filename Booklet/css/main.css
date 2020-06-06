@@ -1,0 +1,11 @@
+afx-app-window[data-id ='Booklet'] div.editor-toolbar{
+    background-color: white;
+}
+
+afx-app-window[data-id ='Booklet']  afx-tree-view .afx-tree-view-item:before{
+    content: "\f292"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: normal;
+}

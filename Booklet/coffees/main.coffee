@@ -1,37 +1,38 @@
-class Booklet extends this.OS.GUI.BaseApplication
+class Booklet extends this.OS.application.BaseApplication
     constructor: ( args ) ->
         super "Booklet", args
     
     main: () ->
-        me = @
+        
         @tree = @find "toc-ui"
         @currentToc = undefined
         @dirty = false
         @emux = false
-        @on "treeselect", (e) ->
-            return me.reloadEditor() if (me.currentToc is e) or (e is undefined) or (e.treepath is 0)
+        @on "treeselect", (evt) =>
+            e = evt.data.item.data
+            return @reloadEditor() if (@currentToc is e) or (e is undefined) or (e.treepath is 0)
             e.treepath = e.path
-            me.load(e).then ()->
-                me.open e
-            .catch (msg) ->
+            @load(e).then ()=>
+                @open e
+            .catch (msg) =>
                 e.loaded = true
-                me.open e
-                me.error __("Error when loading '{0}': {1}", e.name, msg)
+                @open e
+                @error __("Error when loading '{0}': {1}", e.text, msg.toString()), msg
         
         @initEditor()
         @resizeContent()
-        @tree.contextmenuHandler = (e, m) ->
-            menus = me.contextMenu()
+        @tree.contextmenuHandle = (e, m) =>
+            menus = @contextMenu()
             return unless menus
-            m.set "items", menus
-            m.set "onmenuselect", (evt) ->
-                me[evt.item.data.dataid]()
+            m.items = menus
+            m.onmenuselect = (evt) =>
+                @[evt.data.item.data.dataid]()
             m.show e
-        @editor.codemirror.on "change", () ->
-            return if me.emux
-            return unless me.currentToc
-            me.currentToc.descFile.dirty = true
-            me.dirty = true
+        @editor.codemirror.on "change", () =>
+            return if @emux
+            return unless @currentToc
+            @currentToc.descFile.dirty = true
+            @dirty = true
     
     newChapter: () ->
         return @error __("No book selected") unless @currentToc and @currentToc.type is "Book"
@@ -52,30 +53,32 @@ class Booklet extends this.OS.GUI.BaseApplication
         file.treepath = file.path
     
     delete: () ->
-        me = @
+        
         return @error __("No entrie select") unless @currentToc
-        fn = () ->
-            me.currentToc = undefined
-            me.displayToc()
-            me.reloadEditor()
-        @currentToc.remove().then () ->
-            me.notify __("Entrie deleted")
+        fn = () =>
+            @currentToc = undefined
+            @displayToc()
+            @reloadEditor()
+        @currentToc.remove().then () =>
+            @notify __("Entrie deleted")
             fn()
-        .catch (e) ->
-            me.error e
+        .catch (e) =>
+            @error e.toString(), e
             fn()
     
     load: (entry) ->
-        me = @
-        return new Promise (r, e) ->
+        
+        return new Promise (r, e) =>
             return r() if entry.loaded
-            entry.descFile.meta (d) ->
-                return e d.error if d.error
-                entry.descFile.read (data) ->
+            entry.descFile.meta().then (d) =>
+                entry.descFile.read().then (data) =>
                     entry.descFile.cache = data
                     entry.loaded = true
                     entry.descFile.dirty = false
                     r()
+                .catch (msg) -> e __e msg
+            .catch (msg) -> e __e msg
+                    
     
     contextMenu: () ->
         return undefined unless @currentToc
@@ -102,19 +105,22 @@ class Booklet extends this.OS.GUI.BaseApplication
         return undefined
     
     shareFile: (mimes,f) ->
-        me = @
-        me.openDialog "FileDiaLog", (d, n, p) ->
-            p.asFileHandler().publish (r) ->
-                return me.error __("Cannot export file for embedding to text") if r.error
+        
+        @openDialog "FileDialog", { title: __("Select a file"), mimes: mimes }
+        .then (d) =>
+            d.file.path.asFileHandle().publish().then (r) ->
                 f r.result
-        , __("Select a file"), { mimes: mimes }
-    
+            .catch (msg) =>
+                return @error __("Cannot export file for embedding to text"), msg
+        .catch (msg) =>
+                return @error msg.toString(), msg
+                
     initEditor: ()->
         markarea = @find "markarea"
         @container = @find "mycontainer"
         @previewOn = false
         @editormux = false
-        me = @
+        
         @editor = new SimpleMDE
             element: markarea
             autofocus: true
@@ -127,25 +133,25 @@ class Booklet extends this.OS.GUI.BaseApplication
                 {
                     name: "image",
                     className: "fa fa-file-image-o",
-                    action: (e) ->
-                        me.shareFile ["image/.*"], (path) ->
-                            doc = me.editor.codemirror.getDoc()
-                            doc.replaceSelection "![](#{me._api.handler.shared}/#{path})"
+                    action: (e) =>
+                        @shareFile ["image/.*"], (path) =>
+                            doc = @editor.codemirror.getDoc()
+                            doc.replaceSelection "![](#{@_api.handler.shared}/#{path})"
                 },
                 {
                     name:"Youtube",
                     className: "fa fa-youtube",
-                    action: (e) ->
-                        doc = me.editor.codemirror.getDoc()
+                    action: (e) =>
+                        doc = @editor.codemirror.getDoc()
                         doc.replaceSelection "[[youtube:]]"
                 },
                 {
                     name: "3d object",
                     className: "fa fa-file-image-o",
-                    action: (e) ->
-                        me.shareFile ["text/wavefront-obj"], (path) ->
-                            doc = me.editor.codemirror.getDoc()
-                            doc.replaceSelection "[[3DModel:#{me._api.handler.shared}/#{path}]]"
+                    action: (e) =>
+                        @shareFile ["text/wavefront-obj"], (path) =>
+                            doc = @editor.codemirror.getDoc()
+                            doc.replaceSelection "[[3DModel:#{@_api.handler.shared}/#{path}]]"
                 },
                 "|",
                 {
@@ -153,21 +159,21 @@ class Booklet extends this.OS.GUI.BaseApplication
                     className: "fa fa-eye no-disable",
                     action: (e) ->
                         SimpleMDE.togglePreview e
-                        #/console.log me.select ".editor-preview editor-preview-active"
-                        renderMathInElement me.find "mycontainer"
+                        #/console.log @select ".editor-preview editor-preview-active"
+                        renderMathInElement @find "mycontainer"
                 }
             ]
-        @on "hboxchange", (e) -> me.resizeContent()
-        @bindKey "ALT-N", () -> me.actionFile "#{me.name}-New"
-        @bindKey "ALT-O", () -> me.actionFile "#{me.name}-Open"
-        @bindKey "CTRL-S", () -> me.actionFile "#{me.name}-Save"
+        @on "hboxchange", (e) => @resizeContent()
+        @bindKey "ALT-N", () => @actionFile "#{@name}-New"
+        @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
+        @bindKey "CTRL-S", () => @actionFile "#{@name}-Save"
         
     reloadEditor: () ->
         if @currentToc is undefined
             @editor.value ""
-            return @scheme.set "apptitle", @name
+            return @scheme.apptitle = @name
         @editor.value @currentToc.descFile.cache || ""
-        @scheme.set "apptitle", "Booklet - #{@currentToc.descFile.path}"
+        @scheme.apptitle = "Booklet - #{@currentToc.descFile.path}"
     
     saveContext: () ->
         return unless @currentToc
@@ -183,69 +189,71 @@ class Booklet extends this.OS.GUI.BaseApplication
 
 
     menu: () ->
-        me = @
+        
         menu = [{
                 text: "__(File)",
-                child: [
+                nodes: [
                     { text: "__(New booklet)", dataid: "#{@name}-New", shortcut: "A-N" },
                     { text: "__(Open a booklet)", dataid: "#{@name}-Open", shortcut: "A-O" }
                     { text: "__(Save a booklet)", dataid: "#{@name}-Save", shortcut: "C-S" }
                 ],
-                onmenuselect: (e) -> me.actionFile e.item.data.dataid
+                onchildselect: (e) => @actionFile e.data.item.data.dataid
             }]
         menu
     
     actionFile: (e) ->
-        me = @
+        
         switch e
             when "#{@name}-Open"
-                @checkForDirty () ->
-                    me.openDialog "FileDiaLog", ( d, f ) ->
-                        me.book = new BookletBook(d)
-                        me.book.read(d).then () ->
-                            me.book.treepath = me.book.path
-                            me.tree.set "selectedItem", undefined
-                            me.displayToc()
-                            me.notify __("Book loaded")
-                        .catch (msg) ->
-                            me.error __("Cannot load book: {0}", msg)
-                    , __("Open file"), { mimes: ['dir'] }
+                @checkForDirty () =>
+                    @openDialog "FileDialog", { title:__("Open file"), mimes: ['dir'] }
+                    .then (d) =>
+                        @book = new BookletBook(d.file.path)
+                        @book.read(d.file.path).then () =>
+                            @book.treepath = @book.path
+                            @tree.selectedItem = undefined
+                            @displayToc()
+                            @notify __("Book loaded")
+                        .catch (msg) =>
+                            @error __("Cannot load book: {0}", msg.toString()), msg
+                    .catch (msg) => @error msg.toString(), msg
+                   
              when "#{@name}-New"
-                @openDialog "FileDiaLog", ( d, f ) ->
-                    me.newAt "#{d}/#{f}"
-                , __("Open file"), { mimes: ['dir'], file: { basename: __("BookName") }}
+                @openDialog "FileDialog", { title: __("Open file"), mimes: ['dir'], file: { basename: __("BookName") }}
+                .then (d) =>
+                    @newAt "#{d.file.path}/#{d.name}"
+                .catch (msg) => @error msg.toString(), msg
             when "#{@name}-Save"
-                return unless me.book
-                me.saveContext() if me.currentToc
-                me.displayToc()
-                me.book.save().then () ->
-                    me.dirty = false
-                    me.notify __("Book saved")
-                .catch (e) ->
-                    me.error __("Can't save the book : {0}", e)
+                return unless @book
+                @saveContext() if @currentToc
+                @displayToc()
+                @book.save().then () =>
+                    @dirty = false
+                    @notify __("Book saved")
+                .catch (e) =>
+                    @error __("Can't save the book : {0}", e.toString()), e
     
     checkForDirty: (f) ->
         return f() unless @dirty
-        @_gui.openDialog "YesNoDialog", (d) ->
+        @ask {title: __("Continue ?"), text: __("Book is unsaved, you want to continue ?") }
+        .then (d) =>
             # console.log d
             if d
                 f()
-        , __("Continue ?"), { text: __("Book is unsaved, you want to continue ?") }
-    
-    open: (toc) ->
-        me = @
-        me.emux = true
-        me.saveContext()
-        me.currentToc  = toc
-        me.reloadEditor()
-        me.displayToc()
-        me.emux = false
-    
-    openBook: (metaFile) ->
         
     
+    open: (toc) ->
+        console.log toc
+        @emux = true
+        @saveContext()
+        @currentToc  = toc
+        @reloadEditor()
+        @displayToc()
+        @emux = false
+
+    
     newAt: (folder) ->
-        @tree.set "selectedItem", false
+        @tree.selectedItem = undefined
         @book = new BookletBook(folder)
         @book.treepath = @book.path
         @currentToc = undefined
@@ -254,16 +262,19 @@ class Booklet extends this.OS.GUI.BaseApplication
     
     displayToc: () ->
         @book.toc()
-        @tree.set "data", @book
+        @tree.data = @book
+        @tree.expandAll()
     
     cleanup: (evt) ->
         return unless @dirty
-        me = @
         evt.preventDefault()
-        @checkForDirty () ->
-            me.dirty = false
-            me.quit()
+        @checkForDirty () =>
+            @dirty = false
+            @quit()
     
-Booklet.dependencies = [ "mde/simplemde.min" ]
+Booklet.dependencies = [
+    "os://scripts/mde/simplemde.min.js",
+     "os://scripts/mde/simplemde.min.css" 
+]
 
 this.OS.register "Booklet", Booklet

@@ -1,0 +1,13 @@
+{
+	"name": "Booklet",
+	"root": "home://workspace/antosdk-apps/Booklet",
+	"css": ["katex/katex.css", "css/main.css"],
+	"javascripts": ["katex/katex.js", "katex/auto-render.js"],
+	"coffees": ["coffees/main.coffee", "coffees/common.coffee"],
+	"copies": [
+		"assets/scheme.html",
+		"package.json",
+		"README.md",
+		"katex/fonts"
+	]
+}

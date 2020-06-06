@@ -1,6 +1,6 @@
 
 class BookletEntry
-    constructor: (@name) ->
+    constructor: (@text) ->
         @loaded = true
         
     save: () ->
@@ -11,30 +11,28 @@ class BookletEntry
 
     
     updateName:() ->
-        return @name unless @descFile.dirty
+        # return @text unless @descFile.dirty
         t = (new RegExp "^\s*#+(.*)\n", "g").exec @descFile.cache
-        return @name unless t and t.length is 2
+        return @text unless t and t.length is 2
         @metaFile.dirty = true if @hasMeta and @metaFile
         @parent.metaFile.dirty = true if @parent and @parent.hasMeta and @parent.metaFile
-        @name =  t[1].trim()
+        @text =  t[1].trim()
     
     remove: () ->
-        me = @
-        return new Promise (r, e) ->
-            f = me.path.asFileHandler()
-            f.meta (d) ->
-                if d.error
-                    return r() unless me.parent
-                    return me.parent.removeChild(me).then () ->
-                        r()
-                    .catch (msg) -> e msg
-                else
-                    f.remove (ret) ->
-                        return e ret.error if ret.error
-                        return r() unless me.parent
-                        me.parent.removeChild(me).then () -> 
+        return new Promise (r, e) =>
+            f = @path.asFileHandle()
+            f.meta().then (d) =>
+                    f.remove().then (ret) =>
+                        return r() unless @parent
+                        @parent.removeChild(@).then () -> 
                             r()
-                        .catch (msg) -> e msg
+                        .catch (msg) -> e __e msg
+                    .catch (msg) -> e __e msg
+            .catch (msg) =>
+                return r() unless @parent
+                return @parent.removeChild(@).then () ->
+                    r()
+                .catch (msg) -> e __e msg
 
 class BookletFolder extends BookletEntry
     constructor: (@type, @path, @hasMeta) ->
@@ -44,8 +42,8 @@ class BookletFolder extends BookletEntry
     init: () ->
         @cnt = 0
         @nodes = []
-        @metaFile = "#{@path}/meta.json".asFileHandler() if @hasMeta
-        @descFile = "#{@path}/INTRO.md".asFileHandler()
+        @metaFile = "#{@path}/meta.json".asFileHandle() if @hasMeta
+        @descFile = "#{@path}/INTRO.md".asFileHandle()
 
     add: (chap) ->
         chap.parent = @
@@ -55,124 +53,125 @@ class BookletFolder extends BookletEntry
         @cnt = @cnt + 1
 
     removeChild: (child) ->
-        me = @
+        
         #v.treepath = v.path for v in @nodes if @nodes
-        return new Promise (r, e) ->
-            me.nodes.splice (me.nodes.indexOf child), 1
-            #if me.nodes.includes child
-            return r() unless me.hasMeta and me.metaFile
-            me.metaFile.dirty = true
-            me.updateMeta().then () ->
+        return new Promise (r, e) =>
+            @nodes.splice (@nodes.indexOf child), 1
+            #if @nodes.includes child
+            return r() unless @hasMeta and @metaFile
+            @metaFile.dirty = true
+            @updateMeta().then () ->
                 r()
-            .catch (msg) ->
-                e msg
+            .catch (msg) -> e __e msg
+            
     read: (folderPath) ->
-        me = @
-        return new Promise (r, e) ->
-            me.path = folderPath
-            me.init()
-            me.loaded = false
-            me.metaFile.meta (d) ->
-                return e d.error if d.error
-                me.metaFile.read (data) ->
+        
+        return new Promise (r, e) =>
+            @path = folderPath
+            @init()
+            @loaded = false
+            @metaFile.meta().then (d) =>
+                @metaFile.read("json").then (data) =>
                     # load all child
-                    me.name = data.name
+                    @text = data.name
                     list = []
                     list[i] = v for v,i in data.entries
-                    fn = (l) ->
+                    fn = (l) =>
                         if l.length is 0
-                            me.cnt = data.cnt
+                            @cnt = data.cnt
                             return r() 
                         el = (l.splice 0, 1)[0]
-                        #console.log "create", el.type
-                        obj = new NS[el.type]( me )
+                        obj = new NS[el.type]( @ )
                         obj.name = el.name
-                        obj.read(el.path).then () ->
+                        obj.read(el.path).then () =>
                             fn l
-                        .catch (msg) ->
+                        .catch (msg) =>
                             fn l
                             
                     return fn list
-                , "json"
+                .catch (msg) -> e __e msg
+            .catch (msg) -> e __e msg
 
     size: () ->
         return @nodes.length
     
     mkdir: () ->
-        me = @
-        return new Promise (r, e) ->
-            dir = me.path.asFileHandler()
-            dir.meta (d) ->
-                return r() unless d.error
+        
+        return new Promise (r, e) =>
+            dir = @path.asFileHandle()
+            dir.meta().then (d) =>
+                return r()
+            .catch (ex) =>
                 bname = dir.basename
-                dir = dir.parent().asFileHandler()
-                dir.mk bname, (result) ->
-                    e __("Error when create directory: {0}", result.error) if result.error
-                    r()
+                dir = dir.parent().asFileHandle()
+                dir.mk bname
+                    .then (result) => r()
+                    .catch (msg) -> e __e msg
     
     mkdirs: () ->
-        me = @
-        return new Promise (r, e) ->
+        
+        return new Promise (r, e) =>
             list = []
-            list[i] = v for v, i in me.nodes if me.type isnt 'Section'
-            me.mkdir().then () ->
-                fn = (l) ->
+            list[i] = v for v, i in @nodes if @type isnt 'Section'
+            @mkdir().then () =>
+                fn = (l) =>
                     return r() if l.length is 0
                     el = (l.splice 0, 1)[0]
-                    el.mkdirs().then () ->
+                    el.mkdirs().then () =>
                         fn l
-                    .catch (msg) -> e msg
+                    .catch (msg) -> e __e msg
                 return fn list
-            .catch (msg) -> e msg
+            .catch (msg) -> e __e msg
             
     
     updateMeta: () ->
-        me = @
-        return new Promise (r, e) ->
-            return r() unless me.metaFile.dirty
+        
+        return new Promise (r, e) =>
+            return r() unless @metaFile.dirty
             entries = []
-            entries[i] = {name: v.name, path:v.path, type:v.type} for v,i in me.nodes
+            entries[i] = {name: v.name, path:v.path, type:v.type} for v,i in @nodes
             data = {
-                name: me.name,
+                name: @text,
                 entries: entries,
-                cnt: me.cnt,
-                meta: me.hasMeta
+                cnt: @cnt,
+                meta: @hasMeta
             }
-            me.metaFile.cache = data
-            me.metaFile.write "object", (d) ->
-                return e d.error if d.error
-                me.metaFile.dirty = false
-                #console.log "saved " + me.metaFile.path
-                r()
+            @metaFile.cache = data
+            @metaFile.write "object"
+                .then (d) =>
+                    @metaFile.dirty = false
+                    r()
+                .catch (msg) -> e __e msg
             
     
     update: () ->
-        me = @
-        return new Promise (r, e) ->
-            me.updateMeta().then () ->
-                return r() unless me.descFile.dirty
-                me.descFile.write "text/plain", (d) ->
-                    return e d.error if d.error
-                    me.descFile.dirty = false
-                    #console.log "saved " + me.descFile.path
-                    r()
-            .catch (msg) -> e msg
+        
+        return new Promise (r, e) =>
+            @updateMeta().then () =>
+                return r() unless @descFile.dirty
+                @descFile.write "text/plain"
+                    .then (d) =>
+                        @descFile.dirty = false
+                        #console.log "saved " + @descFile.path
+                        r()
+                    .catch (msg) -> e __e msg
+            .catch (msg) -> e __e msg
                 
     
     updateAll: () ->
-        me = @
-        return new Promise (r, e) ->
+        
+        return new Promise (r, e) =>
             list = []
-            list[i] = v for v, i in me.nodes
-            me.update().then () ->
-                fn = (l) ->
+            list[i] = v for v, i in @nodes
+            @update().then () =>
+                fn = (l) =>
                     return r() if l.length is 0
                     el = (l.splice 0, 1)[0]
-                    el.updateAll().then () ->
+                    el.updateAll().then () =>
                         fn l
-                    .catch (msg) -> e msg
+                    .catch (msg) -> e __e msg
                 return fn list
-            .catch (msg) -> e msg
+            .catch (msg) -> e __e msg
 
     toc: () ->
         @updateName()
@@ -185,13 +184,13 @@ class BookletBook extends BookletFolder
         super 'Book', path, true
         
     save:() ->
-        me = @
-        return new Promise (r, e) ->
-            me.mkdirs().then () ->
-                me.updateAll().then () ->
+        
+        return new Promise (r, e) =>
+            @mkdirs().then () =>
+                @updateAll().then () =>
                     r()
-                .catch (msg) -> e msg
-            . catch (msg) -> e msg
+                .catch (msg) -> e __e msg
+            . catch (msg) -> e __e msg
     
 
 class BookletChapter extends BookletFolder
@@ -214,24 +213,26 @@ class BookletFile extends BookletEntry
         @hasMeta = false
         @type = "File"
         @path = "#{@section.path}/f_#{@section.cnt}.md"
-        @descFile = @path.asFileHandler()
+        @descFile = @path.asFileHandle()
         @section.add @
         
     updateAll: ()->
-        me = @
-        return new Promise (r, e) ->
-            return r() unless me.descFile.dirty
-            me.descFile.write "text/plain", (d) ->
-                return e d.error if d.error
-                me.descFile.dirty = false
-                #console.log "saved" + me.descFile.path
-                r()
+        
+        return new Promise (r, e) =>
+            return r() unless @descFile.dirty
+            @descFile.write "text/plain"
+                .then (d) =>
+                    @descFile.dirty = false
+                    #console.log "saved" + @descFile.path
+                    r()
+                .catch (msg) => e __e msg
     
     read: (p) ->
-        me = @
-        return new Promise (r, e) ->
-            me.loaded = false
-            me.treepath = p
+        return new Promise (r, e) =>
+            @loaded = false
+            @treepath = p
+            @path = p
+            @descFile = @path.asFileHandle()
             r() 
     
     toc: () ->
