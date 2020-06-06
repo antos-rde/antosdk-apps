@@ -1,8 +1,0 @@
-{
-    "name": "DrawIOWrapper",
-    "root": "home://workspace/DrawIOWrapper",
-    "css": [],
-    "javascripts": [],
-    "coffees": ["coffees/main.coffee"],
-    "copies": ["assets/scheme.html", "package.json", "README.md"]
-}

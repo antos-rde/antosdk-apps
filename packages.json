@@ -45,6 +45,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
 	},
 	{
+		"pkgname": "GraphEditor",
+		"name": "Graph Editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/README.md",
+		"category": "Office",
+		"author": "Xuan Sang LE",
+		"version": "0.0.5-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",

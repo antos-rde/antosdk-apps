@@ -3,6 +3,7 @@ afx-app-window[data-id="graph_editor_win"] div[data-id="preview"]
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: white;
 }
 afx-app-window[data-id="graph_editor_win"] afx-button button
 {
