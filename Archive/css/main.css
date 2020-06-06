@@ -1,0 +1,19 @@
+afx-app-window[data-id="Archive"]  afx-tree-view .afx-tree-view-folder-close:before{
+    content: "\f07b"; 
+    font-family: "FontAwesome";
+    color:#76D2F9;
+    font-size: 16px;
+}
+afx-app-window[data-id="Archive"]  afx-tree-view .afx-tree-view-folder-open:before{
+    content: "\f07c"; 
+    font-family: "FontAwesome";
+    color:#76D2F9;
+    font-size: 16px;
+}
+afx-app-window[data-id="Archive"] afx-tree-view .afx-tree-view-item:before{
+    content: "\f016"; 
+    font-family: "FontAwesome";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: normal;
+}

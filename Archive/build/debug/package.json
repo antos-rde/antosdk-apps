@@ -1,0 +1,15 @@
+{
+    "app":"Archive",
+    "name":"Archive",
+    "pkgname": "Archive",
+    "description":"Create of extract zip archive",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "mrsang@lxsang.me"
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-archive",
+    "mimes":["application/zip"],
+    "locale": {}
+}

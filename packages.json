@@ -18,6 +18,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
 	{
+		"pkgname": "Archive",
+		"name": "Archive",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/README.md",
+		"category": "Other",
+		"author": "Xuan Sang LE",
+		"version": "0.0.1-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/build/release/Archive.zip"
+	},
+	{
 		"pkgname": "Blogger",
 		"name": "Blogging application",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
