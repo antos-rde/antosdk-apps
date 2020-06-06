@@ -36,6 +36,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
 	},
 	{
+		"pkgname": "Booklet",
+		"name": "Booklet",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/README.md",
+		"category": "Other",
+		"author": "Xuan Sang LE",
+		"version": "0.0.2-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
