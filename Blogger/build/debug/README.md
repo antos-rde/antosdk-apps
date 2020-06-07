@@ -5,6 +5,10 @@ Blackend for my blog at https://blog.iohub.dev
 
 ## Change logs
 
+### v0.1.2-a
+* Minor bug fix
+* CV Category now can be created when database is not created yet
+
 ### v0.1.1-a
 * Minor bug fix
 * Fix package archive broken

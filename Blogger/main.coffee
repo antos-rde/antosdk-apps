@@ -45,7 +45,7 @@ class Blogger extends this.OS.application.BaseApplication
             @saveUser()
 
         (@find "cv-cat-add").onbtclick = (e) =>
-            @fetchCVCat().then (tree) =>
+            fn = (tree) =>
                 @openDialog(new BloggerCategoryDialog(), {
                     title: __("Add category"),
                     tree: tree
@@ -59,7 +59,15 @@ class Blogger extends this.OS.application.BaseApplication
                             @refreshCVCat()
                         .catch (e) => @error __("Cannot add new category"), e
                 .catch (e) => @error e.toString(), e
-            .catch (e) => @error __("Unable to fetch categories"), e
+            @fetchCVCat()
+                .then (tree) => fn(tree)
+                .catch (e) =>
+                    data =
+                        text: "Porfolio",
+                        id:"0",
+                        nodes: []
+                    fn(data)
+                    @error __("Unable to fetch categories"), e
             
         (@find "cv-cat-edit").onbtclick = (e) =>
             sel = @cvlist.selectedItem
