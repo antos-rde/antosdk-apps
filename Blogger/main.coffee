@@ -253,7 +253,7 @@ class Blogger extends this.OS.application.BaseApplication
             return unless sel
             @blogdb.get Number(sel.id)
                 .then (r) =>
-                    @editor.value r.content
+                    @editor.value r.content.unescape()
                     @inputtags.value = r.tags
                     (@find "blog-publish").swon = if Number(r.publish) then true else false
                 .catch (e) =>

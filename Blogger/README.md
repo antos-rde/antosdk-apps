@@ -5,7 +5,7 @@ Blackend for my blog at https://blog.iohub.dev
 
 ## Change logs
 
-### v0.2.0-a
+### v0.2.1-a
 * Important change: Store raw post content to the database instead of base64 string as before
 
 ### v0.1.4-a
