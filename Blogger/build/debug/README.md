@@ -5,7 +5,7 @@ Blackend for my blog at https://blog.iohub.dev
 
 ## Change logs
 
-### v0.1.3-a
+### v0.1.4-a
 * Minor bug fix
 * Enhance youtube video embedding feature in markdown
 
