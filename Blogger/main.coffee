@@ -428,7 +428,7 @@ class Blogger extends this.OS.application.BaseApplication
                     frameborder="0" allow="encrypted-media" allowfullscreen
                 ></iframe>
             """
-        re  = /\[\[([^:]*):([^\]]*)\]\]/g
+        re  = /\[\[youtube:([^\]]*)\]\]/g
         replace = []
         while (found = re.exec text) isnt null
             replace.push found

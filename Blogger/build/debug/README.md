@@ -5,6 +5,10 @@ Blackend for my blog at https://blog.iohub.dev
 
 ## Change logs
 
+### v0.1.3-a
+* Minor bug fix
+* Enhance youtube video embedding feature in markdown
+
 ### v0.1.2-a
 * Minor bug fix
 * CV Category now can be created when database is not created yet
