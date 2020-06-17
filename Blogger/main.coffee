@@ -253,7 +253,7 @@ class Blogger extends this.OS.application.BaseApplication
             return unless sel
             @blogdb.get Number(sel.id)
                 .then (r) =>
-                    @editor.value atob(r.content)
+                    @editor.value r.content
                     @inputtags.value = r.tags
                     (@find "blog-publish").swon = if Number(r.publish) then true else false
                 .catch (e) =>
@@ -401,7 +401,7 @@ class Blogger extends this.OS.application.BaseApplication
         return @notify __("Please enter tags") if tags is ""
         d = new Date()
         data =
-            content: content.asBase64()
+            content: content
             title: title[1].trim()
             tags: tags
             ctime: if sel then sel.ctime else d.timestamp()
@@ -441,7 +441,7 @@ class Blogger extends this.OS.application.BaseApplication
             begin = it.index + it[0].length
         ret += text.substring begin, text.length
         #console.log ret
-        return ret.asBase64()
+        return ret
         
     clearEditor:() ->
         @.editor.value ""

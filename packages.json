@@ -32,7 +32,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.1.4-a",
+		"version": "0.2.0-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
 	},
 	{
@@ -43,6 +43,15 @@
 		"author": "Xuan Sang LE",
 		"version": "0.0.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
+	},
+	{
+		"pkgname": "DBDecoder",
+		"name": "DBDecoder",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.0.1-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/build/release/DBDecoder.zip"
 	},
 	{
 		"pkgname": "GraphEditor",

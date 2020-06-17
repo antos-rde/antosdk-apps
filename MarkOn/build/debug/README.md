@@ -1,3 +1,3 @@
 # MarkOn markdown editor
 
-markdown editor for antOS
+Simple Markdown editor for antOS
