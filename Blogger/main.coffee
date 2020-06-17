@@ -437,7 +437,7 @@ class Blogger extends this.OS.application.BaseApplication
         begin = 0
         for it in replace
             ret += text.substring begin, it.index
-            ret += embed(it[2])
+            ret += embed(it[1])
             begin = it.index + it[0].length
         ret += text.substring begin, text.length
         #console.log ret
