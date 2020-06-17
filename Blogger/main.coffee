@@ -432,7 +432,7 @@ class Blogger extends this.OS.application.BaseApplication
         replace = []
         while (found = re.exec text) isnt null
             replace.push found
-        return text.asBase64() unless replace.length > 0
+        return text unless replace.length > 0
         ret = ""
         begin = 0
         for it in replace
