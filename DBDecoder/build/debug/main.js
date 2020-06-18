@@ -1,1 +1,54 @@
-(function(){var t;t=class extends this.OS.application.BaseApplication{constructor(t){super("DBDecoder",t)}main(){var t;return t=this.find("decoder"),this.db=new this._api.DB("blogs"),t.onbtclick=t=>this.db.find("1=1").then(t=>{var e,n,r;for(e=0,n=t.length;e<n;e++)(r=t[e]).content=atob(r.content),r.rendered=atob(r.rendered);return this.saveDB(t).then(()=>this.notify("Data base saved")).catch(t=>this.error(t.toString(),t))})}saveDB(t){return new Promise((e,n)=>{var r;return 0===t.length?e():(r=t.shift(),this.db.save(r).then(()=>this.saveDB(t).then(()=>e()).catch(t=>n(__e(t)))).catch(t=>n(__e(t))))})}},this.OS.register("DBDecoder",t)}).call(this);
+(function() {
+  var DBDecoder;
+
+  DBDecoder = class DBDecoder extends this.OS.application.BaseApplication {
+    constructor(args) {
+      super("DBDecoder", args);
+    }
+
+    main() {
+      var bt;
+      bt = this.find("decoder");
+      this.db = new this._api.DB("blogs");
+      return bt.onbtclick = (e) => {
+        // decode the database
+        return this.db.find("1=1").then((data) => {
+          var i, len, v;
+          for (i = 0, len = data.length; i < len; i++) {
+            v = data[i];
+            v.content = atob(v.content);
+            v.rendered = atob(v.rendered);
+          }
+          return this.saveDB(data).then(() => {
+            return this.notify("Data base saved");
+          }).catch((e) => {
+            return this.error(e.toString(), e);
+          });
+        });
+      };
+    }
+
+    saveDB(list) {
+      return new Promise((resolve, reject) => {
+        var record;
+        if (list.length === 0) {
+          return resolve();
+        }
+        record = list.shift();
+        return this.db.save(record).then(() => {
+          return this.saveDB(list).then(() => {
+            return resolve();
+          }).catch((e) => {
+            return reject(__e(e));
+          });
+        }).catch((e) => {
+          return reject(__e(e));
+        });
+      });
+    }
+
+  };
+
+  this.OS.register("DBDecoder", DBDecoder);
+
+}).call(this);
