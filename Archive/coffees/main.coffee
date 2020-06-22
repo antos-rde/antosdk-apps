@@ -114,7 +114,7 @@ class Archive extends this.OS.application.BaseApplication
     refreshTreeFile: () ->
         return unless @zip
         treedata = {
-            text: @currfile.filename.trimRight(".zip"),
+            text: @currfile.filename.trimFromRight(".zip"),
             type: "dir"
             path: "",
             open: true,

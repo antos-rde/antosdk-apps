@@ -9,5 +9,8 @@ Small application for zip file manager
 
 ## Changle log
 
+### v0.0.2-a
+* Adapt to the new AntOS string API
+
 ### v0.0.1-a
 * First release
