@@ -243,7 +243,6 @@ class Booklet extends this.OS.application.BaseApplication
         
     
     open: (toc) ->
-        console.log toc
         @emux = true
         @saveContext()
         @currentToc  = toc
