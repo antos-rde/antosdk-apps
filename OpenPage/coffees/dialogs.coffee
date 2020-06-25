@@ -1,43 +1,60 @@
 class HyperLinkDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
-        super "HyperLinkDialog", {
-            tags: [
-                { tag: "afx-label", att: 'text="__(Text)" data-height="23" class="header"' },
-                { tag: "input", att: 'data-height="30"' },
-                { tag: "afx-label", att: 'text="__(Link)" data-height="23" class="header"' },
-                { tag: "input", att: 'data-height="30"' },
-                { tag: "div", att: ' data-height="5"' }
-            ],
-            width: 350,
-            height: 150,
-            resizable: false,
-            buttons: [
-                {
-                    label: "Ok", onclick: (d) ->
-                        data =
-                            text: (d.find "content1").value,
-                            link: (d.find "content3").value,
-                            readonly: d.data.readonly,
-                            action: d.data.action
-                        d.handler data if d.handler
-                        d.quit()
-                },
-                { label: "__(Cancel)", onclick: (d) -> d.quit() }
-            ],
-            filldata: (d) ->
-                return unless d.data
-                (d.find "content1").value = d.data.text
-                (d.find "content3").value = d.data.link
-                $(d.find "content1").prop('disabled', d.data.readonly)
-        }
-
-class FormatDialog extends this.OS.GUI.BaseDialog
-    constructor: () ->
-        super "FormatDialog"
-    init: () ->
-        @_gui.htmlToScheme FormatDialog.scheme, @, @host
+        super "HyperLinkDialog", HyperLinkDialog.scheme
+        
     
     main: () ->
+        super.main()
+        txtText = @find "txtText"
+        txtLink = @find "txtLink"
+        if @data and @data.data
+            txtText.value = @data.data.text
+            txtLink.value = @data.data.link
+            $(txtText).prop('disabled', @data.data.readonly)
+        
+        @find("btnCancel").onbtclick = (e) =>
+            @quit()
+        
+        @find("btnOk").onbtclick = (e) =>
+            data =
+                text: txtText.value,
+                link: txtLink.value,
+                readonly: @data.data.readonly,
+                action: @data.data.action
+            @handle data if @handle
+            @quit()
+
+HyperLinkDialog.scheme = """
+<afx-app-window  width='350' height='150' apptitle = "Hyperlink">
+    <afx-vbox>
+        <afx-hbox>
+            <div data-width = "10" />
+            <afx-vbox>
+                <div data-height="10" />
+                <afx-label class="header" text = "__(Text)" data-height="23" />
+                <input data-height = "30" data-id = "txtText" />
+                <afx-label class="header" text = "__(Link)" data-height="23" />
+                <input data-height = "30" data-id = "txtLink" />
+                <div data-height="10" />
+                <afx-hbox data-height="30">
+                    <div />
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "40" />
+                    <div data-width = "10" />
+                </afx-hbox>
+            </afx-vbox>
+            <div data-width = "10" />
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+"""
+
+class FormatDialog extends this.OS.GUI.BasicDialog
+    constructor: () ->
+        super "FormatDialog", FormatDialog.scheme
+    
+    main: () ->
+        super.main()
         @ui =
             aligment:
                 left:@find("swleft"),
@@ -99,64 +116,68 @@ class FormatDialog extends this.OS.GUI.BaseDialog
                 size: 12
     
     initUIEvent: () ->
-        me = @
-        set = (e, o, k ,f) ->
-            me.ui[o][k].set e, (r) ->
+        
+        set = (e, o, k ,f) =>
+            @ui[o][k][e] = (r) =>
                 v = r
                 v = f r if f
-                me.currentStyle[o][k] = v
-                me.previewStyle()
+                @currentStyle[o][k] = v
+                @previewStyle()
                 
         for k,v of @ui.aligment
-            set "onchange", "aligment", k, ((e) -> e.data)
+            set "onswchange", "aligment", k, ((e) => e.data)
         for k,v of @ui.spacing
-            set "onchange", "spacing", k
+            set "onvaluechange", "spacing", k, ((e) => e.data)
         for k,v of @ui.padding
-            set "onchange", "padding", k
+            set "onvaluechange", "padding", k, ((e) => e.data)
         for k,v of @ui.style
-            set "onchange", "style", k, ((e) -> e.data) if k isnt "color" and k isnt "bgcolor"
-        set "onchange", "font", "size"
-        $(@ui.style.color).click (e) ->
-            me.openDialog "ColorPickerDialog", (d) ->
-                me.currentStyle.style.color = d
-                me.previewStyle()
-        $(@ui.style.bgcolor).click (e) ->
-            me.openDialog "ColorPickerDialog", (d) ->
-                me.currentStyle.style.bgcolor = d
-                me.previewStyle()
+            set "onswchange", "style", k, ((e) => e.data) if k isnt "color" and k isnt "bgcolor"
+        set "onvaluechange", "font", "size"
+        $(@ui.style.color).click (e) =>
+            @openDialog "ColorPickerDialog"
+            .then (d) =>
+                @currentStyle.style.color = d
+                @previewStyle()
+        $(@ui.style.bgcolor).click (e) =>
+            @openDialog "ColorPickerDialog"
+            .then (d) =>
+                @currentStyle.style.bgcolor = d
+                @previewStyle()
         #font
-        @ui.font.family.set "items", @data.fonts if @data and @data.fonts
-        set "onlistselect", "font", "family", ( (e) -> e.data)
+        @ui.font.family.data = @data.data.fonts if @data.data and @data.data.fonts
+        set "onlistselect", "font", "family", ( (e) => e.data.item.data)
         #format list
-        @ui.formats.set "selected", -1
-        @ui.formats.set "items", @data.formats if @data and @data.formats
-        @ui.formats.set "onlistselect", (e) ->
-            me.fromODFStyleFormat e.data
-         @ui.formats.set "selected", 0
-        (@find "btok").set "onbtclick", (e) ->
-            me.saveCurrentStyle()
+        @ui.formats.selected = -1
+        @ui.formats.data = @data.data.formats if @data.data and @data.data.formats
+        @ui.formats.onlistselect = (e) =>
+            @fromODFStyleFormat e.data.item.data
+         @ui.formats.selected = 0
+        (@find "btok").onbtclick = (e) =>
+            @saveCurrentStyle()
             
-        (@find "btx").set "onbtclick", (e) ->
-            me.quit()
+        (@find "btx").onbtclick = (e) =>
+            @quit()
         
-        (@find "bt-clone").set "onbtclick", (e) ->
-            me.clone()
+        (@find "bt-clone").onbtclick = (e) =>
+            @clone()
            
     clone: ()->
-        me = @
-        selected = @ui.formats.get "selected"
+        
+        selected = @ui.formats.selectedItem
         return unless selected
-        @openDialog "PromptDialog", (d) ->
-            return me.notify __("Abort: no style name is specified") unless d and d.trim() isnt ""
-            newstyle = me.parent.editorSession.cloneParagraphStyle selected.name, d
-            me.ui.formats.push { text:d, name: newstyle }
-            me.ui.formats.set "selected", ((me.ui.formats.get 'count') - 1)
-            me.notify __("New style: {0} added", newstyle)
-        , __("Clone style: {0}", selected.text), { label: __("New style name:") }
+        selected = selected.data
+        @openDialog "PromptDialog", { title: __("Clone style: {0}", selected.text), label: __("New style name:") }
+        .then (d) =>
+            return @notify __("Abort: no style name is specified") unless d and d.trim() isnt ""
+            newstyle = @parent.editorSession.cloneParagraphStyle selected.name, d
+            @ui.formats.push { text:d, name: newstyle }
+            @ui.formats.selected = (@ui.formats.data.length - 1)
+            @notify __("New style: {0} added", newstyle)
         
     saveCurrentStyle: () ->
-        selected = @ui.formats.get "selected"
+        selected = @ui.formats.selectedItem
         return unless selected
+        selected = selected.data
         odfs =
             "style:paragraph-properties":
                 "fo:margin-top": @currentStyle.spacing.top + "mm"
@@ -181,11 +202,11 @@ class FormatDialog extends this.OS.GUI.BaseDialog
         @notify __("Paragraph format [{0}] is saved", selected.text)
     
     fromODFStyleFormat: (odfs) ->
-        me = @
+        
         @initStyleObject()
         cssUnits = new core.CSSUnits()
-        findFont = (name) ->
-            items = me.ui.font.family.get "items"
+        findFont = (name) =>
+            items = @ui.font.family.data
             item = v for v in items when v.text is name
             return undefined unless item 
             return item
@@ -216,34 +237,34 @@ class FormatDialog extends this.OS.GUI.BaseDialog
     previewStyle: () ->
         #console.log "previewing"
         # reset ui
-        @ui.aligment.left.set "swon", @currentStyle.aligment.left
-        @ui.aligment.right.set "swon", @currentStyle.aligment.right
-        @ui.aligment.center.set "swon", @currentStyle.aligment.center
-        @ui.aligment.justify.set "swon", @currentStyle.aligment.justify
-        @ui.spacing.left.set "value", @currentStyle.spacing.left
-        @ui.spacing.right.set "value", @currentStyle.spacing.right
-        @ui.spacing.top.set "value", @currentStyle.spacing.top
-        @ui.spacing.bottom.set "value", @currentStyle.spacing.bottom
-        @ui.spacing.lineheight.set "value", @currentStyle.spacing.lineheight
+        @ui.aligment.left.swon = @currentStyle.aligment.left
+        @ui.aligment.right.swon =  @currentStyle.aligment.right
+        @ui.aligment.center.swon = @currentStyle.aligment.center
+        @ui.aligment.justify.swon = @currentStyle.aligment.justify
+        @ui.spacing.left.value = @currentStyle.spacing.left
+        @ui.spacing.right.value = @currentStyle.spacing.right
+        @ui.spacing.top.value = @currentStyle.spacing.top
+        @ui.spacing.bottom.value = @currentStyle.spacing.bottom
+        @ui.spacing.lineheight.value = @currentStyle.spacing.lineheight
         
-        @ui.padding.left.set "value", @currentStyle.padding.left
-        @ui.padding.right.set "value", @currentStyle.padding.right
-        @ui.padding.top.set "value", @currentStyle.padding.top
-        @ui.padding.bottom.set "value", @currentStyle.padding.bottom
+        @ui.padding.left.value = @currentStyle.padding.left
+        @ui.padding.right.value = @currentStyle.padding.right
+        @ui.padding.top.value = @currentStyle.padding.top
+        @ui.padding.bottom.value = @currentStyle.padding.bottom
         
-        @ui.style.bold.set "swon", @currentStyle.style.bold
-        @ui.style.italic.set "swon", @currentStyle.style.italic
-        @ui.style.underline.set "swon", @currentStyle.style.underline
-        @ui.font.size.set "value", @currentStyle.font.size
+        @ui.style.bold.swon = @currentStyle.style.bold
+        @ui.style.italic.swon = @currentStyle.style.italic
+        @ui.style.underline.swon = @currentStyle.style.underline
+        @ui.font.size.value = @currentStyle.font.size
         
         #console.log @currentStyle
         if @currentStyle.font.family
-            items = @ui.font.family.get "items"
+            items = @ui.font.family.data
             item = i for v, i in items when v.text is @currentStyle.font.family.text
-            @ui.font.family.set "selected", item if item >= 0
+            @ui.font.family.selected = item if item >= 0
         
         $(@ui.style.color).css "background-color", if @currentStyle.style.color then @currentStyle.style.color.hex else "#000000"
-        $(@ui.style.bgcolor).css "background-color", if @currentStyle.style.bgcolor then @currentStyle.style.bgcolor.hex else "white"
+        $(@ui.style.bgcolor).css "background-color", if @currentStyle.style.bgcolor then @currentStyle.style.bgcolor.hex else "transparent"
         # set the preview css
         el = $ @preview
         el.css "text-align", if @currentStyle.aligment.selected then @currentStyle.aligment.selected else "left"
@@ -301,16 +322,16 @@ FormatDialog.scheme = """
         <afx-hbox data-height="23" data-id="spacingbox">
             <div ></div>
             <afx-label data-width="50" text="__(Left:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="spnleft" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" data-id="spnleft" value = "0" step="0.5"></afx-nspinner>
             <div></div>
             <afx-label data-width="50" text="__(Right:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="spnright" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" data-id="spnright" value = "0" step="0.5"></afx-nspinner>
             <div></div>
             <afx-label data-width="50" text="__(Top:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="spntop" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" data-id="spntop" value = "0" step="0.5"></afx-nspinner>
             <div></div>
             <afx-label data-width="50" text="__(Bottom:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="spnbottom" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" data-id="spnbottom" value = "0" step="0.5"></afx-nspinner>
             <div  ></div>
         </afx-hbox>
         <div data-height="5"></div>
@@ -319,16 +340,16 @@ FormatDialog.scheme = """
         <afx-hbox data-height="23" data-id="spacingbox">
             <div ></div>
             <afx-label data-width="50" text="__(Left:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="pspnleft" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" data-id="pspnleft" value = "0" step="0.5"></afx-nspinner>
             <div></div>
             <afx-label data-width="50" text="__(Right:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="pspnright" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" value = "0" data-id="pspnright" step="0.5"></afx-nspinner>
             <div></div>
             <afx-label data-width="50" text="__(Top:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="pspntop" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" value = "0" data-id="pspntop" step="0.5"></afx-nspinner>
             <div></div>
             <afx-label data-width="50" text="__(Bottom:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="pspnbottom" step="0.5"></afx-nspinner>
+            <afx-nspinner data-width="50" value = "0" data-id="pspnbottom" step="0.5"></afx-nspinner>
             <div  ></div>
         </afx-hbox>
         
@@ -358,7 +379,7 @@ FormatDialog.scheme = """
             <afx-list-view data-id="lstfont" dropdown = "true"></afx-list-view>
             <div data-width="5" ></div>
             <afx-label data-width="35" text="__(Size:)"></afx-label>
-            <afx-nspinner data-width="50" data-id="spnfsize"></afx-nspinner>
+            <afx-nspinner data-width="50" value = "12" data-id="spnfsize"></afx-nspinner>
             <div data-width="5" ></div>
             <afx-label data-width="80" text="__(Line Height:)"></afx-label>
             <afx-nspinner data-width="50" data-id="spnlheight" value="4.2" step="0.2"></afx-nspinner>
@@ -369,7 +390,7 @@ FormatDialog.scheme = """
         <div data-height="5"></div>
         <afx-hbox>
              <div data-width="5"></div>
-            <div data-id="preview">
+            <div data-id="preview" style="background-color: white;">
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce laoreet diam vestibulum massa malesuada quis dignissim libero blandit. Duis sit amet volutpat nisl.</p>
             </div>
              <div data-width="5"></div>

@@ -81,6 +81,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
 	},
 	{
+		"pkgname": "OpenPage",
+		"name": "OpenPage",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/README.md",
+		"category": "Other",
+		"author": "Xuan Sang LE",
+		"version": "0.1.3-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/build/release/OpenPage.zip"
+	},
+	{
 		"pkgname": "Preview",
 		"name": "Preview",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/README.md",
