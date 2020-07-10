@@ -27,7 +27,7 @@
 /*define("webodf/editor/EditorSession", [
     "dojo/text!resources/fonts/fonts.css"
 ],*/ 
-this.OS.APP.OpenPage.EditorSession = (function (fontsCSS) { // fontsCSS is retrieved as a string, using dojo's text retrieval AMD plugin
+this.OS.application.OpenPage.EditorSession = (function (fontsCSS) { // fontsCSS is retrieved as a string, using dojo's text retrieval AMD plugin
     "use strict";
 
     runtime.loadClass("core.Async");

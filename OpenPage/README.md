@@ -12,3 +12,7 @@
  
 **Credit:**
 OpenPage is heavily based on the WebODF javascript library: https://webodf.org
+
+
+## Change logs
+- v.0.1.3-a adapt the code to the new AntOS API
