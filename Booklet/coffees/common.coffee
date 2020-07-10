@@ -45,6 +45,21 @@ class BookletFolder extends BookletEntry
         @metaFile = "#{@path}/meta.json".asFileHandle() if @hasMeta
         @descFile = "#{@path}/INTRO.md".asFileHandle()
 
+    up: (node) ->
+        return unless node
+        idx = @nodes.indexOf node
+        return unless idx > 0
+        @nodes.splice idx, 1
+        @nodes.splice idx-1, 0, node
+    
+    down: (node) ->
+        return unless node
+        idx = @nodes.indexOf node
+        return unless idx >= 0 and idx < @nodes.length - 1
+        @nodes.splice idx, 1
+        @nodes.splice idx + 1, 0, node
+        
+
     add: (chap) ->
         chap.parent = @
         @nodes.push chap

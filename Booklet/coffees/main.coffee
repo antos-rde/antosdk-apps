@@ -19,6 +19,9 @@ class Booklet extends this.OS.application.BaseApplication
                 @open e
                 @error __("Error when loading '{0}': {1}", e.text, msg.toString()), msg
         
+        @tree.ondragndrop = (e) =>
+            @dndhandle(e)
+        
         @initEditor()
         @resizeContent()
         @tree.contextmenuHandle = (e, m) =>
@@ -66,6 +69,16 @@ class Booklet extends this.OS.application.BaseApplication
             @error e.toString(), e
             fn()
     
+    goUp: () ->
+        return unless @currentToc and @currentToc.type isnt "Book"
+        @currentToc.parent.up @currentToc
+        @displayToc()
+    
+    goDown: () ->
+        return unless @currentToc and @currentToc.type isnt "Book"
+        @currentToc.parent.down @currentToc
+        @displayToc()
+    
     load: (entry) ->
         
         return new Promise (r, e) =>
@@ -80,27 +93,59 @@ class Booklet extends this.OS.application.BaseApplication
             .catch (msg) -> e __e msg
                     
     
+    dndhandle: (e) ->
+        return unless e and e.data
+        from = e.data.from.data
+        to = e.data.to.data
+        return unless from and to
+        return if from.type is "Book" or from.type is "Chapter"
+        return if from.parent is to.parent or from.parent is to
+        if to.type is from.type
+            to = to.parent
+        
+        if to.type is from.parent.type
+            from.parent.removeChild(from).then () =>
+                to.add from
+                @displayToc()
+    
+    upload: () ->
+        return unless @currentToc and @currentToc.type isnt "File"
+        @currentToc.path.asFileHandle().upload()
+        .then () =>
+            @notify __("File uploaded")
+        .catch (e) =>
+            @error __("Unable to upload file {0}", e.toString()), e
+    
     contextMenu: () ->
         return undefined unless @currentToc
         switch @currentToc.type
             when "Book"
                 return [
                     { text: __("New chapter"), dataid: "newChapter" },
-                    { text: __("Delete book"), dataid: "delete" }
+                    { text: __("Delete book"), dataid: "delete" },
+                    { text: __("Upload media"), dataid: "upload" }
                 ]
             when "Chapter"
                 return [
                     { text: __("New section"), dataid: "newSection" },
-                    { text: __("Delete chapter"), dataid: "delete" }
+                    { text: __("Delete chapter"), dataid: "delete" },
+                    { text: __("Go up"), dataid: "goUp" },
+                    { text: __("Go down"), dataid: "goDown" },
+                    { text: __("Upload media"), dataid: "upload" }
                 ]
             when "Section"
                 return [
                     { text: __("New file"), dataid: "newFile" },
-                    { text: __("Delete section"), dataid: "delete" }
+                    { text: __("Delete section"), dataid: "delete" },
+                    { text: __("Go up"), dataid: "goUp" },
+                    { text: __("Go down"), dataid: "goDown" },
+                    { text: __("Upload media"), dataid: "upload" }
                 ]
             when "File"
                 return [
-                    { text: __("Delete file"), dataid: "delete" }
+                    { text: __("Delete file"), dataid: "delete" },
+                    { text: __("Go up"), dataid: "goUp" },
+                    { text: __("Go down"), dataid: "goDown" }
                 ]
         return undefined
     
@@ -123,6 +168,7 @@ class Booklet extends this.OS.application.BaseApplication
         
         @editor = new SimpleMDE
             element: markarea
+            autoDownloadFontAwesome: false
             autofocus: true
             tabSize: 4
             indentWithTabs: true
@@ -131,38 +177,75 @@ class Booklet extends this.OS.application.BaseApplication
                 "unordered-list", "ordered-list", "|", "link",
                 "image", "table", "horizontal-rule",
                 {
-                    name: "image",
-                    className: "fa fa-file-image-o",
+                    name: "shared image",
+                    className: "fa fa-share-square",
                     action: (e) =>
                         @shareFile ["image/.*"], (path) =>
                             doc = @editor.codemirror.getDoc()
                             doc.replaceSelection "![](#{@_api.handler.shared}/#{path})"
                 },
                 {
+                    name: "local image",
+                    className: "fa fa-file-image-o",
+                    action: (e) =>
+                        return unless @book
+                        @openDialog "FileDialog", {
+                            title: __("Select image file"),
+                            mimes: ["image/.*"],
+                            root: @book.path
+                        }
+                        .then (d) =>
+                            path = d.file.path.replace @book.path, ""
+                            doc = @editor.codemirror.getDoc()
+                            #selectedText =  @editor.codemirror.getSelection() 
+                            doc.replaceSelection "[[@book:image:#{path}]]"
+                        .catch (e) =>
+                            @error e.toString(), e
+                },
+                {
                     name:"Youtube",
                     className: "fa fa-youtube",
                     action: (e) =>
                         doc = @editor.codemirror.getDoc()
-                        doc.replaceSelection "[[youtube:]]"
+                        selectedText =  @editor.codemirror.getSelection() || ""
+                        doc.replaceSelection "[[youtube:#{selectedText}]]"
                 },
                 {
                     name: "3d object",
-                    className: "fa fa-file-image-o",
+                    className: "fa fa-cube",
                     action: (e) =>
-                        @shareFile ["text/wavefront-obj"], (path) =>
+                        return unless @book
+                        @openDialog "FileDialog", {
+                            title: __("Select 3d model"),
+                            mimes: ["text/wavefront-obj"],
+                            root: @book.path
+                        }
+                        .then (d) =>
+                            path = d.file.path.replace @book.path, ""
                             doc = @editor.codemirror.getDoc()
-                            doc.replaceSelection "[[3DModel:#{@_api.handler.shared}/#{path}]]"
+                            doc.replaceSelection "[[@book:3dmodel:#{path}]]"
+                        .catch (e) =>
+                            @error e.toString(), e
                 },
                 "|",
                 {
                     name: __("Preview"),
                     className: "fa fa-eye no-disable",
-                    action: (e) ->
+                    action: (e) =>
                         SimpleMDE.togglePreview e
                         #/console.log @select ".editor-preview editor-preview-active"
                         renderMathInElement @find "mycontainer"
+                        @renderLocalElement()
                 }
-            ]
+            ],
+            previewRender: (plainText, preview) =>
+                if @book
+                    plainText = plainText.replace /\[\[@book:image:([^\]]*)\]\]/g, (a, b) =>
+                        return "![](#{@_api.handle.get}/#{@book.path}/#{b})"
+                html = @editor.markdown plainText
+                
+                preview.innerHTML = html
+        
         @on "hboxchange", (e) => @resizeContent()
         @bindKey "ALT-N", () => @actionFile "#{@name}-New"
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
@@ -270,6 +353,9 @@ class Booklet extends this.OS.application.BaseApplication
         @checkForDirty () =>
             @dirty = false
             @quit()
+    
+    renderLocalElement: () ->
+        
     
 Booklet.dependencies = [
     "os://scripts/mde/simplemde.min.js",
