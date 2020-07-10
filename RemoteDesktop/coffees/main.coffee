@@ -1,113 +1,138 @@
 class ConnectionDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
-        super "ConnectionDialog", {
-            tags: [
-                { tag: "afx-label", att: 'text="__(VNC server)" data-height="23" class="header"' },
-                { tag: "input", att: 'data-height="30"' },
-                { tag: "afx-label", att: 'text="__(Bits per pixel)" data-height="23" class="header"' },
-                { tag: "afx-list-view", att: 'dropdown="true" data-height="30"' },
-                { tag: "afx-label", att: 'text="__(Compression)" data-height="23" class="header"' },
-                { tag: "afx-list-view", att: 'dropdown="true" data-height="30"' },
-                { tag: "afx-label", att: 'text="__(JPEG quality)" data-height="23" class="header"' },
-                { tag: "afx-slider", att: 'max="100" data-height="30"' },
-                { tag: "div", att: ' data-height="5"' }
-            ],
-            width: 350,
-            height: 280, 
-            resizable: false,
-            buttons: [
-                { 
-                    label: "__(Connect)",
-                    onclick: (d) ->
-                        return unless d.handler
-                        data =
-                            server: (d.find "content1").value
-                            bbp: ((d.find "content3").get "selected").value,
-                            flag: ((d.find "content5").get "selected").value,
-                            quality:((d.find "content7").get "value")
-                        d.handler data
-                        d.quit()
-                },
-                { label: "__(Cancel)", onclick: (d) -> d.quit() }
-            ],
-            filldata: (d) -> 
-                (d.find "content1").value = "/opt/www/vnc.conf"
-                (d.find "content3").set "items", [
-                    { text: "16 bits", value: 16 }, 
-                    { text: "32 bits", value: 32, selected:true}]
-                (d.find "content5").set "items", [
-                    {text: "No compression", value:0}, 
-                    {text: "JPEG", value:1},
-                    {text: "zLib", value:2},
-                    {text: "JPEG & zLib", value:3, selected:true}
-                ]
-                (d.find "content7").set "value", 40
-        }
+        super "ConnectionDialog", ConnectionDialog.scheme
+        
+    
+    main: () ->
+        super.main()
+        @find("bbp").data = [
+            { text: "16 bits", value: 16, selected: true }, 
+            { text: "32 bits", value: 32 }
+        ]
+        @find("compression").data = [
+            {text: "No compression", value:0}, 
+            {text: "JPEG", value:1},
+            {text: "zLib", value:2},
+            {text: "JPEG & zLib", value:3, selected:true}
+        ]
+        @find("jq").value = 40
+        @find("bt-ok").onbtclick = (e) =>
+            return unless @handle
+            data =
+                wvnc: (@find "txtWVNC").value
+                server: (@find "txtServer").value
+                bbp: (@find "bbp").selectedItem.data.value,
+                flag: (@find "compression").selectedItem.data.value,
+                quality:(@find "jq").value
+            @handle data
+            @quit()
+        
+        @find("bt-cancel").onbtclick = (e) =>
+            @quit()
+
+ConnectionDialog.scheme = """
+<afx-app-window width='350' height='270'>
+    <afx-hbox>
+        <div data-width="5"></div>
+        <afx-vbox>
+            <afx-label text="__(WVNC Websocket)" data-height="25" class="header" ></afx-label>
+            <input data-height="25" data-id="txtWVNC" value="wss://localhost/wvnc"></input>
+            <afx-label text="__(VNC Server)" data-height="25" class="header" ></afx-label>
+            <input data-height="25" data-id="txtServer" value="192.168.1.10:5900"></input>
+            <div data-height="5"></div>
+            <afx-label text="__(Bits per pixel)" data-height="25" class="header" ></afx-label>
+            <afx-list-view dropdown = "true" data-id ="bbp" data-height="25" ></afx-list-view>
+            <div data-height="5"></div>
+            <afx-label text="__(Compression)" data-height="25" class="header" ></afx-label>
+            <afx-list-view dropdown = "true" data-id ="compression" data-height="25" ></afx-list-view>
+            <div data-height="5"></div>
+            <afx-label text="__(JPEG quality)" data-height="25" class="header" ></afx-label>
+            <afx-slider data-id ="jq" data-height="25" ></afx-slider>
+            <afx-hbox data-height = '30'>
+                <div  style=' text-align:right;'>
+                    <afx-button data-id = "bt-ok" text = "__(Connect)"></afx-button>
+                    <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+                </div>
+                <div data-width="5"></div>
+            </afx-hbox>
+        </afx-vbox>
+        <div data-width="5"></div>
+    </afx-hbox>
+</afx-app-window>
+
+"""
 
 class CredentialDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
-        super "ConnectionDialog", {
-            tags: [
-                { tag: "afx-label", att: 'text="__(User name)" data-height="23" class="header"' },
-                { tag: "input", att: 'data-height="30"' },
-                { tag: "afx-label", att: 'text="__(Password)" data-height="23" class="header"' },
-                { tag: "input", att: 'data-height="30" type="password"' },
-                { tag: "div", att: ' data-height="5"' }
-            ],
-            width: 350,
-            height: 150, 
-            resizable: false,
-            buttons: [
-                { 
-                    label: "__(Ok)",
-                    onclick: (d) ->
-                        return d.quit() unless d.handler
-                        data =
-                            username: (d.find "content1").value
-                            password: (d.find "content3").value
-                        d.handler data
-                        d.quit()
-                },
-                { label: "__(Cancel)", onclick: (d) -> d.quit() }
-            ],
-            filldata: (d) -> 
-                (d.find "content1").value = "demo"
-                (d.find "content3").value = "demo"
-        }
+        super "CredentialDialog", CredentialDialog.scheme
+    
+    main: () ->
+        @find("bt-ok").onbtclick = () =>
+            return @quit() unless @handle
+            data =
+                username: (@find "txtUser").value
+                password: (@find "txtPass").value
+            @handle data
+            @quit()
+        
+        @find("bt-cancel").onbtclick = () =>
+            @quit()
 
-class RemoteDesktop extends this.OS.GUI.BaseApplication
+CredentialDialog.scheme = """
+<afx-app-window width='350' height='150'>
+    <afx-vbox>
+        <afx-label text="__(Username)" data-height="25" class="header" ></afx-label>
+        <input data-height="30" data-id="txtUser"></input>
+        <afx-label text="__(Password)" data-height="25" class="header" ></afx-label>
+        <input type="password" data-height="30" data-id="txtPass"></input>
+        <afx-hbox data-height = '30'>
+            <div  style=' text-align:right;'>
+                <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+            <div data-width="5"></div>
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>
+
+"""
+
+class RemoteDesktop extends this.OS.application.BaseApplication
     constructor: ( args ) ->
         super "RemoteDesktop", args
         
     main: () ->
-        me = @
         @canvas = @find "screen"
         @container = @find "container"
         @client = new WVNC { 
-            element: me.canvas,
-            ws: 'wss://localhost:9192/wvnc',
-            worker: "#{me._api.handler.get}/#{me.meta().path}/decoder.js"   
+            element: @canvas,
+            worker: "#{@_api.handle.get}/#{@meta().path}/decoder.js"
         }
-        @client.onerror = (m) ->
-            me.error m
-            me.showConnectionDialog()
-        @client.onresize = ()->
-            me.setScale()
-        @client.onpassword = ()->
-            return new Promise (r,e)->
-                me.openDialog "PromptDialog", (d) ->
+        @client.onerror = (m) =>
+            @error m
+            @showConnectionDialog()
+        @client.onresize = ()=>
+            @setScale()
+        @client.onpassword = ()=>
+            return new Promise (r,e)=>
+                @openDialog "PromptDialog", {
+                    title: __("VNC password"), 
+                    label: __("VNC password"),
+                    value: "!x$@n9ph",
+                    type: "password"
+                }
+                .then (d) ->
                     r(d) 
-                , __("VNC password"), { label: __("VNC password"), value: "demopass", type: "password" }
         
-        @client.oncredential = () ->
-            return new Promise (r,e) ->
-                me.openDialog new CredentialDialog, (d) ->
+        @client.oncredential = () =>
+            return new Promise (r,e) =>
+                @openDialog new CredentialDialog, { title: __("User credential") }
+                .then (d) ->
                     r(d.username, d.password)
-                , __("User credential")
-        @on "resize", (e)-> me.setScale()
-        @on "focus", (e) -> $(me.canvas).focus()
-        @client.init().then () -> 
-            me.showConnectionDialog()
+        @on "resize", (e)=> @setScale()
+        @on "focus", (e) => $(@canvas).focus()
+        @client.init().then () => 
+            @showConnectionDialog()
     
     setScale: () ->
         return unless @client and @client.resolution
@@ -118,15 +143,15 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         if sx > sy then @client.setScale sy else @client.setScale sx
     
     menu: () ->
-        me = @
+        
         [
             {
                 text: "__(Connection)",
-                child: [
+                nodes: [
                     { text: "__(New Connection)", dataid: "#{@name}-new", },
                     { text: "__(Disconnect)", dataid: "#{@name}-close" }
                 ],
-                onmenuselect: (e) -> me.actionConnection()
+                onchildselect: (e) => @actionConnection()
             }
         ]
     
@@ -135,11 +160,15 @@ class RemoteDesktop extends this.OS.GUI.BaseApplication
         @showConnectionDialog()
     
     showConnectionDialog: () ->
-        me = @
-        @openDialog new ConnectionDialog, (d) ->
-            me.client.connect d.server, d
-        , __("Connection")
+        
+        @openDialog new ConnectionDialog, { title: __("Connection")}
+        .then (d) =>
+            @client.ws = d.wvnc
+            console.log d
+            @client.connect d.server, d
     
     cleanup: () ->
         @client.disconnect() if @client
+        
+        
 this.OS.register "RemoteDesktop", RemoteDesktop

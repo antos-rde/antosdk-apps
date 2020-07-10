@@ -8,3 +8,8 @@ Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blo
 **Credit**
 * antd-wvnc-plugin: [https://github.com/lxsang/antd-wvnc-plugin](https://github.com/lxsang/antd-wvnc-plugin)
 * wvnc.js: [https://github.com/lxsang/wvnc.js](https://github.com/lxsang/wvnc.js)
+* 
+
+## Change logs
+
+* v0.1.0 - adapt to the new AntOS API

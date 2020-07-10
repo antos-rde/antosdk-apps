@@ -99,6 +99,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/build/release/Preview.zip"
 	},
 	{
+		"pkgname": "RemoteDesktop",
+		"name": "WVNC remote desktop",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.1.0-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
+	},
+	{
 		"pkgname": "ShowCase",
 		"name": "ShowCase",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/README.md",

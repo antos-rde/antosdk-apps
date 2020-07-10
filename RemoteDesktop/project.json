@@ -1,0 +1,8 @@
+{
+	"name": "RemoteDesktop",
+	"root": "home://workspace/antosdk-apps/RemoteDesktop",
+	"css": ["assets/main.css"],
+	"javascripts": ["javascripts/wvnc.js"],
+	"coffees": ["coffees/main.coffee"],
+	"copies": ["assets/scheme.html", "package.json", "README.md", "javascripts/decoder.js", "javascripts/wvnc_asm.js", "javascripts/wvnc_asm.wasm", "assets/icon.png"]
+}

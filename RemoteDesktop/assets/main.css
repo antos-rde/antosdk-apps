@@ -5,5 +5,6 @@ afx-app-window[data-id="RemoteDesktop"] div[data-id="container"]
 afx-app-window[data-id="RemoteDesktop"] canvas[data-id="screen"]
 {
     border:0;
-    margin:0 auto;
+    margin: auto;
+    display: block;
 }
