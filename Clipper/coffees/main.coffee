@@ -89,18 +89,31 @@ class Clipper extends this.OS.application.BaseApplication
         
         @bindKey "CTRL-S", () => @actionFile "#{@name}-Save"
         @bindKey "ALT-W", () => @actionFile "#{@name}-Saveas"
+        @notify __("User ALT-S global shortcut to capture the entire VDE")
+        @_gui.bindKey "CTRL-S", ()=>
+            return unless html2canvas
+            html2canvas(document.body).then (canvas) =>
+                @_gui.launch "Clipper", [canvas]
+        
+        return unless @args and @args.length is 1
+        @copycanvas @args[0]
+
+    copycanvas: (canvas)->
+        @scene.height = canvas.height
+        @scene.width = canvas.width
+        @scene.getContext('2d').drawImage(canvas, 0, 0)
+        @dirty = true
 
     capture: (el, windoff) ->
         @hide() if windoff
-        html2canvas(el).then (canvas) =>
-            @scene.height = canvas.height
-            @scene.width = canvas.width
-            @scene.getContext('2d').drawImage(canvas, 0, 0)
-            @notify __("Screen captured")
-            @show() if windoff
-            @dirty = true
+        @load new Promise (resolve, reject) =>
+            html2canvas(el).then (canvas) =>
+                @copycanvas canvas
+                @show() if windoff
+                resolve()
+            .catch (e) -> reject __e e
+        .then () => @notify __("Screen captured")
         .catch (e) => @error e.toString(), e
-    
     menu: () ->
         menu = [{
                 text: "__(File)",
@@ -152,5 +165,6 @@ class Clipper extends this.OS.application.BaseApplication
                 @dirty = false
                 @quit()
 
+Clipper.singleton = true
 
 this.OS.register "Clipper", Clipper
