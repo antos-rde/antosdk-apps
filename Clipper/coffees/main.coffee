@@ -90,7 +90,7 @@ class Clipper extends this.OS.application.BaseApplication
         @bindKey "CTRL-S", () => @actionFile "#{@name}-Save"
         @bindKey "ALT-W", () => @actionFile "#{@name}-Saveas"
         @notify __("User ALT-S global shortcut to capture the entire VDE")
-        @_gui.bindKey "CTRL-S", ()=>
+        @_gui.bindKey "ALT-S", ()=>
             return unless html2canvas
             html2canvas(document.body).then (canvas) =>
                 @_gui.launch "Clipper", [canvas]
