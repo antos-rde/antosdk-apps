@@ -45,6 +45,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
 	},
 	{
+		"pkgname": "Clipper",
+		"name": "Clipper",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.1.0-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/build/release/Clipper.zip"
+	},
+	{
 		"pkgname": "DBDecoder",
 		"name": "DBDecoder",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/README.md",

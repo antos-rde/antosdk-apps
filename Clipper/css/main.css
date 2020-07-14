@@ -1,0 +1,20 @@
+afx-app-window[data-id = "Clipper"] div[data-id = "wrapper"] {
+    overflow: auto;
+    background-image: url("bg.jpg");
+    background-repeat: repeat;
+}
+
+afx-app-window[data-id = "Clipper"] div[data-id = "toolbar"] {
+    padding-left: 5px;
+    display:inline-block;
+    text-align:left;
+}
+
+afx-app-window[data-id = "Clipper"] afx-button[data-id = "btnCrop"] button.selected {
+    background-color: #116cd6;
+    color:white;
+}
+
+afx-app-window[data-id = "Clipper"] div[data-id = "cropwin"] {
+    border:1px dashed chocolate;
+}

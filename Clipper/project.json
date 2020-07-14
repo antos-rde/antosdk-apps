@@ -1,0 +1,8 @@
+{
+    "name": "Clipper",
+    "root": "home://workspace/antosdk-apps/Clipper",
+    "css": ["css/main.css"],
+    "javascripts": ["javascripts/html2canvas.js"],
+    "coffees": ["coffees/main.coffee"],
+    "copies": ["assets/scheme.html", "assets/bg.jpg", "package.json", "README.md"]
+}

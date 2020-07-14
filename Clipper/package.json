@@ -1,0 +1,14 @@
+{
+    "app":"Clipper",
+    "name":"Clipper",
+    "description":"Clipper",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.1.0-a",
+    "category":"Other",
+    "iconclass":"fa fa-scissors",
+    "mimes":["none"],
+    "locale": {}
+}
