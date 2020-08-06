@@ -18,6 +18,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
 	{
+		"pkgname": "Antunnel",
+		"name": "Antunnel",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/README.md",
+		"category": "Library",
+		"author": "Xuan Sang LE",
+		"version": "0.1.1-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/build/release/Antunnel.zip"
+	},
+	{
 		"pkgname": "Archive",
 		"name": "Archive",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/README.md",
@@ -49,7 +58,7 @@
 		"name": "Clipper",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/README.md",
 		"category": "Other",
-		"author": "",
+		"author": "Xuan Sang LE",
 		"version": "0.1.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/build/release/Clipper.zip"
 	},
@@ -133,6 +142,15 @@
 		"author": "Xuan Sang LE",
 		"version": "0.0.4-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/build/release/TinyEditor.zip"
+	},
+	{
+		"pkgname": "vTerm",
+		"name": "Virtual Terminal",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
+		"category": "System",
+		"author": "Xuan Sang LE",
+		"version": "0.0.5-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{
 		"pkgname": "wTerm",

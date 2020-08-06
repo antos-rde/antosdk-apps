@@ -1,0 +1,17 @@
+{
+    "pkgname": "Antunnel",
+    "name":"Antunnel",
+    "services": [
+        "AntunnelService"
+    ],
+    "description":"Antunnel API library",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@lxsang.me"
+    },
+    "version":"0.1.1-a",
+    "category":"Library",
+    "iconclass":"fa fa-adn",
+    "mimes":["none"],
+    "locale": {}
+}

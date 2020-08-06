@@ -245,7 +245,8 @@ class Blogger extends this.OS.application.BaseApplication
                         .then (d) ->
                             console.log "Email sent"
                 }
-            ]
+            ],
+            
         @bloglist.onlistselect = (e) =>
             el = @bloglist.selectedItem
             return unless el
