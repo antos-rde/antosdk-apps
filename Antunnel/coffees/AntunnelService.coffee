@@ -23,6 +23,9 @@ class AntunnelService extends OS.application.BaseService
             @iconclass = "fa fa-circle"
             @iconclass = "fa fa-close" unless @is_connect
             @update()
+        OS.onexit "cleanupAntunnel", () =>
+            Antunnel.tunnel.close() if Antunnel.tunnel
+            @quit()
         
     
     action: (e) ->
