@@ -27,11 +27,10 @@ class vTerm extends this.OS.application.BaseApplication
         @term.loadAddon(@fitAddon)
         @term.setOption('fontSize', '12')
         @term.open @mterm
+        @sub = undefined
         @term.onKey (d) =>
             return unless @sub
             @sub.send Antunnel.Msg.DATA, new TextEncoder("utf-8").encode(d.key)
-        
-        @sub = undefined
 
         @on "focus", () => @term.focus()
         
@@ -51,6 +50,7 @@ class vTerm extends this.OS.application.BaseApplication
         @on "hboxchange", (e) =>
             @resizeContent()
         
+        
         checklib = () =>
             if not Antunnel.tunnel
                 @error __("The Antunnel service is not started, please start it first")
@@ -61,8 +61,9 @@ class vTerm extends this.OS.application.BaseApplication
             else
                 @tunnel = Antunnel.tunnel
                 @openSession()
-                
-        if not Antunnel
+        
+        if not window.Antunnel
+            console.log "require Antunnel"
             @_api.requires("pkg://Antunnel/main.js").then () =>
                 checklib()
             .catch (e) =>
