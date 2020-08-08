@@ -217,16 +217,17 @@ class AntunnelApi
         @onclose() if @onclose()
         
 W = this
-W.Antunnel = {
-    tunnel: undefined
-    init: ((url) ->
-        return new Promise (resolve, reject) ->
-            return resolve(W.Antunnel.tunnel) if W.Antunnel.tunnel
-            W.Antunnel.tunnel = new AntunnelApi(url)
-            W.Antunnel.tunnel.onclose = () -> W.Antunnel.tunnel = undefined
-            W.Antunnel.tunnel.ready().then () ->
-                resolve(W.Antunnel.tunnel)
-            .catch (e) -> reject(e)),
-    Subscriber: Subscriber,
-    Msg: Msg
-}
+if not W.Antunnel
+    W.Antunnel = {
+        tunnel: undefined
+        init: ((url) ->
+            return new Promise (resolve, reject) ->
+                return resolve(W.Antunnel.tunnel) if W.Antunnel.tunnel
+                W.Antunnel.tunnel = new AntunnelApi(url)
+                W.Antunnel.tunnel.onclose = () -> W.Antunnel.tunnel = undefined
+                W.Antunnel.tunnel.ready().then () ->
+                    resolve(W.Antunnel.tunnel)
+                .catch (e) -> reject(e)),
+        Subscriber: Subscriber,
+        Msg: Msg
+    }

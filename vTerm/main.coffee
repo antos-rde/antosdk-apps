@@ -51,15 +51,25 @@ class vTerm extends this.OS.application.BaseApplication
         @on "hboxchange", (e) =>
             @resizeContent()
         
-        if not Antunnel.tunnel
-            @error __("The Antunnel service is not started, please start it first")
-            @_gui.pushService("Antunnel/AntunnelService")
+        checklib = () =>
+            if not Antunnel.tunnel
+                @error __("The Antunnel service is not started, please start it first")
+                @_gui.pushService("Antunnel/AntunnelService")
+                .catch (e) =>
+                    @error e.toString(), e
+                @quit()
+            else
+                @tunnel = Antunnel.tunnel
+                @openSession()
+                
+        if not Antunnel
+            @_api.requires("pkg://Antunnel/main.js").then () =>
+                checklib()
             .catch (e) =>
-                @error e.toString(), e
-            @quit()
+                @error __("Unable to load Antunnel: {0}",e.toString()), e
+                @quit()
         else
-            @tunnel = Antunnel.tunnel
-            @openSession()
+            checklib()
 
     mctxHandle: (data) ->
         switch data.id
@@ -110,10 +120,5 @@ class vTerm extends this.OS.application.BaseApplication
 
     cleanup: (e) ->
         @sub.close() if @sub
-
-
-vTerm.dependencies = [
-    "pkg://Antunnel/main.js"
-]
 
 this.OS.register "vTerm", vTerm

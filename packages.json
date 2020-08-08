@@ -23,7 +23,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/README.md",
 		"category": "Library",
 		"author": "Xuan Sang LE",
-		"version": "0.1.1-a",
+		"version": "0.1.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/build/release/Antunnel.zip"
 	},
 	{
@@ -149,7 +149,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.0.5-a",
+		"version": "0.1.2-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{
