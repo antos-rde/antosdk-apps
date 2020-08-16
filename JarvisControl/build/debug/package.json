@@ -1,13 +1,16 @@
 {
     "pkgname": "JarvisControl",
     "app":"JarvisControl",
-    "name":"JarvisControl",
+    "name":"Jarvis monitoring",
+    "services": [
+        "JarvisService"
+    ],
     "description":"JarvisControl",
     "info":{
         "author": "",
         "email": ""
     },
-    "version":"0.0.1-a",
+    "version":"0.1.1-a",
     "category":"Other",
     "iconclass":"fa fa-android",
     "mimes":["none"],

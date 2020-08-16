@@ -82,11 +82,11 @@
 	},
 	{
 		"pkgname": "JarvisControl",
-		"name": "JarvisControl",
+		"name": "Jarvis monitoring",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/JarvisControl/README.md",
 		"category": "Other",
 		"author": "",
-		"version": "0.0.1-a",
+		"version": "0.1.1-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/JarvisControl/build/release/JarvisControl.zip"
 	},
 	{
