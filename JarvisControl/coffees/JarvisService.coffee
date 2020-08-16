@@ -6,9 +6,9 @@ class JarvisService extends OS.application.BaseService
         
         @nodes = [
             {text: __("Status"), id: 1},
-            {text: __("Exit service"), id: 2},
             {text: __("Shutdown"), id: 3},
-            {text: __("Reboot"), id: 4}
+            {text: __("Reboot"), id: 4},
+            {text: __("Exit service"), id: 2}
         ]
         @onchildselect = (e) => @action e
     
@@ -61,9 +61,9 @@ class JarvisService extends OS.application.BaseService
             when 2
                 @quit()
             when 3
-                @execute("halt\n")
+                @execute("poweroff")
             when 4
-                @execute("reboot\n")
+                @execute("reboot")
     
     execute: (cmd) ->
         return unless @tunnel
