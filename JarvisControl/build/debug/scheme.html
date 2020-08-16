@@ -1,0 +1,22 @@
+<afx-app-window apptitle="Jarvis monitoring" width="600" height="400" data-id="JarvisControl">
+    <afx-vbox >
+        <afx-hbox>
+            <afx-vbox>
+                <afx-label data-id="bat-text" data-height="22" text="__(Battery Usage:)"></afx-label>
+                <div data-id="battery-area" class="epoch category10"></div>
+                <afx-label data-id="temp-text" data-height="22" text="__(CPU temperature:)"></afx-label>
+                <div data-id="temp-area" class="epoch category10" ></div>
+            </afx-vbox>
+            <afx-vbox data-width="160">
+                <afx-label data-id="mem-text" data-height="22" text="__(Memory:)"></afx-label>
+                <div data-height="90" data-id="mem-area" class="epoch gauge-tiny"></div>
+                <afx-label data-id="disk-text" data-height="22" text="__(Disk:)"></afx-label>
+                <div data-height="90" data-id="disk-area" class="epoch gauge-tiny" ></div>
+                <afx-label data-id="cpu-text" data-height="22" text="__(CPU:)"></afx-label>
+                <div data-height="90" data-id="cpu-area" class="epoch gauge-tiny" ></div>
+                <div></div>
+            </afx-vbox>
+        </afx-hbox>
+        
+    </afx-vbox>
+</afx-app-window>

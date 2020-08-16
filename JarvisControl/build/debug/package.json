@@ -1,0 +1,15 @@
+{
+    "pkgname": "JarvisControl",
+    "app":"JarvisControl",
+    "name":"JarvisControl",
+    "description":"JarvisControl",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-android",
+    "mimes":["none"],
+    "locale": {}
+}

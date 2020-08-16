@@ -81,6 +81,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
 	},
 	{
+		"pkgname": "JarvisControl",
+		"name": "JarvisControl",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/JarvisControl/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.0.1-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/JarvisControl/build/release/JarvisControl.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
