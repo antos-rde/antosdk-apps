@@ -6,7 +6,9 @@ class JarvisService extends OS.application.BaseService
         
         @nodes = [
             {text: __("Status"), id: 1},
-            {text: __("Exit"), id: 2}
+            {text: __("Exit service"), id: 2},
+            {text: __("Shutdown"), id: 3},
+            {text: __("Reboot"), id: 4}
         ]
         @onchildselect = (e) => @action e
     
@@ -58,6 +60,26 @@ class JarvisService extends OS.application.BaseService
                 @_gui.launch "JarvisControl", []
             when 2
                 @quit()
+            when 3
+                @execute("halt\n")
+            when 4
+                @execute("reboot\n")
+    
+    execute: (cmd) ->
+        return unless @tunnel
+        sub = new Antunnel.Subscriber("jarvis_control")
+        sub.onopen = () =>
+            console.log("Subscribed to jarvis_control channel. Send the command")
+            sub.send Antunnel.Msg.DATA, new TextEncoder("utf-8").encode(cmd)
+            sub.close()
+        
+        sub.onerror = (e) =>
+            @error __("Error: {0}", new TextDecoder("utf-8").decode(e.data)), e
+            #@sub = undefined
+        
+        sub.onclose = () =>
+            @notify __("Unsubscribed to the jarvis_control service")
+        @tunnel.subscribe sub
 
     awake: () ->
     
