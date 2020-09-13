@@ -4,6 +4,8 @@ A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https:
 
 ## Change logs
 
+### v0.1.0-a
+* Add support to model/gltf-binary file
 ### v0.1.0-a: new feature
 * Entries of the same parent now can go up and down
 * Support drag and drop to move entries around

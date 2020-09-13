@@ -217,7 +217,7 @@ class Booklet extends this.OS.application.BaseApplication
                         return unless @book
                         @openDialog "FileDialog", {
                             title: __("Select 3d model"),
-                            mimes: ["text/wavefront-obj"],
+                            mimes: ["text/wavefront-obj", "model/gltf-binary"],
                             root: @book.path
                         }
                         .then (d) =>
