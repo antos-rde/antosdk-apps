@@ -289,7 +289,7 @@ class Booklet extends this.OS.application.BaseApplication
         switch e
             when "#{@name}-Open"
                 @checkForDirty () =>
-                    @openDialog "FileDialog", { title:__("Open file"), mimes: ['dir'] }
+                    @openDialog "FileDialog", { title:__("Open book"), mimes: ['dir'] }
                     .then (d) =>
                         @book = new BookletBook(d.file.path)
                         @book.read(d.file.path).then () =>
@@ -302,7 +302,7 @@ class Booklet extends this.OS.application.BaseApplication
                     .catch (msg) => @error msg.toString(), msg
                    
              when "#{@name}-New"
-                @openDialog "FileDialog", { title: __("Open file"), mimes: ['dir'], file: { basename: __("BookName") }}
+                @openDialog "FileDialog", { title: __("New book at"), mimes: ['dir'], file: { basename: __("BookName") }}
                 .then (d) =>
                     @newAt "#{d.file.path}/#{d.name}"
                 .catch (msg) => @error msg.toString(), msg

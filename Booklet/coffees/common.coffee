@@ -62,6 +62,7 @@ class BookletFolder extends BookletEntry
 
     add: (chap) ->
         chap.parent = @
+        chap.root = @root
         @nodes.push chap
         @metaFile.dirty = true if @hasMeta and @metaFile
         chap.metaFile.dirty = true if chap.metaFile and chap.hasMeta
@@ -98,7 +99,7 @@ class BookletFolder extends BookletEntry
                         el = (l.splice 0, 1)[0]
                         obj = new NS[el.type]( @ )
                         obj.name = el.name
-                        obj.read(el.path).then () =>
+                        obj.read(el.path.replace("book://", @root)).then () =>
                             fn l
                         .catch (msg) =>
                             fn l
@@ -144,7 +145,7 @@ class BookletFolder extends BookletEntry
         return new Promise (r, e) =>
             return r() unless @metaFile.dirty
             entries = []
-            entries[i] = {name: v.name, path:v.path, type:v.type} for v,i in @nodes
+            entries[i] = {name: v.name, path:v.path.replace( @root, "book://" ), type:v.type} for v,i in @nodes
             data = {
                 name: @text,
                 entries: entries,
@@ -197,6 +198,10 @@ class BookletFolder extends BookletEntry
 class BookletBook extends BookletFolder
     constructor: (path) ->
         super 'Book', path, true
+    
+    init: () ->
+        super.init()
+        @root = @path
         
     save:() ->
         

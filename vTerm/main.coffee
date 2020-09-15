@@ -78,6 +78,7 @@ class vTerm extends this.OS.application.BaseApplication
                 @_api.getClipboard().then (text) =>
                     return unless text and text isnt ""
                     @sub.send Antunnel.Msg.DATA, new TextEncoder("utf-8").encode(text) if @sub
+                    @term.focus()
                 .catch (e) => @error __("Unable to paste"), e
             when "copy"
                 text = @term.getSelection()
