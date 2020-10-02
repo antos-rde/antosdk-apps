@@ -228,6 +228,7 @@ class GraphEditor extends this.OS.application.BaseApplication
     
     svgToCanvas: (f) ->
         img = new Image()
+        img.crossOrigin="anonymous"
         svgStr = @svgtext()
         DOMURL = window.URL || window.webkitURL || window
         svgBlob = new Blob [svgStr], { type: 'image/svg+xml;charset=utf-8' }
