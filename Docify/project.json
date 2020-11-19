@@ -1,0 +1,8 @@
+{
+    "name": "Docify",
+    "root": "home://workspace/antosdk-apps/Docify",
+    "css": ["css/main.css"],
+    "javascripts": [],
+    "coffees": ["coffees/main.coffee"],
+    "copies": ["assets/scheme.html", "api/api.lua", "package.json", "README.md"]
+}

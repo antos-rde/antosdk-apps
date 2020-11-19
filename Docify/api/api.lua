@@ -1,0 +1,1 @@
+result("Hello from server side")
