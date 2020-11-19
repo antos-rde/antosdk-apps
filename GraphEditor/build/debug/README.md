@@ -5,6 +5,9 @@ Generate graph from text using mermaid
 ## Change logs
 
 ### v0.0.6-a
+* Fix worker path
+
+### v0.0.6-a
 * Fix unable to export image from tainted canvas
 
 ### v0.0.5-a

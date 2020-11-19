@@ -30,7 +30,7 @@ class GraphEditor extends this.OS.application.BaseApplication
         @datarea = @find "datarea"
         @preview = @find "preview"
         @btctn = @find "btn-container"
-        ace.config.set("basePath", "/scripts/ace")
+        ace.config.set("basePath", "#{window.location.pathname}/scripts/ace")
         @editor = ace.edit @datarea
         @editor.setOptions {
             enableBasicAutocompletion: true,
