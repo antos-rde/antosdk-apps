@@ -181,8 +181,8 @@ handle.preview = function(path)
     end
     
     if vfs.exists(tpath) then
-        --local cmd = "rm "..vfs.ospath(tpath)
-        --os.execute(cmd)
+        local cmd = "rm "..vfs.ospath(tpath)
+        os.execute(cmd)
         return result("exist")
     else
         return error("do not exist")

@@ -3,6 +3,6 @@
     "root": "home://workspace/antosdk-apps/Docify",
     "css": ["css/main.css"],
     "javascripts": [],
-    "coffees": ["coffees/main.coffee"],
+    "coffees": ["coffees/dialogs.coffee", "coffees/main.coffee"],
     "copies": ["assets/scheme.html", "api/api.lua", "package.json", "README.md"]
 }
