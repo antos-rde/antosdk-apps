@@ -2,3 +2,14 @@ afx-app-window[data-id = "Docify"] .header .label-text
 {
     font-weight: bold;
 }
+div[data-id = "preview-container"] 
+{
+    overflow: auto;
+    display: block;
+}
+
+canvas[data-id = "preview-canvas"] 
+{
+    display: block;
+    margin:0 auto;
+}

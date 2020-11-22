@@ -72,6 +72,15 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/build/release/DBDecoder.zip"
 	},
 	{
+		"pkgname": "Docify",
+		"name": "Docify",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.0.1-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/build/release/Docify.zip"
+	},
+	{
 		"pkgname": "GraphEditor",
 		"name": "Graph Editor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/README.md",

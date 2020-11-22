@@ -31,6 +31,49 @@ local mkdirp =function(p)
     return true, nil
 end
 
+local merge_files = function(data)
+    local firstfile = data.file[1]
+    local fpath = docpath.."/"..data.cid
+    local r, e = mkdirp(fpath)
+    if not r then return e end
+    fpath = fpath.."/"..os.date("%d-%m-%Y_%H_%M_%S")..".pdf"
+    -- concat the files
+    if #data.file > 1 then
+        local cmd = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="..vfs.ospath(fpath)
+        for i,v in ipairs(data.file) do
+           cmd = cmd.." "..vfs.ospath(v)
+        end
+        os.execute(cmd)
+        if not vfs.exists(fpath) then
+            return error("Unable to merge PDF files")
+        end
+        cmd = "chmod 777 "..vfs.ospath(fpath)
+        os.execute(cmd)
+    else
+        if not vfs.move(firstfile, fpath) then
+            return error("Unable to move file")
+        end
+    end
+    -- move the thumb file to the cache folder
+    local thumb = docpath.."/cache/"..std.sha1(firstfile:gsub(docpath, ""))..".png"
+    local desthumb = docpath.."/cache/"..std.sha1(fpath:gsub(docpath, ""))..".png"
+    if vfs.exists(thumb) then
+        vfs.move(thumb, desthumb)
+    end
+    -- remove all other thumb files
+    for i,v in ipairs(data.file) do
+        thumb = docpath.."/cache/"..std.sha1(v:gsub(docpath, ""))..".png"
+        if vfs.exists(thumb) then
+            vfs.delete(thumb)
+        end
+        -- delete all files
+        if vfs.exists(v) then
+            vfs.delete(v)
+        end
+    end
+    return result(fpath)
+end
+
 handle.init = function(args)
     
     local r, e = mkdirp(docpath)
@@ -124,6 +167,20 @@ handle.init = function(args)
     return result("Docify initialized")
 end
 
+handle.select = function(param)
+    local db = sqlite._getdb(vfs.ospath(dbpath))
+    if not db then
+        return error("Unable to get database "..dbpath)
+    end
+    local r = sqlite.select(db, param.table, "*", param.cond)
+    sqlite.dbclose(db)
+    if r == nil then
+        return error("Unable to select data from "..param.table)
+    else
+        return result(r)
+    end
+end
+
 handle.fetch = function(table)
     local db = sqlite._getdb(vfs.ospath(dbpath))
     if not db then
@@ -176,17 +233,111 @@ handle.preview = function(path)
     local tpath = docpath.."/cache/"..name
     if not vfs.exists(tpath) then
         -- regenerate thumb
-        local cmd = "convert -resize 200x500 "..vfs.ospath(path).."[0] "..vfs.ospath(tpath)
+        local cmd = "convert -resize 250x500 "..vfs.ospath(path).."[0] "..vfs.ospath(tpath)
         os.execute(cmd)
     end
     
     if vfs.exists(tpath) then
-        local cmd = "rm "..vfs.ospath(tpath)
+        local cmd = "chmod 777 "..vfs.ospath(tpath)
         os.execute(cmd)
-        return result("exist")
+        return result(tpath)
     else
         return error("do not exist")
     end
+end
+
+handle.get_doc = function(id)
+    local db = sqlite._getdb(vfs.ospath(dbpath))
+    if not db then
+        return error("Unable to get database "..dbpath)
+    end
+    local r = sqlite.select(db, "docs", "*", "id = "..id)
+    if r == nil or #r == 0 then
+        sqlite.dbclose(db)
+        return error("Unable to select data from "..param.table)
+    else
+        r = r[1]
+        local o = sqlite.select(db, "owners", "*", "id = "..r.oid)
+        sqlite.dbclose(db)
+        if o == nil or #o == 0 then
+            return result(r)
+        else
+            o = o[1]
+            r.owner = o.name
+            if r.ctime then
+                r.ctime = os.date("%d/%m/%Y %H:%M:%S", r.ctime)
+            end
+            
+            if r.mtime then
+                r.mtime = os.date("%d/%m/%Y %H:%M:%S", r.mtime)
+            end
+            local edate = ""
+            return result(r)
+        end
+    end
+end
+
+handle.deletedoc = function(param)
+    local db = sqlite._getdb(vfs.ospath(dbpath))
+    if not db then
+        return error("Unable to get database "..dbpath)
+    end
+    local sql = "DELETE FROM docs WHERE id="..param.id..";"
+    local ret = sqlite.query(db, sql) == 1
+    sqlite.dbclose(db)
+    if not ret then
+        return error("Unable to delete doc meta-data from database")
+    end
+    -- move file to unclassified
+    local newfile = docpath.."/unclassified/"..std.basename(param.file)
+    vfs.move(param.file, newfile)
+    -- delete thumb file
+    local thumb = docpath.."/cache/"..std.sha1(param.file:gsub(docpath,""))..".png"
+    if vfs.exists(thumb) then
+        vfs.delete(thumb)
+    end
+    return result("Document entry deleted")
+end
+
+handle.updatedoc = function(param)
+    local r = merge_files(param.data)
+    if r.error then return r end
+
+    if param.rm then
+        -- move ve the old file to unclassified
+        local newfile = docpath.."/unclassified/"..std.basename(param.rm)
+        if vfs.exists(param.rm) then
+            vfs.move(param.rm, newfile)
+        end
+        -- move the thumb file if needed
+        local thumb = docpath.."/cache/"..std.sha1(param.rm:gsub(docpath,""))..".png"
+        local newwthumb = docpath.."/cache/"..std.sha1(newfile:gsub(docpath, ""))..".png"
+        if vfs.exists(thumb) then
+            vfs.move(thumb, newwthumb)
+        end
+    end
+    param.data.file = r.result
+    print(r.result)
+    param.data.mtime = os.time(os.date("!*t"))
+    return handle.update({
+        table = "docs",
+        data = param.data
+    })
+end
+
+
+handle.insertdoc = function(data)
+    local r = merge_files(data)
+    if r.error then return r end
+    -- save data
+    data.file = r.result
+    data.ctime = os.time(os.date("!*t"))
+    data.mtime = os.time(os.date("!*t"))
+    local ret = handle.insert({
+        table = "docs",
+        data = data
+    })
+    return ret
 end
 
 handle.update = function(param)
