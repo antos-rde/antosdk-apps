@@ -251,7 +251,7 @@ class FilePreviewDialog extends this.OS.GUI.BasicDialog
             .then (d) =>
                 return @error d.error if d.error
                 v.text = v.filename for v in d.result
-                @flist.data = d.result
+                @flist.data = (v for v in d.result when v.filename[0] isnt '.')
             .catch (e) =>
                 @error __("Unable to fetch unclassified file list: {0}", e.toString()), e
 

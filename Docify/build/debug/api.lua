@@ -41,7 +41,7 @@ local merge_files = function(data)
     if #data.file > 1 then
         local cmd = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="..vfs.ospath(fpath)
         for i,v in ipairs(data.file) do
-           cmd = cmd.." "..vfs.ospath(v)
+           cmd = cmd.." \""..vfs.ospath(v).."\""
         end
         os.execute(cmd)
         if not vfs.exists(fpath) then
@@ -233,7 +233,7 @@ handle.preview = function(path)
     local tpath = docpath.."/cache/"..name
     if not vfs.exists(tpath) then
         -- regenerate thumb
-        local cmd = "convert -resize 250x500 "..vfs.ospath(path).."[0] "..vfs.ospath(tpath)
+        local cmd = "convert -resize 250x500 \""..vfs.ospath(path).."\"[0] "..vfs.ospath(tpath)
         os.execute(cmd)
     end
     

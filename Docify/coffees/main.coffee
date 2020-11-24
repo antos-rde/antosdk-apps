@@ -193,6 +193,8 @@ class Docify extends this.OS.application.BaseApplication
                 @error e.toString(), e
     
     cat_refresh: () ->
+        @docview.data = []
+        @clear_preview()
         @exec("fetch", "categories")
             .then (d) =>
                 v.text = v.name for v in d.result
@@ -239,8 +241,9 @@ class Docify extends this.OS.application.BaseApplication
             {
                 text: "__(View)",
                 nodes: [
-                    { text: "__(Owners)", id:"owners", shortcut: "A-O"},
-                    { text: "__(Preview)", id:"preview", shortcut: "A-P"}
+                    { text: "__(Owners)", id:"owners"},
+                    { text: "__(Preview)", id:"preview"},
+                    { text: "__(Change doc path)", id:"setdocp"}
                 ],
                 onchildselect: (e) => @fileMenuHandle e.data.item.data.id
             }
@@ -254,5 +257,8 @@ class Docify extends this.OS.application.BaseApplication
                 @openDialog(new FilePreviewDialog())
                     .then (d) =>
                         @notify d.path
+            when "setdocp"
+                @setting.docpath = undefined
+                @initialize()
 
 this.OS.register "Docify", Docify
