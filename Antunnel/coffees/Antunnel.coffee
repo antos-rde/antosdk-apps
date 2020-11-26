@@ -12,33 +12,33 @@ class Msg
     
     
     as_raw:() ->
-        length = 21 + @header.size
+        length = 13 + @header.size
         arr = new Uint8Array(length)
-        arr.set(Msg.MAGIC_START, 0)
-        arr[4] = @header.type
+        #arr.set(Msg.MAGIC_START, 0)
+        arr[0] = @header.type
         bytes = Msg.bytes_of @header.cid
-        arr.set(bytes,5)
+        arr.set(bytes,1)
         bytes = Msg.bytes_of @header.sid
-        arr.set(bytes,9)
+        arr.set(bytes,5)
         bytes = Msg.bytes_of @header.size
-        arr.set(bytes,13)
+        arr.set(bytes,9)
         if @data
-            arr.set(@data, 17)
-        arr.set(Msg.MAGIC_END, @header.size + 17)
+            arr.set(@data, 13)
+        # arr.set(Msg.MAGIC_END, @header.size + 13)
         arr.buffer
 
 Msg.decode = (raw) ->
     new Promise (resolve, reject) ->
         msg = new Msg()
-        if(Msg.int_from(Msg.MAGIC_START, 0) != Msg.int_from(raw, 0))
-            return reject("Unmatch message begin magic number")
-        msg.header.type = raw[4]
-        msg.header.cid = Msg.int_from(raw, 5)
-        msg.header.sid = Msg.int_from(raw,9)
-        msg.header.size = Msg.int_from(raw, 13)
-        msg.data = raw.slice(17, 17+msg.header.size)
-        if(Msg.int_from(Msg.MAGIC_END, 0) != Msg.int_from(raw, 17+msg.header.size))
-            return reject("Unmatch message end magic number")
+        #if(Msg.int_from(Msg.MAGIC_START, 0) != Msg.int_from(raw, 0))
+        #    return reject("Unmatch message begin magic number")
+        msg.header.type = raw[0]
+        msg.header.cid = Msg.int_from(raw, 1)
+        msg.header.sid = Msg.int_from(raw,5)
+        msg.header.size = Msg.int_from(raw, 9)
+        msg.data = raw.slice(13, 13+msg.header.size)
+        #if(Msg.int_from(Msg.MAGIC_END, 0) != Msg.int_from(raw, 17+msg.header.size))
+        #    return reject("Unmatch message end magic number")
         resolve msg
     
     
@@ -63,8 +63,8 @@ Msg.CLOSE = 5
 Msg.SUBSCRIBE = 2
 Msg.UNSUBSCRIBE = 3
 Msg.CTRL = 7
-Msg.MAGIC_END = [ 0x41, 0x4e, 0x54, 0x44]
-Msg.MAGIC_START = [0x44, 0x54, 0x4e, 0x41 ]
+#Msg.MAGIC_END = [ 0x41, 0x4e, 0x54, 0x44]
+#Msg.MAGIC_START = [0x44, 0x54, 0x4e, 0x41 ]
 
 class Subscriber
     constructor: (@channel) ->
