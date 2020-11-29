@@ -162,12 +162,21 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/build/release/TinyEditor.zip"
 	},
 	{
+		"pkgname": "VizApp",
+		"name": "Viz editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/README.md",
+		"category": "Office",
+		"author": "Xuan Sang LE",
+		"version": "0.0.1-a",
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/build/release/VizApp.zip"
+	},
+	{
 		"pkgname": "vTerm",
 		"name": "Virtual Terminal",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.1.4-a",
+		"version": "0.1.5-a",
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{

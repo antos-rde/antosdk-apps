@@ -75,11 +75,22 @@ class vTerm extends this.OS.application.BaseApplication
     mctxHandle: (data) ->
         switch data.id
             when "paste"
-                @_api.getClipboard().then (text) =>
+                cb = (text) =>
                     return unless text and text isnt ""
+                    text = text.replace /\n/g, "\r"
                     @sub.send Antunnel.Msg.DATA, new TextEncoder("utf-8").encode(text) if @sub
                     @term.focus()
-                .catch (e) => @error __("Unable to paste"), e
+                    
+                @_api.getClipboard()
+                    .then (text) =>
+                        cb(text)
+                    .catch (e) =>
+                        @error __("Unable to paste"), e
+                        #ask for user to enter the text manually
+                        @openDialog("TextDialog", { title: "Paste text"})
+                            .then (text) =>
+                                cb(text)
+                            .catch (err) => @error err.toString(), err
             when "copy"
                 text = @term.getSelection()
                 return unless text and text isnt ""

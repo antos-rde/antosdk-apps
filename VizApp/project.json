@@ -1,0 +1,11 @@
+{
+	"name": "VizApp",
+	"root": "home://workspace/antosdk-apps/Viz",
+	"css": ["css/main.css"],
+	"javascripts": [
+	    "javascripts/svg-pan-zoom.js",
+	    "javascripts/viz.js",
+	    "javascripts/lite.render.js"],
+	"coffees": ["coffees/main.coffee"],
+	"copies": ["assets/scheme.html", "package.json", "README.md"]
+}
