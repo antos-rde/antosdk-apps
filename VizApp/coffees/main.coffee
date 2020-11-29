@@ -28,7 +28,7 @@ class VizApp extends this.OS.application.BaseApplication
         @btctn = @find "btn-container"
         @previewSVG = undefined
         $(@preview).append @btctn
-        ace.config.set("basePath", "#{window.location.pathname}/scripts/ace")
+        ace.config.set("basePath", "scripts/ace")
         @editor = ace.edit @datarea
         @editor.setOptions {
             enableBasicAutocompletion: true,

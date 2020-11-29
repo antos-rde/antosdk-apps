@@ -1,6 +1,6 @@
 {
 	"name": "VizApp",
-	"root": "home://workspace/antosdk-apps/Viz",
+	"root": "home://workspace/antosdk-apps/VizApp",
 	"css": ["css/main.css"],
 	"javascripts": [
 	    "javascripts/svg-pan-zoom.js",
