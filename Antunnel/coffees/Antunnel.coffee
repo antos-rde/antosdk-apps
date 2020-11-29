@@ -181,9 +181,9 @@ class AntunnelApi
         @ready().then ()=>
             # insert it to pending list
             sub.tunnel = @
-            sub.id = Math.floor(Math.random()*100000) + 1
+            sub.id = Math.floor(Math.random()*1000) + 1
             while @subscribers[sub.id] or @pending[sub.id]
-                sub.id = Math.floor(Math.random()*100000) + 1
+                sub.id = Math.floor(Math.random()*1000) + 1
             @pending[sub.id] = sub
             # send request to connect to a channel
             @send sub.genmsg Msg.SUBSCRIBE, (new TextEncoder()).encode(sub.channel)
