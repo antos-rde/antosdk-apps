@@ -157,7 +157,7 @@ class Docify extends this.OS.application.BaseApplication
         @initialize()
     
     update_doclist: (cid) ->
-        @exec("select",{table: "docs", cond:"cid = #{cid}"})
+        @exec("select",{table: "docs", cond:"cid = #{cid} ORDER BY year DESC, month DESC, day DESC"})
             .then (d) =>
                 return @error d.error if d.error
                 v.text = v.name for v in d.result

@@ -50,8 +50,10 @@ local merge_files = function(data)
         cmd = "chmod 777 "..vfs.ospath(fpath)
         os.execute(cmd)
     else
-        if not vfs.move(firstfile, fpath) then
-            return error("Unable to move file")
+        local cmd = "mv \""..vfs.ospath(firstfile).."\" \""..vfs.ospath(fpath).."\""
+        os.execute(cmd)
+        if not vfs.exists(fpath) then
+            return error("Unable to move PDF file")
         end
     end
     -- move the thumb file to the cache folder
