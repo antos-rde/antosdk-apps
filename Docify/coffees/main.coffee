@@ -82,6 +82,7 @@ class Docify extends this.OS.application.BaseApplication
                     return @error d.error if d.error
                     @preview d.result.file, @docpreview
                     rows = []
+                    d.result.size = (d.result.fileinfo.size / 1024.0).toFixed(2) + " Kb" if d.result.fileinfo
                     map = {
                         ctime: "Created on",
                         mtime: "Modified on",
@@ -90,7 +91,8 @@ class Docify extends this.OS.application.BaseApplication
                         name: "Title",
                         owner: "Owner",
                         edate: "Effective date",
-                        file: "File"
+                        file: "File",
+                        size: "Size"
                     }
                     d.result.edate = "#{d.result.day}/#{d.result.month}/#{d.result.year}"
                     for key, value of d.result

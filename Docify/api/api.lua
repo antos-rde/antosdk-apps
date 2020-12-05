@@ -259,6 +259,10 @@ handle.get_doc = function(id)
         return error("Unable to select data from "..param.table)
     else
         r = r[1]
+        local ret, meta = vfs.fileinfo(r.file)
+        if ret then
+            r.fileinfo = meta
+        end
         local o = sqlite.select(db, "owners", "*", "id = "..r.oid)
         sqlite.dbclose(db)
         if o == nil or #o == 0 then
