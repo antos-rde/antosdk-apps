@@ -312,9 +312,11 @@ handle.updatedoc = function(param)
     if param.rm then
         -- move ve the old file to unclassified
         local newfile = docpath.."/unclassified/"..std.basename(param.rm)
-        if vfs.exists(param.rm) then
-            vfs.move(param.rm, newfile)
-        end
+        local cmd = "rm -f "..vfs.ospath(param.rm)
+        os.execute(cmd)
+        --if vfs.exists(param.rm) then
+        --    vfs.move(param.rm, newfile)
+        --end
         -- move the thumb file if needed
         local thumb = docpath.."/cache/"..std.sha1(param.rm:gsub(docpath,""))..".png"
         local newwthumb = docpath.."/cache/"..std.sha1(newfile:gsub(docpath, ""))..".png"
