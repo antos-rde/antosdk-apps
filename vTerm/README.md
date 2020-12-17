@@ -10,3 +10,6 @@ thanks to the Antd **tunnel** plugin.
 
 VTerm depends on the server side **tunnel** plugin and the AntOS **Antunnel**
 client side package
+
+## Change logs
+- v0.1.6-a: Add dependencies to package meta-data

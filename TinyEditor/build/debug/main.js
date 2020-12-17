@@ -1,1 +1,146 @@
-(function(){var e;e=class extends this.OS.application.BaseApplication{constructor(e){super("TinyEditor",e)}main(){return this.editor=this.find("editor"),this.bindKey("ALT-N",()=>this.newFile()),this.bindKey("ALT-O",()=>this.openFile()),this.bindKey("CTRL-S",()=>this.saveFile()),this.filehandle=this.args&&this.args.length>0?this.args[0].path.asFileHandle():null,$(this.editor).on("input",e=>{if(!0!==this.filehandle.dirty)return this.filehandle.dirty=!0,this.scheme.apptitle=this.filehandle.path+"*"}),this.read()}menu(){return[{text:"__(File)",nodes:[{text:"__(New)",dataid:"new",shortcut:"A-N"},{text:"__(Open)",dataid:"open",shortcut:"A-O"},{text:"__(Save)",dataid:"save",shortcut:"C-S"}],onchildselect:e=>{switch(e.data.item.data.dataid){case"new":return this.newFile();case"open":return this.openFile();case"save":return this.saveFile()}}}]}newFile(){return this.filehandle=null,this.read()}openFile(){return this.openDialog("FileDialog",{title:__("Open file")}).then(e=>(this.filehandle=e.file.path.asFileHandle(),this.read()))}saveFile(){return this.filehandle.cache=this.editor.value,"Untitled"!==this.filehandle.path?this.write():this.openDialog("FileDialog",{title:__("Save as"),file:this.filehandle}).then(e=>{var t;return t=e.file.path.asFileHandle(),"file"===e.file.type&&(t=t.parent()),this.filehandle.setPath(`${t.path}/${e.name}`),this.write()})}read(){return this.editor.value="",null===this.filehandle?(this.filehandle="Untitled".asFileHandle(),void(this.scheme.apptitle="Untitled")):this.filehandle.read().then(e=>(this.scheme.apptitle=this.filehandle.path,this.editor.value=e)).catch(e=>this.error(__("Unable to read file content")))}write(){return this.filehandle.write("text/plain").then(e=>(this.filehandle.dirty=!1,this.scheme.apptitle=""+this.filehandle.path)).catch(e=>this.error(__("Error saving file {0}",this.filehandle.path),e))}cleanup(e){if(this.filehandle.dirty)return e.preventDefault(),this.ask({title:"__(Quit)",text:"__(Quit without saving?)"}).then(e=>{if(e)return this.filehandle.dirty=!1,this.quit()})}},this.OS.register("TinyEditor",e)}).call(this);
+(function() {
+  var TinyEditor;
+
+  TinyEditor = class TinyEditor extends this.OS.application.BaseApplication {
+    constructor(args) {
+      super("TinyEditor", args);
+    }
+
+    main() {
+      this.editor = this.find("editor");
+      this.bindKey("ALT-N", () => {
+        return this.newFile();
+      });
+      this.bindKey("ALT-O", () => {
+        return this.openFile();
+      });
+      this.bindKey("CTRL-S", () => {
+        return this.saveFile();
+      });
+      this.filehandle = this.args && this.args.length > 0 ? this.args[0].path.asFileHandle() : null;
+      $(this.editor).on('input', (e) => {
+        if (this.filehandle.dirty === true) {
+          return;
+        }
+        this.filehandle.dirty = true;
+        return this.scheme.apptitle = `${this.filehandle.path}*`;
+      });
+      return this.read();
+    }
+
+    menu() {
+      var m;
+      m = [
+        {
+          text: "__(File)",
+          nodes: [
+            {
+              text: "__(New)",
+              dataid: "new",
+              shortcut: 'A-N'
+            },
+            {
+              text: "__(Open)",
+              dataid: "open",
+              shortcut: 'A-O'
+            },
+            {
+              text: "__(Save)",
+              dataid: "save",
+              shortcut: 'C-S'
+            }
+          ],
+          onchildselect: (e) => {
+            switch (e.data.item.data.dataid) {
+              case "new":
+                return this.newFile();
+              case "open":
+                return this.openFile();
+              case "save":
+                return this.saveFile();
+            }
+          }
+        }
+      ];
+      return m;
+    }
+
+    newFile() {
+      this.filehandle = null;
+      return this.read();
+    }
+
+    openFile() {
+      return this.openDialog("FileDialog", {
+        title: __("Open file")
+      }).then((d) => {
+        this.filehandle = d.file.path.asFileHandle();
+        return this.read();
+      });
+    }
+
+    saveFile() {
+      this.filehandle.cache = this.editor.value;
+      if (this.filehandle.path !== "Untitled") {
+        return this.write();
+      }
+      return this.openDialog("FileDialog", {
+        title: __("Save as"),
+        file: this.filehandle
+      }).then((f) => {
+        var d;
+        d = f.file.path.asFileHandle();
+        if (f.file.type === "file") {
+          d = d.parent();
+        }
+        this.filehandle.setPath(`${d.path}/${f.name}`);
+        return this.write();
+      });
+    }
+
+    read() {
+      this.editor.value = "";
+      if (this.filehandle === null) {
+        this.filehandle = "Untitled".asFileHandle();
+        this.scheme.apptitle = "Untitled";
+        return;
+      }
+      return this.filehandle.read().then((d) => {
+        this.scheme.apptitle = this.filehandle.path;
+        return this.editor.value = d;
+      }).catch((e) => {
+        return this.error(__("Unable to read file content"));
+      });
+    }
+
+    write() {
+      return this.filehandle.write("text/plain").then((d) => {
+        this.filehandle.dirty = false;
+        return this.scheme.apptitle = `${this.filehandle.path}`;
+      }).catch((e) => {
+        return this.error(__("Error saving file {0}", this.filehandle.path), e);
+      });
+    }
+
+    cleanup(e) {
+      if (!this.filehandle.dirty) {
+        return;
+      }
+      e.preventDefault();
+      return this.ask({
+        title: "__(Quit)",
+        text: "__(Quit without saving?)"
+      }).then((d) => {
+        if (!d) {
+          return;
+        }
+        this.filehandle.dirty = false;
+        return this.quit();
+      });
+    }
+
+  };
+
+  this.OS.register("TinyEditor", TinyEditor);
+
+}).call(this);

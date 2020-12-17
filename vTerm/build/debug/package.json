@@ -6,10 +6,11 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.5-a",
+    "version":"0.1.6-a",
     "category":"System",
     "iconclass":"fa fa-terminal",
     "mimes":["none"],
+    "dependencies": ["Antunnel@0.1.4-a"],
     "locales":{
         "fr_FR": {
             "Open terminal": "Ouvrir terminal",

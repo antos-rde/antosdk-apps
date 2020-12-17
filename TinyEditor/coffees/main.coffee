@@ -13,7 +13,6 @@ class TinyEditor extends this.OS.application.BaseApplication
             @filehandle.dirty = true
             @scheme.apptitle = "#{@filehandle.path}*"
         @read()
-        
     menu: () ->
         m = [ 
             {
