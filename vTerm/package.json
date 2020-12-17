@@ -11,8 +11,7 @@
     "iconclass":"fa fa-terminal",
     "mimes":["none"],
     "dependencies": [
-        "Antunnel@0.1.4-a",
-        "blabla@blbl"
+        "Antunnel@0.1.4-a"
     ],
     "locales":{
         "fr_FR": {

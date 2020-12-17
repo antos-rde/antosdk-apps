@@ -196,7 +196,7 @@
 		"category": "System",
 		"author": "Xuan Sang LE",
 		"version": "0.1.6-a",
-		"dependencies": ["Antunnel@0.1.4-a","blabla@blbl"],
+		"dependencies": ["Antunnel@0.1.4-a"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{
