@@ -5,9 +5,16 @@ set -e
 repodir=$1
 repofile=$2
 
-function get_json_entry()
+function get_json_string_entry()
 {
     cmd="cat $1 | sed -n 's/\"$2\"[[:space:]]*:[[:space:]]*\"\(.*\)\"[[:space:]]*,*/\1/p'|sed -e 's/^[[:space:]]*//'"
+    value=$(eval "$cmd")
+    echo "$value"
+}
+
+function get_json_array_entry()
+{
+    cmd="cat $1 | sed -e ':a' -e 'N' -e '\$!ba' -e 's/\\n/ /g'  | sed -n 's/.*\"$2\"[[:space:]]*:[[:space:]]*\[\(.*\)\][[:space:]]*.*/\1/p'|sed -e 's/[[:space:]]//g'"
     value=$(eval "$cmd")
     echo "$value"
 }
@@ -16,10 +23,11 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 
 function gen_pkg_meta()
 {
-    author=$(get_json_entry "$1/package.json" "author")
-    name=$(get_json_entry "$1/package.json" "name")
-    category=$(get_json_entry "$1/package.json" "category")
-    version=$(get_json_entry "$1/package.json" "version")
+    author=$(get_json_string_entry "$1/package.json" "author")
+    name=$(get_json_string_entry "$1/package.json" "name")
+    category=$(get_json_string_entry "$1/package.json" "category")
+    version=$(get_json_string_entry "$1/package.json" "version")
+    dependencies=$(get_json_array_entry "$1/package.json" "dependencies")
     printf "\t{\n"
     printf "\t\t\"pkgname\": \"%s\",\n" "$2"
     printf "\t\t\"name\": \"%s\",\n" "$name"
@@ -27,9 +35,11 @@ function gen_pkg_meta()
     printf "\t\t\"category\": \"%s\",\n" "$category"
     printf "\t\t\"author\": \"%s\",\n" "$author"
     printf "\t\t\"version\": \"%s\",\n" "$version"
+    printf "\t\t\"dependencies\": [%s],\n" "$dependencies"
     printf "\t\t\"download\": \"https://raw.githubusercontent.com/lxsang/antosdk-apps/master/%s/build/release/%s.zip\"\n" "$2" "$2"
     printf "\t}\n"
 }
+
 # generate packages meta-data
 [ ! -d "$repodir" ] && echo "No such directory: $repodir" && exit 1
 [ -z "$repofile" ] && repofile="packages.json"
