@@ -1,0 +1,15 @@
+{
+    "pkgname": "Katex",
+    "name":"Katex",
+    "description":"Katex",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.11.1-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

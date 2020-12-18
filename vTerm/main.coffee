@@ -134,4 +134,10 @@ class vTerm extends this.OS.application.BaseApplication
     cleanup: (e) ->
         @sub.close() if @sub
 
+vTerm.dependencies = [
+    "pkg://xTerm/main.js",
+    "pkg://xTerm/main.css",
+    "pkg://Antunnel/main.js"
+]
+
 this.OS.register "vTerm", vTerm

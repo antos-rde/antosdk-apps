@@ -116,5 +116,8 @@ class wTerm extends this.OS.application.BaseApplication
                 return unless (d and d isnt "")
                 @setting.uri = d
                 @openSession()
-            
+wTerm.dependencies = [
+    "pkg://xTerm/main.js",
+    "pkg://xTerm/main.css"
+]
 this.OS.register "wTerm", wTerm

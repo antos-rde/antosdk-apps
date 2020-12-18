@@ -1,0 +1,14 @@
+{
+    "pkgname": "SimpleMDE",
+    "name":"SimpleMDE library",
+    "description":"SimpleMDE",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"1.11.2-r",
+    "category":"Library",
+    "iconclass":"fa  fa-cog",
+    "mimes":["none"],
+    "locale": {}
+}

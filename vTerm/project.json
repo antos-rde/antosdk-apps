@@ -1,8 +1,8 @@
 {
     "name": "vTerm",
     "root": "home://workspace/antosdk-apps/vTerm",
-    "css": ["xterm.css", "main.css"],
-    "javascripts": ["xterm-addon-fit.js", "xterm.js"],
+    "css": [ "main.css"],
+    "javascripts": [],
     "coffees": ["main.coffee"],
     "copies": ["scheme.html", "package.json", "README.md"]
 }

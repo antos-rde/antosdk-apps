@@ -3,6 +3,8 @@ A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https:
 
 
 ## Change logs
+### v0.2.1-a
+* Add depends on the SimpleMDE package
 ### v0.2.0-a
 * Book meta data is no longer depending on the absolute path
 * Meta-data of Books created by Booklet v0.1.x needs to be modified (manually) to work properly on v0.2.x

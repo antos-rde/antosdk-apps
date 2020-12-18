@@ -1,0 +1,15 @@
+{
+    "pkgname": "xTerm",
+    "name":"xTerm Library",
+    "description":"xTerm Library",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"4.8.1-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

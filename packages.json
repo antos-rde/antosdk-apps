@@ -45,8 +45,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.2.3-a",
-		"dependencies": [],
+		"version": "0.2.4-a",
+		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
 	},
 	{
@@ -55,8 +55,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/README.md",
 		"category": "Other",
 		"author": "Xuan Sang LE",
-		"version": "0.2.0-a",
-		"dependencies": [],
+		"version": "0.2.1-a",
+		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["dir"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
 	},
 	{
@@ -110,6 +110,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/JarvisControl/build/release/JarvisControl.zip"
 	},
 	{
+		"pkgname": "Katex",
+		"name": "Katex",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.11.1-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/build/release/Katex.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
@@ -125,8 +135,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/README.md",
 		"category": "Utils",
 		"author": "Xuan Sang LE",
-		"version": "0.0.6-a",
-		"dependencies": [],
+		"version": "0.0.7-a",
+		"dependencies": ["SimpleMDE@1.11.2-r"],"mimes":["text/.*"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
 	},
 	{
@@ -170,6 +180,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/build/release/ShowCase.zip"
 	},
 	{
+		"pkgname": "SimpleMDE",
+		"name": "SimpleMDE library",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SimpleMDE/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "1.11.2-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SimpleMDE/build/release/SimpleMDE.zip"
+	},
+	{
 		"pkgname": "TinyEditor",
 		"name": "Tiny editor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/README.md",
@@ -195,8 +215,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.1.6-a",
-		"dependencies": ["Antunnel@0.1.4-a"],
+		"version": "0.1.7-a",
+		"dependencies": ["Antunnel@0.1.4-a","xTerm@4.8.1-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{
@@ -205,9 +225,19 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.0.5-a",
-		"dependencies": [],
+		"version": "0.0.6-a",
+		"dependencies": ["xTerm@4.8.1-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/build/release/wTerm.zip"
+	},
+	{
+		"pkgname": "xTerm",
+		"name": "xTerm Library",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/xTerm/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "4.8.1-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/xTerm/build/release/xTerm.zip"
 	}
 
 ]

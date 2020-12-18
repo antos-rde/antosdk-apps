@@ -160,8 +160,8 @@ class MarkOn extends this.OS.application.BaseApplication
                 @quit()
 
 MarkOn.dependencies = [
-    "os://scripts/mde/simplemde.min.js",
-    "os://scripts/mde/simplemde.min.css"
+    "pkg://SimpleMDE/main.js",
+    "pkg://SimpleMDE/main.css"
 ]
 
 this.OS.register "MarkOn", MarkOn

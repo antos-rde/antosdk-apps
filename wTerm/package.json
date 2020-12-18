@@ -6,10 +6,13 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.0.5-a",
+    "version":"0.0.6-a",
     "category":"System",
     "iconclass":"fa fa-terminal",
     "mimes":["none"],
+    "dependencies": [
+        "xTerm@4.8.1-r"
+    ],
     "locales":{
         "fr_FR": {
             "Open terminal": "Ouvrir terminal",

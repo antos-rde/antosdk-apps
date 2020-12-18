@@ -6,6 +6,7 @@ Blackend for my blog at https://blog.iohub.dev
 ## Change logs
 
 ### v0.2.x-a
+* Patch 4: Add package dependencies
 * Patch 3: Correct JSON text decoding
 * Patch 2: Bug fix rendering content
 * Patch 0-1 Important change: Store raw post content to the database instead of base64 string as before
