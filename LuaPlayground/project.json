@@ -1,6 +1,5 @@
 {
 	"name": "LuaPlayground",
-	"root": "home://workspace/antosdk-apps/LuaPlayground",
 	"css": ["css/main.css"],
 	"javascripts": ["javascripts/paper-core.min.js"],
 	"coffees": ["coffees/main.coffee"],

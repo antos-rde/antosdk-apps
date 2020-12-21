@@ -1,6 +1,5 @@
 {
     "name": "SimpleMDE",
-    "root": "home://workspace/antosdk-apps/SimpleMDE",
     "css": ["simplemde.min.css"],
     "javascripts": ["simplemde.min.js"],
     "coffees": [],

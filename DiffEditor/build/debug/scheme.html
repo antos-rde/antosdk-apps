@@ -1,0 +1,19 @@
+<afx-app-window apptitle="Diff Editor" width="650" height="400" data-id="DiffEditor">
+    <afx-vbox>
+        <afx-hbox >
+            <afx-file-view data-id="fileview" min-width="150" data-width="150" view="tree" status="false"></afx-file-view>
+            <afx-resizer data-width="3"></afx-resizer>
+            <afx-vbox>
+                <afx-hbox data-height="20">
+                    <afx-label data-id="left-file" class="file-label"></afx-label>
+                    <afx-label data-id="right-file" class="file-label"></afx-label>
+                </afx-hbox>
+                <div data-id="diffeditor" style="position: relative;" ></div>
+            </afx-vbox>
+        </afx-hbox>
+        <afx-hbox data-height="25" data-id="status-bar">
+            <div class="status-text"></div>
+            <afx-list-view data-id="langmode" dropdown="true" data-width="150"></afx-list-view>
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>

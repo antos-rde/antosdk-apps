@@ -1,6 +1,5 @@
 {
 	"name": "RemoteDesktop",
-	"root": "home://workspace/antosdk-apps/RemoteDesktop",
 	"css": ["assets/main.css"],
 	"javascripts": ["javascripts/wvnc.js"],
 	"coffees": ["coffees/main.coffee"],

@@ -1,0 +1,13 @@
+
+afx-app-window[data-id="DiffEditor"] afx-hbox[data-id="status-bar"] {
+    background-color: #007ACC;
+}
+afx-app-window[data-id="DiffEditor"] .status-text {
+    color: white;
+    text-align: right;
+    padding-right: 10px;
+}
+afx-app-window[data-id="DiffEditor"] afx-label.file-label {
+    background-color: #333333;
+    color: white;
+}

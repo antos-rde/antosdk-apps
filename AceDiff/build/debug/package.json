@@ -1,0 +1,15 @@
+{
+    "pkgname": "AceDiff",
+    "name":"AceDiff addon library",
+    "description":"AceDiff add on library",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"3.0.3-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

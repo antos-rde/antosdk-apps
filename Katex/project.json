@@ -1,6 +1,5 @@
 {
     "name": "Katex",
-    "root": "home://workspace/antosdk-apps/Katex",
     "css": ["katex.css"],
     "javascripts": ["katex.js", "auto-render.js"],
     "coffees": [],

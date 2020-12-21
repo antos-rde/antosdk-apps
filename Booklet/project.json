@@ -1,6 +1,5 @@
 {
 	"name": "Booklet",
-	"root": "home://workspace/antosdk-apps/Booklet",
 	"css": ["css/main.css"],
 	"javascripts": [],
 	"coffees": ["coffees/main.coffee", "coffees/common.coffee"],

@@ -1,6 +1,5 @@
 {
     "name": "MarkOn",
-    "root": "home://workspace/antosdk-apps/MarkOn",
     "css": ["main.css"],
     "javascripts": [],
     "coffees": ["main.coffee"],

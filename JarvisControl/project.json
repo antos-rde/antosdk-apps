@@ -1,6 +1,5 @@
 {
     "name": "JarvisControl",
-    "root": "home://workspace/antosdk-apps/JarvisControl",
     "css": ["css/epoch.css"],
     "javascripts": ["javascripts/d3.v3.js", "javascripts/epoch.js"],
     "coffees": ["coffees/JarvisService.coffee", "coffees/main.coffee"],

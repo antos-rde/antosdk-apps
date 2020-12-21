@@ -1,0 +1,7 @@
+{
+    "name": "AceDiff",
+    "css": ["ace-diff-dark.min.css"],
+    "javascripts": ["ace-diff.min.js"],
+    "coffees": [],
+    "copies": ["package.json", "README.md"]
+}

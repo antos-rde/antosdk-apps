@@ -1,0 +1,16 @@
+{
+    "pkgname": "DiffEditor",
+    "app":"DiffEditor",
+    "name":"Diff Editor",
+    "description":"Diff Editor",
+    "info":{
+        "author": "",
+        "edsdmail": ""
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-adn",
+    "mimes":["none"],
+    "dependencies":["AceDiff@3.0.3-r"],
+    "locale": {}
+}

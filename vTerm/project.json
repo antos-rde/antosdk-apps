@@ -1,6 +1,5 @@
 {
     "name": "vTerm",
-    "root": "home://workspace/antosdk-apps/vTerm",
     "css": [ "main.css"],
     "javascripts": [],
     "coffees": ["main.coffee"],

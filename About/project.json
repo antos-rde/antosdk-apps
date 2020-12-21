@@ -1,6 +1,5 @@
 {
     "name": "About",
-    "root": "home://workspace/antosdk-apps/About",
     "css": ["css/main.css"],
     "javascripts": [],
     "coffees": ["coffees/main.coffee"],

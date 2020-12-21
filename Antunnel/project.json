@@ -1,6 +1,5 @@
 {
     "name": "Antunnel",
-    "root": "home://workspace/antosdk-apps/Antunnel",
     "css": [],
     "javascripts": [],
     "coffees": ["coffees/Antunnel.coffee", "coffees/AntunnelService.coffee"],

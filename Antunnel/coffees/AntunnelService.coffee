@@ -13,7 +13,7 @@ class AntunnelService extends OS.application.BaseService
         @onchildselect = (e) => @action e
     
     init: () ->
-        @start() if @systemsetting.system.tunnel_uri
+        # @start() if @systemsetting.system.tunnel_uri
         @watch 1500, () =>
             new_status = false
             new_status = true if Antunnel.tunnel isnt undefined

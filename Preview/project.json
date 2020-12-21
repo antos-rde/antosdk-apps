@@ -1,6 +1,5 @@
 {
     "name": "Preview",
-    "root": "home://workspace/antosdk-apps/Preview",
     "css": ["main.css"],
     "javascripts": ["pdf.js"],
     "coffees": ["main.coffee"],

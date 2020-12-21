@@ -1,6 +1,5 @@
 {
 	"name": "GraphEditor",
-	"root": "home://workspace/antosdk-apps/GraphEditor",
 	"css": ["css/main.css"],
 	"javascripts": ["javascripts/svg-pan-zoom.js", "javascripts/mermaid.min.js"],
 	"coffees": ["coffees/main.coffee"],

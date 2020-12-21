@@ -1,6 +1,5 @@
 {
     "name": "wTerm",
-    "root": "home://workspace/antosdk-apps/wTerm",
     "css": ["main.css"],
     "javascripts": [],
     "coffees": ["main.coffee"],

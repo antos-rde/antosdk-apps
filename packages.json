@@ -10,6 +10,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/About/build/release/About.zip"
 	},
 	{
+		"pkgname": "AceDiff",
+		"name": "AceDiff addon library",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AceDiff/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "3.0.3-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AceDiff/build/release/AceDiff.zip"
+	},
+	{
 		"pkgname": "ActivityMonitor",
 		"name": "Activity monitor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/README.md",
@@ -25,7 +35,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/README.md",
 		"category": "Library",
 		"author": "Xuan Sang LE",
-		"version": "0.1.4-a",
+		"version": "0.1.5-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/build/release/Antunnel.zip"
 	},
@@ -78,6 +88,16 @@
 		"version": "0.0.2-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/build/release/DBDecoder.zip"
+	},
+	{
+		"pkgname": "DiffEditor",
+		"name": "Diff Editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.0.1-a",
+		"dependencies": ["AceDiff@3.0.3-r"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/build/release/DiffEditor.zip"
 	},
 	{
 		"pkgname": "Docify",
@@ -216,7 +236,7 @@
 		"category": "System",
 		"author": "Xuan Sang LE",
 		"version": "0.1.7-a",
-		"dependencies": ["Antunnel@0.1.4-a","xTerm@4.8.1-r"],
+		"dependencies": ["Antunnel@0.1.5-a","xTerm@4.8.1-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{

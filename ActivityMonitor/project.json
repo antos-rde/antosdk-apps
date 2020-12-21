@@ -1,6 +1,5 @@
 {
     "name": "ActivityMonitor",
-    "root": "home://workspace/antosdk-apps/ActivityMonitor",
     "css": ["main.css"],
     "javascripts": [],
     "coffees": ["main.coffee"],

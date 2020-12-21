@@ -1,6 +1,5 @@
 {
     "name": "xTerm",
-    "root": "home://workspace/antosdk-apps/xTerm",
     "css": ["xterm.css"],
     "javascripts": ["xterm-addon-fit.js", "xterm.js"],
     "coffees": [],

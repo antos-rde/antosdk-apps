@@ -1,6 +1,5 @@
 {
     "name": "DBDecoder",
-    "root": "home://workspace/antosdk-apps/DBDecoder",
     "css": [],
     "javascripts": [],
     "coffees": ["coffees/main.coffee"],

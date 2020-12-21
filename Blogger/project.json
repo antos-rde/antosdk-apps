@@ -1,6 +1,5 @@
 {
     "name": "Blogger",
-    "root": "home://workspace/antosdk-apps/Blogger",
     "css": ["main.css"],
     "javascripts": [],
     "coffees": ["main.coffee", "dialogs.coffee", "tags.coffee"],
