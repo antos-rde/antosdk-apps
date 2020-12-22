@@ -59,6 +59,7 @@ Msg.CLOSE = 5
 Msg.SUBSCRIBE = 2
 Msg.UNSUBSCRIBE = 3
 Msg.CTRL = 7
+Msg.PING = 8
 Msg.MAGIC_END = [0x44, 0x54]
 Msg.MAGIC_START = [0x4e, 0x41 ]
 
@@ -168,6 +169,8 @@ class AntunnelApi
                     sub = @subscribers[msg.header.sid]
                     return unless sub
                     sub.close(true)
+                when Msg.PING
+                    # do nothing
                 else
                     console.error "Message of type #{msg.header.type} is unsupported", msg
                  
