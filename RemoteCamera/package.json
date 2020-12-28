@@ -1,0 +1,16 @@
+{
+    "pkgname": "RemoteCamera",
+    "app":"RemoteCamera",
+    "name":"Remote Camera",
+    "description":"Connect to remote camera via Antunnel",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-camera",
+    "mimes":["none"],
+    "dependencies":["libjpeg@0.1.1-a", "Antunnel@0.1.8-a"],
+    "locale": {}
+}

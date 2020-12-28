@@ -1,0 +1,12 @@
+
+afx-app-window[data-id="RemoteCamera"] div[data-id="container"]
+{
+    display: block;
+    overflow: auto;
+}
+
+afx-app-window[data-id="RemoteCamera"] div[data-id="container"] canvas
+{
+    display: block;
+    margin:0 auto;
+}
