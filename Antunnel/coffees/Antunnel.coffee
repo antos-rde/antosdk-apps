@@ -12,7 +12,7 @@ class Msg
     
     
     as_raw:() ->
-        length = 11 + @header.size
+        length = 13 + @header.size
         arr = new Uint8Array(length)
         arr.set(Msg.MAGIC_START, 0)
         arr[2] = @header.type
@@ -20,11 +20,11 @@ class Msg
         arr.set(bytes,3)
         bytes = Msg.bytes_of @header.sid
         arr.set(bytes,5)
-        bytes = Msg.bytes_of @header.size
+        bytes = Msg.bytes_of @header.size, 4
         arr.set(bytes,7)
         if @data
-            arr.set(@data, 9)
-        arr.set(Msg.MAGIC_END, @header.size + 9)
+            arr.set(@data, 11)
+        arr.set(Msg.MAGIC_END, @header.size + 11)
         arr.buffer
 
 Msg.decode = (raw) ->
@@ -35,22 +35,29 @@ Msg.decode = (raw) ->
         msg.header.type = raw[2]
         msg.header.cid = Msg.int_from(raw, 3)
         msg.header.sid = Msg.int_from(raw,5)
-        msg.header.size = Msg.int_from(raw, 7)
-        msg.data = raw.slice(9, 9+msg.header.size)
-        if(Msg.int_from(Msg.MAGIC_END, 0) != Msg.int_from(raw, 9+msg.header.size))
+        msg.header.size = Msg.int_from(raw, 7,4)
+        msg.data = raw.slice(11, 11+msg.header.size)
+        if(Msg.int_from(Msg.MAGIC_END, 0) != Msg.int_from(raw, 11+msg.header.size))
             return reject("Unmatch message end magic number")
         resolve msg
     
     
-Msg.bytes_of = (x) ->
-    bytes=new Uint8Array(2)
+Msg.bytes_of = (x,s) ->
+    s = 2 unless s is 4
+    bytes=new Uint8Array(s)
     bytes[0]=x & (255)
     x=x>>8
     bytes[1]=x & (255)
-    bytes
+    return bytes unless s is 4
+    x=x>>8
+    bytes[2]=x & (255)
+    x=x>>8
+    bytes[3]=x & (255)
+    return bytes
 
-Msg.int_from = (bytes, offset) ->
-    (bytes[offset] | (bytes[offset+1]<<8))
+Msg.int_from = (bytes, offset, size) ->
+    return (bytes[offset] | (bytes[offset+1]<<8)) unless size is 4
+    return (bytes[offset] | (bytes[offset+1]<<8) | (bytes[offset+2]<<16) | (bytes[offset+3] << 24))
 
 Msg.OK = 0
 Msg.ERROR = 1
