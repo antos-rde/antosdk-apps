@@ -145,7 +145,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/README.md",
 		"category": "Library",
 		"author": "",
-		"version": "0.1.0-a",
+		"version": "0.1.1-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/build/release/libjpeg.zip"
 	},
