@@ -6,12 +6,12 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.10-a",
+    "version":"0.1.11-a",
     "category":"System",
     "iconclass":"fa fa-terminal",
     "mimes":["none"],
     "dependencies": [
-        "Antunnel@0.1.7-a",
+        "Antunnel@0.1.8-a",
         "xTerm@4.8.1-r"
     ],
     "locales":{

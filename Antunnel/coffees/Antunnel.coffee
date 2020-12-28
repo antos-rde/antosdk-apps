@@ -168,7 +168,8 @@ class AntunnelApi
                 
                 when Msg.DATA
                     relay_msg msg, "onmessage"
-                
+                when Msg.CTRL
+                    relay_msg msg, "onctrl"
                 when Msg.ERROR
                     relay_msg msg, "onerror"
                    
