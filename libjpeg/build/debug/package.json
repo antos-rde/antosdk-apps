@@ -1,6 +1,5 @@
 {
     "pkgname": "libjpeg",
-    "app":"libjpeg",
     "name":"libjpeg",
     "description":"libjpeg",
     "info":{
