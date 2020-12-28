@@ -190,6 +190,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/build/release/Preview.zip"
 	},
 	{
+		"pkgname": "RemoteCamera",
+		"name": "Remote Camera",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteCamera/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.0.1-a",
+		"dependencies": ["libjpeg@0.1.1-a","Antunnel@0.1.8-a"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteCamera/build/release/RemoteCamera.zip"
+	},
+	{
 		"pkgname": "RemoteDesktop",
 		"name": "WVNC remote desktop",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
