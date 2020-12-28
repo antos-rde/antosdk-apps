@@ -1,0 +1,16 @@
+{
+    "pkgname": "libjpeg",
+    "app":"libjpeg",
+    "name":"libjpeg",
+    "description":"libjpeg",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.1.0-a",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

@@ -140,6 +140,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/build/release/Katex.zip"
 	},
 	{
+		"pkgname": "libjpeg",
+		"name": "libjpeg",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.1.0-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/build/release/libjpeg.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",

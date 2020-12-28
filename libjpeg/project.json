@@ -1,0 +1,7 @@
+{
+    "name": "libjpeg",
+    "css": [],
+    "javascripts": ["jpg.js"],
+    "coffees": [],
+    "copies": ["package.json", "README.md"]
+}
