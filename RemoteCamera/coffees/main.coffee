@@ -165,7 +165,6 @@ class RemoteCamera extends this.OS.application.BaseApplication
             @mute = false
             
         @sub.onmessage =  (e) =>
-            console.log("receive")
             return unless @decoder
             @decoder.postMessage e.data.buffer, [e.data.buffer]
             
