@@ -5,11 +5,8 @@ A web based VNC client allowing to control remote VNC desktop from browser. The 
 
 Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blog.lxsang.me/post/id/23)
 
-**Credit**
-* antd-wvnc-plugin: [https://github.com/lxsang/antd-wvnc-plugin](https://github.com/lxsang/antd-wvnc-plugin)
-* wvnc.js: [https://github.com/lxsang/wvnc.js](https://github.com/lxsang/wvnc.js)
-* 
 
 ## Change logs
 
+* v0.1.5 - add package dependencies and use the new **libwvnc**
 * v0.1.0 - adapt to the new AntOS API

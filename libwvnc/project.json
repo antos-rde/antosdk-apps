@@ -1,0 +1,7 @@
+{
+    "name": "libwvnc",
+    "css": [],
+    "javascripts": [],
+    "coffees": ["main.coffee"],
+    "copies": [ "decoder.js","package.json", "README.md"]
+}

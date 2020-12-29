@@ -150,6 +150,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/build/release/libjpeg.zip"
 	},
 	{
+		"pkgname": "libwvnc",
+		"name": "libwvnc",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.1.2-a",
+		"dependencies": ["libjpeg@0.1.1-a"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/build/release/libwvnc.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
@@ -205,8 +215,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
 		"category": "Other",
 		"author": "",
-		"version": "0.1.0-a",
-		"dependencies": [],
+		"version": "0.1.5-a",
+		"dependencies": ["libwvnc@0.1.2-a"],"category":"Other","icon":"icon.png","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
 	},
 	{

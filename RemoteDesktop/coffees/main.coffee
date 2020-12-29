@@ -6,14 +6,12 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
     main: () ->
         super.main()
         @find("bbp").data = [
-            { text: "16 bits", value: 16, selected: true }, 
+            { text: "16 bits", value: 16, selected: true },
             { text: "32 bits", value: 32 }
         ]
         @find("compression").data = [
             {text: "No compression", value:0}, 
-            {text: "JPEG", value:1},
-            {text: "zLib", value:2},
-            {text: "JPEG & zLib", value:3, selected:true}
+            {text: "JPEG", value:1, selected: true}
         ]
         @find("jq").value = 40
         @find("bt-ok").onbtclick = (e) =>
@@ -38,7 +36,7 @@ ConnectionDialog.scheme = """
             <afx-label text="__(WVNC Websocket)" data-height="25" class="header" ></afx-label>
             <input data-height="25" data-id="txtWVNC" value="wss://localhost/wvnc"></input>
             <afx-label text="__(VNC Server)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtServer" value="192.168.1.10:5900"></input>
+            <input data-height="25" data-id="txtServer" value="192.168.1.27:5901"></input>
             <div data-height="5"></div>
             <afx-label text="__(Bits per pixel)" data-height="25" class="header" ></afx-label>
             <afx-list-view dropdown = "true" data-id ="bbp" data-height="25" ></afx-list-view>
@@ -106,7 +104,7 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @container = @find "container"
         @client = new WVNC { 
             element: @canvas,
-            worker: "#{@_api.handle.get}/#{@meta().path}/decoder.js"
+            libjpeg: "pkg://libjpeg/jpg.js".asFileHandle().getlink()
         }
         @client.onerror = (m) =>
             @error m
@@ -118,7 +116,7 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                 @openDialog "PromptDialog", {
                     title: __("VNC password"), 
                     label: __("VNC password"),
-                    value: "!x$@n9ph",
+                    value: "password",
                     type: "password"
                 }
                 .then (d) ->
@@ -156,7 +154,7 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         ]
     
     actionConnection: (e) ->
-        @client.disconnect() if @client
+        @client.disconnect(false) if @client
         @showConnectionDialog()
     
     showConnectionDialog: () ->
@@ -164,11 +162,12 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @openDialog new ConnectionDialog, { title: __("Connection")}
         .then (d) =>
             @client.ws = d.wvnc
-            console.log d
             @client.connect d.server, d
     
     cleanup: () ->
-        @client.disconnect() if @client
-        
-        
+        @client.disconnect(true) if @client
+
+RemoteDesktop.dependencies = [
+    "pkg://libwvnc/main.js"
+]
 this.OS.register "RemoteDesktop", RemoteDesktop

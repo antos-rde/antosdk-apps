@@ -6,7 +6,8 @@
         "author": "",
         "email": ""
     },
-    "version":"0.1.0-a",
+    "version":"0.1.5-a",
+    "dependencies": ["libwvnc@0.1.2-a"],
     "category":"Other",
     "icon": "icon.png",
     "mimes":["none"]

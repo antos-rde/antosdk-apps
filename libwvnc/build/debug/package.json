@@ -1,0 +1,15 @@
+{
+    "pkgname": "libwvnc",
+    "name":"libwvnc",
+    "description":"libwvnc: client side VNC protocol via websocket",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.1.2-a",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":["libjpeg@0.1.1-a"],
+    "locale": {}
+}

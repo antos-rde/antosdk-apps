@@ -1,7 +1,7 @@
 {
 	"name": "RemoteDesktop",
 	"css": ["assets/main.css"],
-	"javascripts": ["javascripts/wvnc.js"],
+	"javascripts": [],
 	"coffees": ["coffees/main.coffee"],
-	"copies": ["assets/scheme.html", "package.json", "README.md", "javascripts/decoder.js", "javascripts/wvnc_asm.js", "javascripts/wvnc_asm.wasm", "assets/icon.png"]
+	"copies": ["assets/scheme.html", "package.json", "README.md","assets/icon.png"]
 }
