@@ -3,12 +3,22 @@ class RemoteCamera extends this.OS.application.BaseApplication
         super "RemoteCamera", args
     
     main: () ->
+        
+        @decoder = new Worker("pkg://RemoteCamera/decoder.js".asFileHandle().getlink())
+        
+        @decoder.onmessage = (e) =>
+            @paint e.data
+            
+        @decoder.postMessage {libjpeg: "pkg://libjpeg/jpg.js".asFileHandle().getlink()}
+        
         @mute = false
         @player = @find "player"
         
         @qctl = @find "qctl"
         
         @fpsctl = @find "fpsctl"
+        
+        
         
         @cam_setting = {
             w: 640,
@@ -97,7 +107,20 @@ class RemoteCamera extends this.OS.application.BaseApplication
         }
         .then (v) =>
             @setting.channel = v
-            @openSession()
+            return @openSession() unless @sub
+            @sub.onclose = (e) =>
+                @openSession()
+            @sub.close()
+    
+    paint: (msg) ->
+        # console.log msg
+        data = new Uint8Array msg.pixels
+        ctx = @player.getContext "2d", { alpha: false }
+        @player.width = msg.w
+        @player.height = msg.h
+        imgData = ctx.createImageData  msg.w, msg.h
+        imgData.data.set data
+        ctx.putImageData imgData, 0, 0
     
     menu: () ->
         {
@@ -142,24 +165,19 @@ class RemoteCamera extends this.OS.application.BaseApplication
             @mute = false
             
         @sub.onmessage =  (e) =>
-            jpeg = new JpegImage()
-            jpeg.parse e.data
-            context = @player.getContext("2d")
-            @player.width = jpeg.width
-            @player.height = jpeg.height
-            #jpeg.copyToImageData(d)
-            imgData = context.getImageData(0,0,jpeg.width,jpeg.height)
-            jpeg.copyToImageData imgData
-            context.putImageData(imgData, 0, 0)
+            console.log("receive")
+            return unless @decoder
+            @decoder.postMessage e.data.buffer, [e.data.buffer]
             
         @sub.onclose = () =>
             @sub = undefined
             @notify __("Unsubscribed to the camera service")
-            @quit()
+            return @quit()
         Antunnel.tunnel.subscribe @sub
     
     cleanup: () ->
         @sub.close() if @sub
+        @decoder.terminate() if @decoder
     
     setCameraSetting: () ->
         return unless @sub
@@ -171,7 +189,5 @@ class RemoteCamera extends this.OS.application.BaseApplication
         @sub.send Antunnel.Msg.CTRL, arr
 
 RemoteCamera.singleton = true
-RemoteCamera.dependencies = [
-    "pkg://libjpeg/jpg.js"
-]
+
 this.OS.register "RemoteCamera", RemoteCamera

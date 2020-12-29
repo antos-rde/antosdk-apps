@@ -3,5 +3,5 @@
     "css": ["css/main.css"],
     "javascripts": [],
     "coffees": ["coffees/main.coffee"],
-    "copies": ["assets/scheme.html", "package.json", "README.md"]
+    "copies": ["assets/scheme.html", "js/decoder.js", "package.json", "README.md"]
 }
