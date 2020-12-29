@@ -1,5 +1,5 @@
 # WVNC remote desktop
-![](https://os.lxsang.me/repo/RemoteDesktop/RemoteDesktop.png)
+![](https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/screenshot.jpg)
 
 A web based VNC client allowing to control remote VNC desktop from browser. The application is based on **wvnc**, a protocol and API that uses web socket to communicate with remote VNC server.
 
