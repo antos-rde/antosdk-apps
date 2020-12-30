@@ -31,12 +31,14 @@ decode = (arr) =>
 }
 
 onmessage = (e) => {
-    if(e.data.libjpeg)
-    {
-        importScripts(e.data.libjpeg);
-    }
-    else
-    {
-        decode(e.data);
+    switch (e.data.cmd) {
+        case 0x0:
+            importScripts(e.data.data);
+            break;
+        case 0x1:
+            decode(e.data.data);
+            break;
+        default:
+            console.error("Unknown command " + e.data.cmd);
     }
 }

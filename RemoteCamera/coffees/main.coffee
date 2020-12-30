@@ -9,7 +9,7 @@ class RemoteCamera extends this.OS.application.BaseApplication
         @decoder.onmessage = (e) =>
             @paint e.data
             
-        @decoder.postMessage {libjpeg: "pkg://libjpeg/jpg.js".asFileHandle().getlink()}
+        @decoder.postMessage {cmd:0x0 ,data: "pkg://libjpeg/jpg.js".asFileHandle().getlink()}
         
         @mute = false
         @player = @find "player"
@@ -166,7 +166,11 @@ class RemoteCamera extends this.OS.application.BaseApplication
             
         @sub.onmessage =  (e) =>
             return unless @decoder
-            @decoder.postMessage e.data.buffer, [e.data.buffer]
+            msg = {
+                cmd: 0x1,
+                data: e.data.buffer
+            }
+            @decoder.postMessage msg, [msg.data]
             
         @sub.onclose = () =>
             @sub = undefined
