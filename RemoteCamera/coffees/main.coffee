@@ -52,6 +52,10 @@ class RemoteCamera extends this.OS.application.BaseApplication
                 mode: "qvga"
             },
             {
+                text: __("480×320"),
+                mode: "hvga"
+            },
+            {
                 text: __("640x480"),
                 selected: true,
                 mode: "vga"
@@ -63,10 +67,6 @@ class RemoteCamera extends this.OS.application.BaseApplication
             {
                 text: __("1024x760"),
                 mode: "hd"
-            },
-            {
-                text: __("1920×1080"),
-                mode: "fhd"
             }
         ]
         @resoctl.onlistselect = (e) =>
@@ -84,9 +84,9 @@ class RemoteCamera extends this.OS.application.BaseApplication
                 when "hd"
                     @cam_setting.w = 1024
                     @cam_setting.h = 768
-                when "fhd"
-                    @cam_setting.w = 1920
-                    @cam_setting.h = 1080
+                when "hvga"
+                    @cam_setting.w = 480
+                    @cam_setting.h = 320
             @setCameraSetting()
         
         @qctl.onvaluechange = (e) =>
@@ -153,13 +153,13 @@ class RemoteCamera extends this.OS.application.BaseApplication
             switch res
                 when "320x240"
                     @resoctl.selected = 0
-                when "640x480"
+                when "480x320"
                     @resoctl.selected = 1
-                when "800x600"
+                when "640x480"
                     @resoctl.selected = 2
-                when "1024x768"
+                when "800x600"
                     @resoctl.selected = 3
-                when "1920x1080"
+                when "1024x768"
                     @resoctl.selected = 4
             @fpsctl.selected = @cam_setting.fps/5 -1
             @mute = false
