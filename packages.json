@@ -95,7 +95,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/README.md",
 		"category": "Other",
 		"author": "",
-		"version": "0.0.1-a",
+		"version": "0.1.2-a",
 		"dependencies": ["AceDiff@3.0.3-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/build/release/DiffEditor.zip"
 	},
