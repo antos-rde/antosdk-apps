@@ -23,17 +23,6 @@ class DiffEditor extends @OS.application.BaseApplication
         ace.config.set('basePath', "scripts/ace")
         ace.require("ace/ext/language_tools")
         @modelist = ace.require("ace/ext/modelist")
-        list = []
-        for v in @modelist.modes
-            list.push {
-                text: v.caption,
-                mode: v.mode
-            }
-        @langlist = @find("langmode")
-        @langlist.data = list
-        @langlist.onlistselect = (e) =>
-            @editors.left.getSession().setMode e.data.item.data.mode
-            @editors.right.getSession().setMode e.data.item.data.mode
         
         @differ = new AceDiff({
             # ace: window.ace,
@@ -97,8 +86,21 @@ class DiffEditor extends @OS.application.BaseApplication
             @editors.right.current_file.dirty = true
             @editors.right.afx_label.text += "*"
         
+        
         @current_editor = @editors.left
         @current_editor.focus()
+        
+        list = []
+        for v in @modelist.modes
+            list.push {
+                text: v.caption,
+                mode: v.mode
+            }
+        @langlist = @find("langmode")
+        @langlist.data = list
+        @langlist.onlistselect = (e) =>
+            @editors.left.getSession().setMode e.data.item.data.mode
+            @editors.right.getSession().setMode e.data.item.data.mode
         
         @bindKey "ALT-O", () => @menuAction("open")
         @bindKey "ALT-F", () => @menuAction("opendir")
@@ -198,6 +200,7 @@ class DiffEditor extends @OS.application.BaseApplication
         
 DiffEditor.dependencies = [
     "os://scripts/ace/ace.js",
+    "os://scripts/ace/ext-language_tools.js",
     "os://scripts/ace/ext-themelist.js",
     "os://scripts/ace/ext-language_tools.js",
     "pkg://AceDiff/main.js",
