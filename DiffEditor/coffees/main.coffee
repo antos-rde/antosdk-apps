@@ -202,7 +202,7 @@ DiffEditor.dependencies = [
     "os://scripts/ace/ace.js",
     "os://scripts/ace/ext-language_tools.js",
     "os://scripts/ace/ext-themelist.js",
-    "os://scripts/ace/ext-language_tools.js",
+     "os://scripts/ace/ext-modelist.js",
     "pkg://AceDiff/main.js",
     "pkg://AceDiff/main.css"
 ]
