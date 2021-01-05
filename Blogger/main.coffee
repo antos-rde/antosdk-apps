@@ -31,6 +31,17 @@ class Blogger extends this.OS.application.BaseApplication
         @bloglist = @find "blog-list"
         @seclist = @find "cv-sec-list"
         
+        el = @find("photo")
+        $(el)
+            .click (e) =>
+                @openDialog("FileDialog", {
+                    title: __("Select image file"),
+                    mimes: ["image/.*"]
+                })
+                .then (d) =>
+                    el.value = d.file.path
+                .catch (e) => @error __("Unable to get file"), e 
+        
         @userdb = new @_api.DB("user")
         @cvcatdb = new @_api.DB("cv_cat")
         @cvsecdb = new @_api.DB("cv_sections")

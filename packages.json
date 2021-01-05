@@ -55,7 +55,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.2.4-a",
+		"version": "0.2.5-a",
 		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
 	},
