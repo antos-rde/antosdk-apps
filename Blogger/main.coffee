@@ -496,10 +496,10 @@ class Blogger extends this.OS.application.BaseApplication
         ($ children[2]).css("height", cheight + "px")
         
 Blogger.singleton = true
-Blogger.dependencies = [ 
-    "pkg://Katex/main.js",
-    "pkg://Katex/main.css",
+Blogger.dependencies = [
     "pkg://SimpleMDE/main.js",
     "pkg://SimpleMDE/main.css"
+    "pkg://Katex/main.js",
+    "pkg://Katex/main.css",
 ]
 this.OS.register "Blogger", Blogger
