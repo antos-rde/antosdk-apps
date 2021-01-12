@@ -1,0 +1,7 @@
+{
+    "name": "SystemControl",
+    "css": ["css/epoch.css", "css/main.css"],
+    "javascripts": ["javascripts/d3.v3.js", "javascripts/epoch.js"],
+    "coffees": ["coffees/SysmondService.coffee", "coffees/main.coffee"],
+    "copies": ["assets/scheme.html", "package.json", "README.md"]
+}

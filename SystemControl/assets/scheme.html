@@ -1,0 +1,33 @@
+<afx-app-window apptitle="System monitoring" width="700" height="450" data-id="SystemControl">
+    <afx-vbox >
+        <afx-hbox>
+            <afx-vbox>
+                <div data-height="5"></div>
+                
+                <div data-id="cpu-text" data-height="22" class = "epoch category10 legend"></div>
+                <div data-id="cpu-area" class="epoch category10"></div>
+                
+                <div data-id="memory-text" data-height="22" class = "epoch category10 legend"></div>
+                <div data-id="memory-area" class="epoch category10"></div>
+                
+                <div data-id="network-text" data-height="22" class = "epoch category10 legend"></div>
+                <div data-id="network-area" class="epoch category10"></div>
+                <div data-height="5"></div>
+            </afx-vbox>
+            <afx-vbox data-width="300">
+                <div data-height="5"></div>
+                
+                <div data-id="temp-text" data-height="22" class = "epoch category10 legend"></div>
+                <div data-id="temp-area" class="epoch category10"></div>
+                
+                <div data-id="battery-text" data-height="22" class = "epoch category10 legend"></div>
+                <div data-id="battery-area" class="epoch category10"></div>
+                
+                <afx-label data-id="disk-text" data-height="22" text="__(Disk:)"></afx-label>
+                <div data-id="disk-area" class="epoch gauge-tiny" ></div>
+                <div data-height="5"></div>
+            </afx-vbox>
+        </afx-hbox>
+        
+    </afx-vbox>
+</afx-app-window>
