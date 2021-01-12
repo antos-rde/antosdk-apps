@@ -1,7 +1,7 @@
 {
     "pkgname": "SystemMonitor",
     "app":"SystemMonitor",
-    "name":"Jarvis monitoring",
+    "name":"System monitoring",
     "services": [
         "SysmondService"
     ],
