@@ -85,6 +85,7 @@ class SysmondService extends OS.application.BaseService
     awake: () ->
     
     cleanup: () ->
+        @app.quit() if @app
         @sub.close() if @sub
         
 
