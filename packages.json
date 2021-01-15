@@ -236,7 +236,7 @@
 		"category": "Other",
 		"author": "",
 		"version": "0.1.4-a",
-		"dependencies": ["Antunnel@0.1.8-a"],"version":"0.1.4-a","category":"Other","iconclass":"fafa-android","mimes":["none"],
+		"dependencies": ["Antunnel@0.1.9-a"],"version":"0.1.4-a","category":"Other","iconclass":"fafa-android","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/build/release/SystemControl.zip"
 	},
 	{
