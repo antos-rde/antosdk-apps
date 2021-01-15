@@ -12,6 +12,9 @@ class SysmondService extends OS.application.BaseService
         #]
         @onmenuselect = (e) => @openApp()
     
+    setting: () ->
+        return @systemsetting.applications["SystemControl"]
+    
     init: () ->
         checklib = () =>
             if not Antunnel.tunnel
@@ -21,8 +24,9 @@ class SysmondService extends OS.application.BaseService
                     @error e.toString(), e
                 @quit()
             else
+                return unless @setting().topic
                 @tunnel = Antunnel.tunnel
-                @sub = new Antunnel.Subscriber("fbf070ddea3ea90d07f456540b405d302554ec82")
+                @sub = new Antunnel.Subscriber(@setting().topic)
                 @sub.onopen = () =>
                     #@sub.send Antunnel.Msg.DATA, new TextEncoder("utf-8").encode("Hello")
                     console.log("Subscribed to notification channel")
@@ -44,7 +48,17 @@ class SysmondService extends OS.application.BaseService
                     @quit()
                 Antunnel.tunnel.subscribe @sub
         
-        checklib()
+        if not @setting().topic
+            console.log "Open dialog"
+            @_gui.openDialog("PromptDialog", { 
+                title: __("Enter topic name"),
+                label: __("Please enter topic name")
+            })
+            .then (v) =>
+                @setting().topic = v
+                checklib()
+        else
+            checklib()
         
     
     openApp: () ->
