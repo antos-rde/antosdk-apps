@@ -65,7 +65,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/README.md",
 		"category": "Other",
 		"author": "Xuan Sang LE",
-		"version": "0.2.1-a",
+		"version": "0.2.2-a",
 		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["dir"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
 	},

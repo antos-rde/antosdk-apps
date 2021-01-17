@@ -6,7 +6,7 @@
         "author": "Xuan Sang LE",
         "email": "mrsang@lxsang.me"
     },
-    "version":"0.2.1-a",
+    "version":"0.2.2-a",
     "category":"Other",
     "iconclass":"fa fa-adn",
     "dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],

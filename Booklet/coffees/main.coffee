@@ -358,10 +358,10 @@ class Booklet extends this.OS.application.BaseApplication
         
     
 Booklet.dependencies = [
-    "pkg://Katex/main.js",
-    "pkg://Katex/main.css",
     "pkg://SimpleMDE/main.js",
-    "pkg://SimpleMDE/main.css"
+    "pkg://SimpleMDE/main.css",
+    "pkg://Katex/main.js",
+    "pkg://Katex/main.css"
 ]
 
 this.OS.register "Booklet", Booklet
