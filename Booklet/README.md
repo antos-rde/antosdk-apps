@@ -1,5 +1,5 @@
 # Booklet
-A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https://doc.iohub.dev/antos/)
+A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https://doc.iohub.dev/)
 
 
 ## Change logs
