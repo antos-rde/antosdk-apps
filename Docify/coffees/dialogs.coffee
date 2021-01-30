@@ -125,7 +125,7 @@ class DocDialog extends this.OS.GUI.BasicDialog
             value: 0
         }
         @ylist.selected = 0
-        for y in [1980..new Date().getFullYear()]
+        for y in [1960..new Date().getFullYear()]
             @ylist.push {
                 text:"#{y}",
                 value: y,
@@ -272,5 +272,58 @@ FilePreviewDialog.scheme = """
             
         </afx-vbox>
     </afx-hbox>
+</afx-app-window>
+"""
+
+class PrintDialog extends this.OS.GUI.BasicDialog
+    constructor: () ->
+        super "PrintDialog", PrintDialog.scheme
+        
+    main: () ->
+        super.main()
+        @find("printerName").value = @parent.setting.printer
+        @find("btnprint").onbtclick = (e) =>
+            data = {}
+            data.range = parseInt($('input[name=range]:checked', @scheme).val())
+            data.pages = @find("txtPageRange").value
+            data.printer = @find("printerName").value
+            data.orientation = parseInt($('input[name=orientation]:checked', @scheme).val())
+            data.side = parseInt($('input[name=side]:checked', @scheme).val())
+            @handle data if @handle
+            @quit()
+
+PrintDialog.scheme = """
+<afx-app-window width='300' height='300' data-id="DocifyPrintDialog" apptitle = "__(Print)">
+    <afx-vbox>
+        <afx-label text = "__(Printer name)" data-height="22"></afx-label>
+        <input  type="text" data-id="printerName" data-height="25"/>
+        <afx-label text = "__(Range)" data-height="22"></afx-label>
+        <div>
+            <input type="radio"  name="range" value="0" checked  />
+            <label for="0">All</label><br>
+            <input type="radio"  name="range" value="1"  />
+            <label for="1">Pages: </label>
+            <input  type="text" data-id="txtPageRange" />
+        </div>
+        <afx-label text = "__(Orientation)" data-height="22"></afx-label>
+        <div>
+            <input type="radio"  name="orientation" value="0" checked  />
+            <label for="0">Portrait</label><br>
+            <input type="radio"  name="orientation" value="1"  />
+            <label for="1">Landscape</label>
+        </div>
+        <afx-label text = "__(Side)" data-height="22"></afx-label>
+        <div>
+            <input type="radio"  name="side" value="0"  />
+            <label for="0">One side</label><br>
+             <input type="radio"  name="side" value="1" checked  />
+            <label for="1">Double side long edge</label><br>
+            <input type="radio"  name="side" value="2"   />
+            <label for="2">Double side short edge</label>
+        </div>
+        <div data-height="30" style="text-align:right;">
+            <afx-button text="__(Print)" style="margin-right:5px;" data-id="btnprint"></afx-button>
+        </div>
+    </afx-vbox>
 </afx-app-window>
 """

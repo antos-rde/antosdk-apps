@@ -396,6 +396,33 @@ handle.delete = function(param)
     end
 end
 
+handle.printdoc = function(opt)
+    local cmd = "lp "
+    if opt.printer and opt.printer ~= "" then
+        cmd = cmd .. " -d "..opt.printer
+    end
+    if opt.side == 0 then
+        cmd = cmd.. " -o sides=one-sided"
+    elseif opt.side == 1 then
+        cmd = cmd.. " -o sides=two-sided-long-edge"
+    elseif opt.side == 2 then
+        cmd = cmd .. " -o sides=two-sided-short-edge"
+    end
+    -- orientation landscape
+    if opt.orientation == 1 then
+        cmd = cmd.." -o orientation-requested=5"
+    end
+    
+    if opt.range == 1 then
+        cmd = cmd.." -P "..opt.pages
+    end
+    
+    cmd = cmd.. " "..vfs.ospath(opt.file)
+    print(cmd)
+    os.execute(cmd)
+    return result("A print job has been posted on server. Check if it successes")
+end
+
 
 if arg.action and handle[arg.action] then
     -- check if the database exits

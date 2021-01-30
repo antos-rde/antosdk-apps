@@ -105,7 +105,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/README.md",
 		"category": "Other",
 		"author": "",
-		"version": "0.0.5-a",
+		"version": "0.0.6-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/build/release/Docify.zip"
 	},

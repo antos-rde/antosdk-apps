@@ -4,6 +4,8 @@ class Docify extends this.OS.application.BaseApplication
     
     main: () ->
         
+        @setting.printer = "" unless @setting.printer
+        
         @catview = @find "catview"
         @docview = @find "docview"
         @docpreview = @find "preview-canvas"
@@ -26,6 +28,18 @@ class Docify extends this.OS.application.BaseApplication
                     return @error m.error if m.error
                     @_gui.openWith m.result
                 .catch (e) => @error e.toString(), e
+        @find("btprint").onbtclick = (e) =>
+            item = @docview.selectedItem
+            return unless item
+            @openDialog new PrintDialog(), {}
+            .then (d) =>
+                return unless d
+                d.file = item.data.file
+                @exec("printdoc", d)
+                    .then (r) =>
+                        return @error r.error if r.error
+                        @notify r.result
+                    .catch (e) => @error __("Unable to insert category: {0}", e.toString()), e
         @catview.buttons = [
             {
                  text: "",
@@ -241,11 +255,12 @@ class Docify extends this.OS.application.BaseApplication
     menu: () ->
         [
             {
-                text: "__(View)",
+                text: "__(Options)",
                 nodes: [
                     { text: "__(Owners)", id:"owners"},
                     { text: "__(Preview)", id:"preview"},
-                    { text: "__(Change doc path)", id:"setdocp"}
+                    { text: "__(Change doc path)", id:"setdocp"},
+                    { text: "__(Set default printer)", id:"setprinter"}
                 ],
                 onchildselect: (e) => @fileMenuHandle e.data.item.data.id
             }
@@ -262,5 +277,9 @@ class Docify extends this.OS.application.BaseApplication
             when "setdocp"
                 @setting.docpath = undefined
                 @initialize()
+            when "setprinter"
+                @openDialog "PromptDialog", {title: __("Default Printer"), label: __("Enter printer name")}
+                .then (n) =>
+                    @setting.printer = n
 
 this.OS.register "Docify", Docify
