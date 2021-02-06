@@ -6,6 +6,7 @@ Blackend for my blog at https://blog.iohub.dev
 ## Change logs
 
 ### v0.2.x-a
+* Patch 7: Fix sendmail API security bug
 * Patch 6: Chage libraries load order
 * Patch 5: Add user photo to portfolio
 * Patch 4: Add package dependencies
