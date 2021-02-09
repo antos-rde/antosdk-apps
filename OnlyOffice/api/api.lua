@@ -26,8 +26,24 @@ handle.token = function()
     return result("sessionid="..SESSION.sessionid)
 end
 
+handle.duplicate = function(data)
+    local file = vfs.ospath(data.as)
+    local tmpfile = "/tmp/"..std.sha1(file)
+    local cmd = "curl -o "..tmpfile..' "'..data.remote..'"'
+    os.execute(cmd)
+    -- move file to correct position
+    if ulib.exists(tmpfile) then
+        cmd = "mv "..tmpfile.." "..file
+        os.execute(cmd)
+        print("File "..file.." is duplicated with remote")
+    else
+        return error("Unable to duplicate file")
+    end
+    return result("File duplicated")
+end
+
 handle.save = function()
-    print(JSON.encode(REQUEST))
+    --print(JSON.encode(REQUEST))
     if not REQUEST.json then
         return error("Invalid request")
     end
@@ -40,17 +56,23 @@ handle.save = function()
     end
     local file = vfs.ospath(REQUEST.file)
     if data.status == 2 then
-        print("download to"..file)
-        if not web.download(data.url, file) then
-            print("Unable to download")
-            return error("Unable to save file")
+        local tmpfile = "/tmp/"..std.sha1(file)
+        local cmd = "curl -o "..tmpfile..' "'..data.url..'"'
+        os.execute(cmd)
+        -- move file to correct position
+        if ulib.exists(tmpfile) then
+            cmd = "mv "..tmpfile.." "..file
+            os.execute(cmd)
+            print("File "..file.." sync with remote")
+        else
+            return error("Unable to download")
         end
     end
     
     return result("OK")
 end
 
-print(JSON.encode(args))
+--print(JSON.encode(args))
 
 if args.action and handle[args.action] then
     return handle[args.action](args.args)

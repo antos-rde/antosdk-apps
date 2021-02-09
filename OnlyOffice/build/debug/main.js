@@ -8,23 +8,87 @@
     }
 
     main() {
-      var placeholder;
       this.currfile = void 0;
       if (this.args && this.args.length > 0) {
         this.currfile = this.args[0].path.asFileHandle();
       }
-      placeholder = this.find("editor-area");
-      placeholder.id = this.eid;
+      this.placeholder = this.find("editor-area");
+      this.placeholder.id = this.eid;
+      this.find("btn-open-file").onbtclick = (e) => {
+        return this.openFile();
+      };
+      this.find("btn-new-doc").onbtclick = (e) => {
+        return this.create("word");
+      };
+      this.find("btn-new-cell").onbtclick = (e) => {
+        return this.create("sheet");
+      };
+      this.find("btn-new-slide").onbtclick = (e) => {
+        return this.create("slide");
+      };
       if (this.currfile) {
         return this.open();
       }
+    }
+
+    create(type) {
+      var ext;
+      ext = void 0;
+      if (type === "word") {
+        ext = "docx";
+      }
+      if (type === "sheet") {
+        ext = "xlsx";
+      }
+      if (type === "slide") {
+        ext = "pptx";
+      }
+      if (!ext) {
+        return this.error(__("Unkown file type"));
+      }
+      return this.openDialog("FileDialog", {
+        title: __("Save file as"),
+        type: "dir",
+        file: `home://Untitled.${ext}`.asFileHandle()
+      }).then((d) => {
+        var file, model;
+        file = `${d.file.path}/${d.name}`.asFileHandle();
+        // copy file to destination
+        model = `${this.path()}/templates/model.${ext}`.asFileHandle();
+        return model.read("binary").then((d) => {
+          var blob;
+          blob = new Blob([d], {
+            type: model.info.mime
+          });
+          file.cache = blob;
+          return file.write(model.info.mime).then((r) => {
+            file.cache = void 0;
+            this.currfile = file;
+            return this.open();
+          }).catch((e) => {
+            return this.error(e.toString(), e);
+          });
+        }).catch((err) => {
+          return this.error(err.toString(), err);
+        });
+      });
+    }
+
+    openFile() {
+      return this.openDialog("FileDialog", {
+        title: __("Open file"),
+        type: "file",
+        mimes: this.meta().mimes
+      }).then((f, name) => {
+        this.currfile = f.file.path.asFileHandle();
+        return this.open();
+      });
     }
 
     open() {
       if (!this.currfile) {
         return;
       }
-      console.log(this.currfile);
       return this.exec("token", {
         file: this.currfile.path
       }).then((d) => {
@@ -33,8 +97,9 @@
         }
         this.access_token = d.result;
         return this.currfile.onready().then((meta) => {
+          this.scheme.apptitle = this.currfile.path;
+          $(this.placeholder).empty();
           if (this.editor) {
-            //@scheme.apptitle = @currfile.path
             this.editor.destroyEditor();
           }
           return this.editor = new DocsAPI.DocEditor(this.eid, {
@@ -43,13 +108,13 @@
                 return this.newDocument();
               },
               onRequestSaveAs: (e) => {
-                return console.log(e);
+                return this.saveAs(e);
               }
             },
             document: {
               fileType: this.currfile.ext,
               key: meta.mtime.hash().toString(),
-              title: this.currfile.path,
+              title: this.currfile.filename,
               url: this.currfile.getlink() + "?" + this.access_token
             },
             documentType: this.getDocType(this.currfile.ext),
@@ -86,12 +151,67 @@
     }
 
     saveAs(e) {
-      return console.log(e);
+      var rfile;
+      if (!e.data.url) {
+        return;
+      }
+      rfile = e.data.url.asFileHandle();
+      return this.openDialog("FileDialog", {
+        title: __("Save file as"),
+        type: "dir",
+        file: `home://${e.data.title}`.asFileHandle()
+      }).then((d) => {
+        var file;
+        file = `${d.file.path}/${d.name}`;
+        // copy file to destination
+        return this.exec("duplicate", {
+          remote: e.data.url,
+          as: file
+        }).then((r) => {
+          if (r.error) {
+            return this.error(r.error);
+          }
+          this.currfile = file.asFileHandle();
+          return this.open();
+        }).catch((e) => {
+          return this.error(e.toString(), e);
+        });
+      });
     }
 
     newDocument() {
-      console.log("create document");
-      return this.error(__("Unable to create document"));
+      return this.openDialog("SelectionDialog", {
+        title: __("Create new"),
+        data: [
+          {
+            text: __("Open a file"),
+            iconclass: "fa fa-folder-open",
+            type: "open"
+          },
+          {
+            text: __("Document"),
+            iconclass: "fa  fa-file-word-o",
+            type: "word"
+          },
+          {
+            text: __("Spreadsheet"),
+            iconclass: "fa  fa-file-excel-o",
+            type: "sheet"
+          },
+          {
+            text: __("Presentation"),
+            iconclass: "fa  fa-file-powerpoint-o",
+            type: "slide"
+          }
+        ]
+      }).then((d) => {
+        switch (d.type) {
+          case "open":
+            return this.openFile();
+          default:
+            return this.create(d.type);
+        }
+      });
     }
 
     uapi(action) {

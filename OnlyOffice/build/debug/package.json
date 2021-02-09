@@ -9,7 +9,7 @@
     },
     "version":"0.0.1-a",
     "category":"Other",
-    "iconclass":"fa fa-adn",
+    "icon":"icon.png",
     "mimes":[
         "application/vnd.oasis.opendocument.text",
         "application/vnd.oasis.opendocument.spreadsheet",

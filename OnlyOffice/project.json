@@ -1,7 +1,7 @@
 {
     "name": "OnlyOffice",
-    "css": [],
+    "css": ["css/main.css"],
     "javascripts": [],
     "coffees": ["coffees/main.coffee"],
-    "copies": ["api/api.lua", "assets/scheme.html", "package.json", "README.md"]
+    "copies": ["assets/templates", "assets/icon.png","api/api.lua", "assets/scheme.html", "package.json", "README.md"]
 }
