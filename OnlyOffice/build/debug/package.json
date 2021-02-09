@@ -1,8 +1,8 @@
 {
     "pkgname": "OnlyOffice",
     "app":"OnlyOffice",
-    "name":"OnlyOffice",
-    "description":"OnlyOffice",
+    "name":"Office Suite",
+    "description":"Online Office suite based on OnlyOffice",
     "info":{
         "author": "",
         "email": ""
@@ -10,7 +10,18 @@
     "version":"0.0.1-a",
     "category":"Other",
     "iconclass":"fa fa-adn",
-    "mimes":["none"],
+    "mimes":[
+        "application/vnd.oasis.opendocument.text",
+        "application/vnd.oasis.opendocument.spreadsheet",
+        "application/vnd.oasis.opendocument.presentation",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "application/epub+zip"
+    ],
     "dependencies":[],
     "locale": {}
 }
