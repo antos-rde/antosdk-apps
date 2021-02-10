@@ -68,6 +68,9 @@ class OnlyOffice extends this.OS.application.BaseApplication
             @currfile = f.file.path.asFileHandle()
             @open()
     
+    editorReady: () ->
+        console.log $('iframe[name="frameEditor"]', @scheme).contents()
+    
     open: () ->
         return unless @currfile
         @exec("token", {file: @currfile.path})
@@ -76,17 +79,20 @@ class OnlyOffice extends this.OS.application.BaseApplication
                 @access_token = d.result
                 @currfile.onready()
                 .then (meta) =>
+                    key = "#{@systemsetting.user.username}:#{@currfile.path}:#{meta.mtime}"
+                    key = key.hash().toString()
                     @scheme.apptitle = @currfile.path
                     $(@placeholder).empty()
                     @editor.destroyEditor() if @editor
                     @editor = new DocsAPI.DocEditor(@eid, {
                         events: {
+                            onAppReady: (e) => @editorReady(e),
                             onRequestCreateNew: () => @newDocument(),
                             onRequestSaveAs: (e) => @saveAs(e)
                         },
                         document: {
                             fileType: @currfile.ext,
-                            key: meta.mtime.hash().toString(),
+                            key: key,
                             title: @currfile.filename,
                             url: @currfile.getlink() + "?" + @access_token
                         },

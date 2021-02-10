@@ -150,6 +150,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
 	},
 	{
+		"pkgname": "OnlyOffice",
+		"name": "Office Suite",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/README.md",
+		"category": "Other",
+		"author": "Xuan Sang LE",
+		"version": "0.1.0-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/build/release/OnlyOffice.zip"
+	},
+	{
 		"pkgname": "OpenPage",
 		"name": "OpenPage",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/README.md",
