@@ -8,3 +8,5 @@ Integrate OnlyOffice to an virtual window environment like AntOs allows an incon
 way to work with multiple document at the same time
 
 
+## Change log
+- v 0.1.1a: generate document key based on username and file path
