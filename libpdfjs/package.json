@@ -1,0 +1,15 @@
+{
+    "pkgname": "libpdfjs",
+    "name":"PDF JS library",
+    "description":"AntOS wrapper for PDF JS",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"2.6.347-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

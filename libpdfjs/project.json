@@ -1,0 +1,7 @@
+{
+    "name": "libpdfjs",
+    "css": [],
+    "javascripts": [],
+    "coffees": [],
+    "copies": [ "package.json", "README.md", "pdf.js", "pdf.worker.js", "web"]
+}

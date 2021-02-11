@@ -1,7 +1,7 @@
 {
     "name": "Preview",
     "css": ["main.css"],
-    "javascripts": ["pdf.js"],
+    "javascripts": [],
     "coffees": ["main.coffee"],
-    "copies": ["pdf.worker.js","scheme.html", "package.json", "README.md", "bg.jpg"]
+    "copies": ["scheme.html", "package.json", "README.md", "bg.jpg"]
 }

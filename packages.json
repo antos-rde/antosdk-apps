@@ -130,6 +130,36 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/build/release/Katex.zip"
 	},
 	{
+		"pkgname": "libjpeg",
+		"name": "libjpeg",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.1.1-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/build/release/libjpeg.zip"
+	},
+	{
+		"pkgname": "libpdfjs",
+		"name": "PDF JS library",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libpdfjs/README.md",
+		"category": "Library",
+		"author": "Xuan Sang LE",
+		"version": "2.6.347-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libpdfjs/build/release/libpdfjs.zip"
+	},
+	{
+		"pkgname": "libwvnc",
+		"name": "libwvnc",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.1.2-a",
+		"dependencies": ["libjpeg@0.1.1-a"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/build/release/libwvnc.zip"
+	},
+	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
@@ -175,8 +205,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/README.md",
 		"category": "Utils",
 		"author": "Xuan Sang LE",
-		"version": "0.0.7-a",
-		"dependencies": [],
+		"version": "0.1.0-a",
+		"dependencies": ["libpdfjs@2.6.347-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/build/release/Preview.zip"
 	},
 	{
@@ -248,26 +278,6 @@
 		"version": "0.0.2-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/build/release/VizApp.zip"
-	},
-	{
-		"pkgname": "libjpeg",
-		"name": "libjpeg",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/README.md",
-		"category": "Library",
-		"author": "",
-		"version": "0.1.1-a",
-		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/build/release/libjpeg.zip"
-	},
-	{
-		"pkgname": "libwvnc",
-		"name": "libwvnc",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/README.md",
-		"category": "Library",
-		"author": "",
-		"version": "0.1.2-a",
-		"dependencies": ["libjpeg@0.1.1-a"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/build/release/libwvnc.zip"
 	},
 	{
 		"pkgname": "vTerm",

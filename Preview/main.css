@@ -33,3 +33,7 @@ afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-i
     align-items: center;
     justify-content: center;
 }
+afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "view"].pdf
+{
+    overflow: hidden;
+}

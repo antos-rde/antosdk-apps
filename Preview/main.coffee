@@ -26,35 +26,14 @@ class Preview extends this.OS.application.BaseApplication
         @view = @find "view"
         @status = @find "status"
         @zoom = @find "zoom"
-        @btnext = @find "btnext"
-        @btprev = @find "btprev"
         @btreset = @find "btreset"
-        @txtpage = @find "txtpage"
         
         @zoom.onvaluechange = (e) => @setViewScale e.data
         
         @btreset.onbtclick = (e) =>
                 @zoom.value = 100
                 @setViewScale 100
-        
-        @btnext.onbtclick = (e) =>
-            val = parseInt $(@txtpage).val()
-            return if isNaN val
-            $(@txtpage).val val + 1
-            @gotoPage()
-        @btprev.onbtclick = (e) =>
-            val = parseInt $(@txtpage).val()
-            return if isNaN val
-            $(@txtpage).val val - 1
-            @gotoPage()
-        
-        $(@txtpage).keyup (e) =>
-            return unless e.which is 13
-            return unless @pdf
-            @gotoPage()
-        
-        PDFJS.workerSrc = "#{@path()}/pdf.worker.js".asFileHandle().getlink()
-        @pdf = undefined
+    
         @img = undefined
         
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
@@ -74,19 +53,9 @@ class Preview extends this.OS.application.BaseApplication
             @error __("File not found {0}", file.path), err
     
     
-    gotoPage: () ->
-        return unless @pdf
-        val = parseInt $(@txtpage).val()
-        return if  isNaN(val)
-        return if val <= 0 or val > @pdf.numPages
-        ($ @view).empty()
-        @renderPDFPages val, (@zoom.value / 100), false
-            .catch (e) => @error __("Unable to render page {0}", val), e
-    
     renderFile: () ->
         mime = @currfile.info.mime
         return unless mime
-        @pdf = undefined
         @img = undefined
         ($ @view).empty()
         @zoom.value = 100
@@ -106,13 +75,7 @@ class Preview extends this.OS.application.BaseApplication
         return unless @currfile
         mime = @currfile.info.mime
         scale = (value / 100)
-        if mime.match /^[^\/]+\/.*pdf.*/g
-            return unless @pdf
-            ($ @view).empty()
-            @load @renderPDFPages 1, scale
-            .catch (e) => @error __("Unable to set view scale"), e
-                
-        else if mime.match /image\/.*svg.*/g
+        if mime.match /image\/.*svg.*/g
             $($(@view).children()[0])
                 .css "width", "#{Math.round(value)}%"
                 .css "height", "#{Math.round(value)}%"
@@ -129,53 +92,21 @@ class Preview extends this.OS.application.BaseApplication
             context.scale scale, scale
             context.drawImage @img, 0, 0
 
-    renderPDFPages: (n, scale, recursive) ->
-        new Promise (resolve, reject) =>
-            status = "#{@currfile.info.name} (#{@currfile.info.size} Kb)"
-            return resolve() if n > @pdf.numPages
-            @pdf.getPage(n).then (page) =>
-                viewport = page.getViewport scale
-                div = ($ "<div/>")
-                        .attr("id", "page-" + (page.pageIndex + 1))
-                        .attr("scale", scale)
-                        .addClass "pdf-page"
-                ($ @view).append div
-                canvas = ($ "<canvas>")[0]
-                div.append canvas
-                context = canvas.getContext '2d'
-                canvas.height = viewport.height
-                canvas.width = viewport.width
-                renderContext =
-                    canvasContext: context
-                    viewport: viewport
-                page.render renderContext
-                page._canvas = canvas
-                @setStatus "#{status} - page #{n}/#{@pdf.numPages} loaded"
-                if recursive
-                    @renderPDFPages n + 1, scale, recursive
-                        .then () -> resolve()
-                        .catch (e) -> reject __e e
-                else
-                    resolve()
-            .catch (e) -> reject __e e
+    
 
     renderPDF: () ->
-        @load new Promise (resolve, reject) =>
-            @currfile.read("binary").then (d) =>
-                ($ @view).removeClass()
-                PDFJS.getDocument { data: d }
-                .then (pdf) =>
-                    @pdf = pdf
-                    @renderPDFPages 1, 1, false
-                        .then () =>
-                            $(@txtpage).val("1")
-                            resolve()
-                        .catch (e) -> reject __e e
-                .catch (e) -> reject __e e
-            .catch (e) -> reject __e e
-        .catch (e) => @error __("Unable to view file: {0}", @currfile.path), e
+        $(@find("statcontainer")).hide()
+        @trigger "resize"
+        ($ @view).attr("class", "pdf")
+        frame = ($ "<iframe/>")
+                    .css "width", "100%"
+                    .css "height", "100%"
+        ($ @view).append frame[0]
+        frame[0].src = "pkg://libpdfjs/web/viewer.html".asFileHandle().getlink() + "?file=" + @currfile.getlink()
 
     renderSVG: () ->
+        $(@find("statcontainer")).show()
+        @trigger "resize"
         ($ @view).attr("class", "image")
         @currfile.read().then (d) =>
             @view.innerHTML = d
@@ -185,6 +116,8 @@ class Preview extends this.OS.application.BaseApplication
         .catch (e) => @error __("Unable to read file: {0}", @currfile.path), e
 
     renderImage: () ->
+        $(@find("statcontainer")).show()
+        @trigger "resize"
         ($ @view).attr("class", "image")
 
         @currfile.read("binary").then (d) =>
