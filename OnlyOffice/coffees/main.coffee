@@ -79,8 +79,7 @@ class OnlyOffice extends this.OS.application.BaseApplication
                 @access_token = d.result
                 @currfile.onready()
                 .then (meta) =>
-                    key = "#{@systemsetting.user.username}:#{@currfile.path}"
-                    # :#{meta.mtime}
+                    key = "#{@systemsetting.user.username}:#{@currfile.path}:#{meta.mtime}"
                     key = key.hash().toString()
                     @scheme.apptitle = @currfile.path
                     $(@placeholder).empty()
@@ -136,6 +135,7 @@ class OnlyOffice extends this.OS.application.BaseApplication
                 as: file
             }).then (r) =>
                 return @error r.error if r.error
+                return if @getDocType(file.asFileHandle().ext) is "none"
                 @currfile = file.asFileHandle()
                 @open()
             .catch (e) =>
