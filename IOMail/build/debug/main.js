@@ -1,0 +1,1 @@
+(function(){var i;(i=class extends this.OS.application.BaseApplication{constructor(i){super("IOMail",i)}main(){}}).singleton=!0,this.OS.register("IOMail",i)}).call(this);

@@ -1,0 +1,16 @@
+{
+    "pkgname": "IOMail",
+    "app":"IOMail",
+    "name":"IOHub mail",
+    "description":"IOHub mail",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.1.0-a",
+    "category":"Other",
+    "iconclass":"fa  fa-envelope",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}
