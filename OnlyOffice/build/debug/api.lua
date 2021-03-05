@@ -22,8 +22,14 @@ end
 
 local handle = {}
 
-handle.token = function()
-    return result("sessionid="..SESSION.sessionid)
+handle.token = function(data)
+    local file = vfs.ospath(data.file)
+    local stat = ulib.file_stat(file)
+    local ret = {
+        sid = "sessionid="..SESSION.sessionid,
+        key = std.sha1(file..":"..stat.mtime)
+    }
+    return result(ret)
 end
 
 handle.duplicate = function(data)

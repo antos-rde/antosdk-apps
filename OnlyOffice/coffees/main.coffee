@@ -75,12 +75,13 @@ class OnlyOffice extends this.OS.application.BaseApplication
         return unless @currfile
         @exec("token", {file: @currfile.path})
             .then (d) =>
+                console.log(d)
                 return @error d.error if d.error
-                @access_token = d.result
+                @access_token = d.result.sid
                 @currfile.onready()
                 .then (meta) =>
-                    key = "#{@systemsetting.user.username}:#{@currfile.path}:#{meta.mtime}"
-                    key = key.hash().toString()
+                    #key = "#{@systemsetting.user.username}:#{@currfile.path}:#{meta.mtime}"
+                    #key = key.hash().toString()
                     @scheme.apptitle = @currfile.path
                     $(@placeholder).empty()
                     @editor.destroyEditor() if @editor
@@ -92,7 +93,7 @@ class OnlyOffice extends this.OS.application.BaseApplication
                         },
                         document: {
                             fileType: @currfile.ext,
-                            key: key,
+                            key: d.result.key,
                             title: @currfile.filename,
                             url: @currfile.getlink() + "?" + @access_token
                         },
