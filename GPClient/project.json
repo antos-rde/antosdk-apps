@@ -1,5 +1,5 @@
 {
-    "name": "IOMail",
+    "name": "GPClient",
     "css": [],
     "javascripts": [],
     "coffees": ["coffees/main.coffee"],

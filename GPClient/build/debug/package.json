@@ -1,0 +1,16 @@
+{
+    "pkgname": "GPClient",
+    "app":"GPClient",
+    "name":"Generic Purpose client",
+    "description":"Generic Purpose client",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"0.1.0-a",
+    "category":"Internet",
+    "iconclass":"fa  fa-globe",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}
