@@ -110,6 +110,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/build/release/Docify.zip"
 	},
 	{
+		"pkgname": "GPClient",
+		"name": "Generic Purpose client",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/README.md",
+		"category": "Internet",
+		"author": "Xuan Sang LE",
+		"version": "0.1.0-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/build/release/GPClient.zip"
+	},
+	{
 		"pkgname": "GraphEditor",
 		"name": "Graph Editor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/README.md",
@@ -118,16 +128,6 @@
 		"version": "0.0.8-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
-	},
-	{
-		"pkgname": "IOMail",
-		"name": "IOHub mail",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/IOMail/README.md",
-		"category": "Other",
-		"author": "",
-		"version": "0.1.0-a",
-		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/IOMail/build/release/IOMail.zip"
 	},
 	{
 		"pkgname": "Katex",
