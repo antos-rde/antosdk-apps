@@ -4,11 +4,22 @@ class OnlyOffice extends this.OS.application.BaseApplication
         @eid = "id#{Math.random().toString(36).replace(".","")}"
     
     main: () ->
+        @isActive = false
         @currfile = undefined
+        @iframe = undefined
         if @args and @args.length > 0
             @currfile =  @args[0].path.asFileHandle()
         @placeholder = @find "editor-area"
         @placeholder.id = @eid
+        
+        @on "focus", (e) =>
+            @isActive = true
+            if @iframe
+                el = $("#id_viewer_overlay", @iframe)
+                el = $("#ws-canvas-graphic-overlay", @iframe) if el.length is 0
+                el.trigger("click") if el.length > 0
+                
+        @on "blur", (e) => @isActive = false
         
         @find("btn-open-file").onbtclick = (e) =>
             @openFile()
@@ -69,10 +80,15 @@ class OnlyOffice extends this.OS.application.BaseApplication
             @open()
     
     editorReady: () ->
-        console.log $('iframe[name="frameEditor"]', @scheme).contents()
+        @iframe = $('iframe[name="frameEditor"]', @scheme).contents()[0]
+        return unless @iframe
+        $(@iframe).on "mousedown, mouseup, click", (e) =>
+            return if @isActive
+            @trigger "focus"
     
     open: () ->
         return unless @currfile
+        @iframe = undefined
         @exec("token", {file: @currfile.path})
             .then (d) =>
                 console.log(d)
@@ -197,3 +213,6 @@ this.OS.register "OnlyOffice", OnlyOffice
 this.extensionParams = {
     url: "https://office.iohub.dev/web-apps/"
 }
+# dirty hack that allow subdomain iframes access each other
+# FIXME: may be the domain should be defined by ATOS API
+document.domain = "iohub.dev" if document.domain is "os.iohub.dev"
