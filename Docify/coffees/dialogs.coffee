@@ -296,29 +296,29 @@ PrintDialog.scheme = """
 <afx-app-window width='300' height='300' data-id="DocifyPrintDialog" apptitle = "__(Print)">
     <afx-vbox>
         <afx-label text = "__(Printer name)" data-height="22"></afx-label>
-        <input  type="text" data-id="printerName" data-height="25"/>
+        <input  type="text" data-id="printerName" data-height="25"></input>
         <afx-label text = "__(Range)" data-height="22"></afx-label>
         <div>
-            <input type="radio"  name="range" value="0" checked  />
+            <input type="radio"  name="range" value="0" checked  ></input>
             <label for="0">All</label><br>
-            <input type="radio"  name="range" value="1"  />
+            <input type="radio"  name="range" value="1"  ></input>
             <label for="1">Pages: </label>
-            <input  type="text" data-id="txtPageRange" />
+            <input  type="text" data-id="txtPageRange" ></input>
         </div>
         <afx-label text = "__(Orientation)" data-height="22"></afx-label>
         <div>
-            <input type="radio"  name="orientation" value="0" checked  />
+            <input type="radio"  name="orientation" value="0" checked  ></input>
             <label for="0">Portrait</label><br>
-            <input type="radio"  name="orientation" value="1"  />
+            <input type="radio"  name="orientation" value="1"  ></input>
             <label for="1">Landscape</label>
         </div>
         <afx-label text = "__(Side)" data-height="22"></afx-label>
         <div>
-            <input type="radio"  name="side" value="0"  />
+            <input type="radio"  name="side" value="0"  ></input>
             <label for="0">One side</label><br>
-             <input type="radio"  name="side" value="1" checked  />
+             <input type="radio"  name="side" value="1" checked  ></input>
             <label for="1">Double side long edge</label><br>
-            <input type="radio"  name="side" value="2"   />
+            <input type="radio"  name="side" value="2"   ></input>
             <label for="2">Double side short edge</label>
         </div>
         <div data-height="30" style="text-align:right;">

@@ -9,7 +9,9 @@ class ShowCase extends this.OS.application.BaseApplication
         
         @observable.on "btclick", (e) =>
             @notify "button clicked"
-
+        
+        @bindKey("CTRL-SHIFT-P", (e) => @notify("CTRL-SHIFT-P shortcut executed"))
+        
         list = @find 'list'
 
         list.data = [
@@ -137,7 +139,8 @@ class ShowCase extends this.OS.application.BaseApplication
             { text: "Selection dialog", id: "selection" },
             { text: "About dialog", id: "about" },
             { text: "File dialog", id: "file" },
-            { text: "Text dialog", id: "text" }
+            { text: "Text dialog", id: "text" },
+            { text: "Multi-input dialog", id: "minputs" }
         ]
 
         btrun.onbtclick = (e) =>
@@ -208,6 +211,23 @@ class ShowCase extends this.OS.application.BaseApplication
                         })
                         .then (d) =>
                             @notify d
+                when "minputs"
+                    @openDialog("MultiInputDialog", {
+                        title: "Multi-inputs",
+                        model: {
+                            name: "Your name",
+                            email: "Your email",
+                            where: "Your address"
+                        },
+                        allow_empty: false,
+                        data: {
+                            name: "John Doe",
+                            email: "jd@mail.com",
+                            where: "Anywhere on Earth"
+                        }
+                    })
+                    .then (d) =>
+                        @notify JSON.stringify(d)
                 else return
                     
 

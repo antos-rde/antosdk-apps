@@ -28,22 +28,22 @@ HyperLinkDialog.scheme = """
 <afx-app-window  width='350' height='150' apptitle = "Hyperlink">
     <afx-vbox>
         <afx-hbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
             <afx-vbox>
-                <div data-height="10" />
-                <afx-label class="header" text = "__(Text)" data-height="23" />
-                <input data-height = "30" data-id = "txtText" />
-                <afx-label class="header" text = "__(Link)" data-height="23" />
-                <input data-height = "30" data-id = "txtLink" />
-                <div data-height="10" />
+                <div data-height="10" ></div>
+                <afx-label class="header" text = "__(Text)" data-height="23" ></afx-label>
+                <input data-height = "30" data-id = "txtText" ></input>
+                <afx-label class="header" text = "__(Link)" data-height="23" ></afx-label>
+                <input data-height = "30" data-id = "txtLink" ></input>
+                <div data-height="10" ></div>
                 <afx-hbox data-height="30">
-                    <div />
-                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" />
-                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "40" />
-                    <div data-width = "10" />
+                    <div ></div>
+                    <afx-button data-id = "btnOk" text = "__(Ok)" data-width = "40" ></afx-button>
+                    <afx-button data-id = "btnCancel" text = "__(Cancel)" data-width = "40" ></afx-button>
+                    <div data-width = "10" ></div>
                 </afx-hbox>
             </afx-vbox>
-            <div data-width = "10" />
+            <div data-width = "10" ></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>
