@@ -29,10 +29,10 @@ ClientDialog.scheme = """
         <afx-vbox>
             <div data-height="5"></div>
             <afx-label data-height="25" text = "__(Client name)"></afx-label>
-            <input type="text" name="text" data-height="25" />
+            <input type="text" name="text" data-height="25" ></input>
             <div data-height="5"></div>
             <afx-label data-height="25" text = "__(URL)"></afx-label>
-            <input type="text" name="url" data-height="25" />
+            <input type="text" name="url" data-height="25" ></input>
             <div data-height="30" style="text-align: right;">
                 <afx-button data-id="btnok" text="__(Ok)"></afx-button>
                 <afx-button data-id="btncancel" text="__(Cancel)"></afx-button>

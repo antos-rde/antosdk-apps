@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 (function() {
   var Ant, ShowCase;
 
