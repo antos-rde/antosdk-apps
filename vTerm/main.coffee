@@ -28,6 +28,14 @@ class vTerm extends this.OS.application.BaseApplication
         @term.setOption('fontSize', '12')
         @term.open @mterm
         @sub = undefined
+        
+        @bindKey "CTRL-SHIFT-C", (e) =>
+            @mctxHandle {id: "copy"}
+            @term.focus()
+        
+        @bindKey "CTRL-SHIFT-V", (e) =>
+            @mctxHandle {id: "paste"}
+        
         @term.onKey (d) =>
             return unless @sub
             @sub.send Antunnel.Msg.DATA, new TextEncoder("utf-8").encode(d.key)
