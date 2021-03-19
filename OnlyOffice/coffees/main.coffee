@@ -89,9 +89,9 @@ class OnlyOffice extends this.OS.application.BaseApplication
     open: () ->
         return unless @currfile
         @iframe = undefined
+        @history = undefined
         @exec("token", {file: @currfile.path})
             .then (d) =>
-                console.log(d)
                 return @error d.error if d.error
                 @access_token = d.result.sid
                 @currfile.onready()
@@ -105,7 +105,11 @@ class OnlyOffice extends this.OS.application.BaseApplication
                         events: {
                             onAppReady: (e) => @editorReady(e),
                             onRequestCreateNew: () => @newDocument(),
-                            onRequestSaveAs: (e) => @saveAs(e)
+                            onRequestSaveAs: (e) => @saveAs(e),
+                            onRequestHistory: () => @loadHistory(),
+                            onRequestHistoryData: (e) => @loadHistoryData(e),
+                            onRequestHistoryClose: (e) => @closeHistory(e),
+                            onRequestRestore: (e) => @restoreVersion(e)
                         },
                         document: {
                             fileType: @currfile.ext,
@@ -128,6 +132,71 @@ class OnlyOffice extends this.OS.application.BaseApplication
                         }
                     });
             .catch (e) =>
+                @error e.toString(), e
+    
+    restoreVersion: (e) ->
+        return if e.data.version is @history.version
+        @exec("restore", { version: e.data.version, file: @currfile.path })
+            .then (d) =>
+                @error d.error if d.error
+                @notify d.result if d.result
+                @loadHistory()
+            .catch (e) =>
+                @error e.toString(),e
+                @loadHistory()
+    
+    closeHistory: (e) ->
+        @open()
+    
+    loadHistoryData: (e) ->
+        fn = (h,v) =>
+            return h if h.version is v
+            return fn h.previous, v if h.previous
+            return undefined
+        data = fn @history, e.data
+        @editor.setHistoryData({ error:__("No data found").__()}) unless data
+        path = "home://.office/#{@history.hash}"
+        hdata = {
+            changesUrl: "#{path}/#{data.key}.zip".asFileHandle().getlink()+ "?" + @access_token,
+            key: data.key,
+            url: "#{path}/#{data.key}".asFileHandle().getlink()+ "?" + @access_token,
+            version: data.version
+        }
+        if data.previous
+            hdata.previous = {
+                key: data.previous.key,
+                url: "#{path}/#{data.previous.key}".asFileHandle().getlink()+ "?" + @access_token
+            }
+        hdata.url = @currfile.getlink()+ "?" + @access_token if data.version is @history.version
+        # console.log(hdata)
+        @editor.setHistoryData {hdata}
+    
+    loadHistory: () ->
+        @history = undefined
+        @exec("history", { file: @currfile.path })
+            .then (d) =>
+                return @editor.refreshHistory({error: d.error}) if d.error
+                @history = d.result
+                history = {}
+                history.currentVersion = d.result.version
+                history.history = []
+                fn = (list, obj) =>
+                    list.push {
+                        changes: obj.changes,
+                        created: obj.create,
+                        key: obj.key,
+                        user: obj.user,
+                        version: obj.version
+                    }
+                    return unless obj.previous
+                    fn list, obj.previous
+                
+                fn history.history, d.result
+                console.log history
+                @editor.refreshHistory(history)
+            
+            .catch (e) =>
+                @editor.refreshHistory({ error: e.toString()})
                 @error e.toString(), e
     
     getDocType: (ext) ->
