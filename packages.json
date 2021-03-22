@@ -213,9 +213,9 @@
 		"pkgname": "Preview",
 		"name": "Preview",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/README.md",
-		"category": "Utils",
+		"category": "Graphics",
 		"author": "Xuan Sang LE",
-		"version": "0.1.0-a",
+		"version": "0.1.1-a",
 		"dependencies": ["libpdfjs@2.6.347-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/build/release/Preview.zip"
 	},

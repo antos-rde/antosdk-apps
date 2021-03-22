@@ -6,8 +6,8 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.0-a",
-    "category":"Utils",
+    "version":"0.1.1-a",
+    "category":"Graphics",
     "iconclass":"fa fa-eye",
     "mimes":["[^\/]*/.*pdf", "image/.*"],
     "dependencies": ["libpdfjs@2.6.347-r"]

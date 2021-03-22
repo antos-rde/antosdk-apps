@@ -27,12 +27,13 @@ afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div.pdf-pa
     margin-bottom: 5px;
 }
 
+/*
 afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "view"].image
 {
     display: flex;
     align-items: center;
     justify-content: center;
-}
+}*/
 afx-app-window[data-id = "preview-win"] afx-vbox[data-id="container"] div[data-id = "view"].pdf
 {
     overflow: hidden;
