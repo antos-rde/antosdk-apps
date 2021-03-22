@@ -61,17 +61,25 @@ class vTerm extends this.OS.application.BaseApplication
         
         checklib = () =>
             if not Antunnel.tunnel
-                @error __("The Antunnel service is not started, please start it first")
                 @_gui.pushService("Antunnel/AntunnelService")
+                .then (d) =>
+                    return unless @systemsetting.system.tunnel_uri
+                    Antunnel.init(@systemsetting.system.tunnel_uri).then (t) =>
+                        @notify __("Tunnel now connected to the server at: {0}", @systemsetting.system.tunnel_uri)
+                        @tunnel = Antunnel.tunnel
+                        @openSession()
+                    .catch (e) =>
+                        Antunnel.tunnel.close() if Antunnel.tunnel
+                        @error __("Unable to connect to the tunnel: {0}", e.toString()), e
+                        @quit()
                 .catch (e) =>
-                    @error e.toString(), e
-                @quit()
+                    @error __("Unable to run Antunnel service: {0}",e.toString()), e
+                    @quit()
             else
                 @tunnel = Antunnel.tunnel
                 @openSession()
         
         if not window.Antunnel
-            console.log "require Antunnel"
             @_api.requires("pkg://Antunnel/main.js").then () =>
                 checklib()
             .catch (e) =>

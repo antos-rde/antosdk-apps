@@ -1,5 +1,4 @@
 local args=...
-local web = require("web")
 local vfs = require("vfs")
 
 if not args then
