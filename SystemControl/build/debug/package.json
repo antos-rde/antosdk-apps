@@ -13,7 +13,7 @@
     "dependencies": [
         "Antunnel@0.1.8-a"
     ],
-    "version":"0.1.8-a",
+    "version":"0.1.9-a",
     "category":"Other",
     "iconclass":"fa fa-android",
     "mimes":["none"],

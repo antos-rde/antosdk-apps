@@ -131,7 +131,7 @@ class SystemControl extends this.OS.application.BaseApplication
             { time: now, y: (data.cpu_temp / 1000.0).toFixed(2)},
             { time: now, y: (data.gpu_temp / 1000.0).toFixed(2)}
         ]
-        @streamline "temp", temp_data, [0,], ["CPU temp (C)", "GPU temp (C)"]
+        @streamline "temp", temp_data, [0,100], ["CPU temp (C)", "GPU temp (C)"]
         
         battery_range = [
             (data.battery_min_voltage / 1000.0).toFixed(2), 
