@@ -5,6 +5,7 @@ class SystemControl extends this.OS.application.BaseApplication
         super "SystemControl", args
     
     main: () ->
+        @max_net_range = 2048
         @diskchart =  $(@find("disk-area")).epoch({
             type: 'time.gauge',
             value: 0
@@ -121,14 +122,16 @@ class SystemControl extends this.OS.application.BaseApplication
             { time: now, y: (net_rx / 1024.0).toFixed(3)},
             { time: now, y: (net_tx / 1024.0).toFixed(3)}
         ]
-        @streamline "network", net_data, undefined, ["RX (Kb/s)", "TX (Kb/s)"]
+        @max_net_range = net_data[0].y if net_data[0].y > @max_net_range
+        @max_net_range = net_data[1].y if net_data[1].y > @max_net_range
+        @streamline "network", net_data, [0, @max_net_range], ["RX (Kb/s)", "TX (Kb/s)"]
     
         
         temp_data = [
             { time: now, y: (data.cpu_temp / 1000.0).toFixed(2)},
             { time: now, y: (data.gpu_temp / 1000.0).toFixed(2)}
         ]
-        @streamline "temp", temp_data, undefined, ["CPU temp (C)", "GPU temp (C)"]
+        @streamline "temp", temp_data, [0,], ["CPU temp (C)", "GPU temp (C)"]
         
         battery_range = [
             (data.battery_min_voltage / 1000.0).toFixed(2), 

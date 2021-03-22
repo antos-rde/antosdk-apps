@@ -11,7 +11,7 @@
         "email": ""
     },
     "dependencies": [
-        "Antunnel@0.1.8-a"
+        "Antunnel@0.1.9-a"
     ],
     "version":"0.1.7-a",
     "category":"Other",
