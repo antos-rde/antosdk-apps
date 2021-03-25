@@ -5,7 +5,7 @@ class About extends this.OS.application.BaseApplication
     main: () ->
         me = @
         @container = @find "container"
-        path = "os://README.md"
+        path = "https://raw.githubusercontent.com/lxsang/antos/master/README.md"
         path.asFileHandle()
             .read()
             .then (txt) ->

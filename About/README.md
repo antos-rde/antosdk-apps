@@ -5,6 +5,9 @@ It is used to show the change logs of the current AntOS version
 
 ## Change logs
 
+### v0.0.6-a
+* Use README page available on github
+
 ### v0.0.5-a
 * Fix cotent padding is not correct on some browsers
 

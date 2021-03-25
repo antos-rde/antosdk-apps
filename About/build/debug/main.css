@@ -14,3 +14,8 @@ afx-app-window[data-id = "About"] div[data-id="container"]
 {
     text-align: justify;
 }
+
+afx-app-window[data-id = "About"] img
+{
+    max-width: 100%;
+}
