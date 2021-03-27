@@ -95,7 +95,7 @@ end
 handle.duplicate = function(data)
     local file = vfs.ospath(data.as)
     local tmpfile = "/tmp/"..std.sha1(file)
-    local cmd = "curl -o "..tmpfile..' "'..data.remote..'"'
+    local cmd = "wget -O "..tmpfile..' "'..data.remote..'"'
     os.execute(cmd)
     -- move file to correct position
     if ulib.exists(tmpfile) then
@@ -123,7 +123,7 @@ handle.save = function()
     local file = vfs.ospath(REQUEST.file)
     if data.status == 2 then
         local tmpfile = "/tmp/"..std.sha1(file)
-        local cmd = "curl -o "..tmpfile..' "'..data.url..'"'
+        local cmd = "wget -O "..tmpfile..' "'..data.url..'"'
         os.execute(cmd)
         -- move file to correct position
         if ulib.exists(tmpfile) then
@@ -145,7 +145,7 @@ handle.save = function()
             local new_key = std.sha1(file..":"..stat.mtime)
             -- save changes
             if(data.changesurl) then
-                cmd = "curl -o "..history_dir.."/"..new_key..'.zip "'..data.changesurl..'"'
+                cmd = "wget -O "..history_dir.."/"..new_key..'.zip "'..data.changesurl..'"'
                 os.execute(cmd)
             end
             -- now save version object
