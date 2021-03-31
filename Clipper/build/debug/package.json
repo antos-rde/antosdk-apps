@@ -6,8 +6,8 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.2-a",
-    "category":"Other",
+    "version":"0.1.3-a",
+    "category":"Utility",
     "iconclass":"fa fa-scissors",
     "mimes":["none"],
     "locale": {}

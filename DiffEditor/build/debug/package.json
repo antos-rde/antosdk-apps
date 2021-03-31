@@ -7,9 +7,9 @@
         "author": "",
         "edsdmail": ""
     },
-    "version":"0.1.2-a",
-    "category":"Other",
-    "iconclass":"fa fa-adn",
+    "version":"0.1.3-a",
+    "category":"Development",
+    "iconclass":"bi bi-file-diff-fill",
     "mimes":["none"],
     "dependencies":["AceDiff@3.0.3-r"],
     "locale": {}

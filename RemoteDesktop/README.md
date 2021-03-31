@@ -7,6 +7,6 @@ Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blo
 
 
 ## Change logs
-
+* v0.1.6 - Change category
 * v0.1.5 - add package dependencies and use the new **libwvnc**
 * v0.1.0 - adapt to the new AntOS API

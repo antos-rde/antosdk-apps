@@ -14,8 +14,8 @@
         "Antunnel@0.1.8-a"
     ],
     "version":"0.1.9-a",
-    "category":"Other",
-    "iconclass":"fa fa-android",
+    "category":"System",
+    "iconclass":"fa fa-tachometer",
     "mimes":["none"],
     "locale": {}
 }

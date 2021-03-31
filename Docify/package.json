@@ -7,9 +7,9 @@
         "author": "",
         "email": ""
     },
-    "version":"0.0.6-a",
-    "category":"Other",
-    "iconclass":"fa fa-adn",
+    "version":"0.0.7-a",
+    "category":"Office",
+    "iconclass":"bi bi-collection-fill",
     "mimes":["none"],
     "locale": {}
 }

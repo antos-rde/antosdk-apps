@@ -6,9 +6,9 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.13-a",
+    "version":"0.1.14-a",
     "category":"System",
-    "iconclass":"fa fa-terminal",
+    "iconclass":"bi bi-terminal-fill",
     "mimes":["none"],
     "dependencies": [
         "Antunnel@0.1.8-a",

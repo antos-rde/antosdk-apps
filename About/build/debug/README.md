@@ -5,6 +5,9 @@ It is used to show the change logs of the current AntOS version
 
 ## Change logs
 
+### v0.0.7-a
+* Change app category to Utility
+
 ### v0.0.6-a
 * Use README page available on github
 

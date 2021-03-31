@@ -6,8 +6,8 @@
         "author": "Xuan Sang LEs",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.0.6-a",
-    "category":"System",
-    "iconclass":"fa fa-adn",
+    "version":"0.0.7-a",
+    "category":"Development",
+    "iconclass":"bi gear-full",
     "mimes":["none"]
 }

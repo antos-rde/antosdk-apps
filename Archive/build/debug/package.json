@@ -7,8 +7,8 @@
         "author": "Xuan Sang LE",
         "email": "mrsang@lxsang.me"
     },
-    "version":"0.0.2-a",
-    "category":"Other",
+    "version":"0.0.3-a",
+    "category":"Utility",
     "iconclass":"fa fa-archive",
     "mimes":["application/zip"],
     "locale": {}

@@ -1,0 +1,25 @@
+<afx-app-window data-id="Dockman" apptitle="__(Remote Docker Manager)" width="650" height="450" >
+    <afx-vbox>
+        <afx-hbox data-height="23" class="tab-wrapper">
+            <afx-button data-id="add" text="" iconclass="fa fa-plus-square" data-width="23"></afx-button>
+            <afx-tab-bar data-id="host-tab-bar" closable="true"></afx-tab-bar>
+        </afx-hbox>
+        <afx-hbox>
+            <afx-vbox data-width="250">
+                <afx-label text = "__(Images)" class="header" iconclass='fa fa-square' data-height="23"></afx-label>
+                <afx-list-view data-id="img-list"></afx-list-view>
+                <afx-resizer data-height = "3"></afx-resizer>
+                <afx-label text = "__(Containers)" class="header" iconclass='fa fa-square' data-height="23"></afx-label>
+                <afx-list-view data-id="container-list"></afx-list-view>
+            </afx-vbox>
+            <afx-resizer data-width="3"></afx-resizer>
+            <afx-vbox>
+                <!--afx-label text = "__(Detail)" class="header" iconclass='fa fa-square' data-height="23"></afx-label-->
+                <afx-tree-view data-id="obj-view"></afx-tree-view>
+                <div data-height="25"></div>
+            </afx-vbox>
+            
+        </afx-hbox>
+    </afx-vbox>
+   
+</afx-app-window>

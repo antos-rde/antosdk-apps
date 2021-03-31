@@ -7,8 +7,8 @@
         "author": "",
         "email": ""
     },
-    "version":"0.1.3-a",
-    "category":"Other",
+    "version":"0.1.4-a",
+    "category":"Graphics",
     "iconclass":"fa fa-camera",
     "mimes":["none"],
     "dependencies":["libjpeg@0.1.1-a", "Antunnel@0.1.8-a"],

@@ -1,3 +1,3 @@
-# IOMail
+# GPClient
 
-Simple Mail client wrapper for https://mail.iohub.dev/
+Simple Multi purpose client wrapper

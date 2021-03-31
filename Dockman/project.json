@@ -1,0 +1,7 @@
+{
+    "name": "Dockman",
+    "css": ["main.css"],
+    "javascripts": [],
+    "coffees": ["main.coffee"],
+    "copies": ["scheme.html", "api.lua", "package.json", "README.md"]
+}

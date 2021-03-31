@@ -1,0 +1,16 @@
+{
+    "pkgname": "Dockman",
+    "app":"Dockman",
+    "name":"Remote Docker Manager",
+    "description":"Remote Docker Manager",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "xsang.le@gmail.com"
+    },
+    "version":"0.1.0-b",
+    "category":"Development",
+    "iconclass":"fa  fa-cubes",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

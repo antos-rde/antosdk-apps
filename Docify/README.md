@@ -2,6 +2,7 @@
 Simple PDF document manager
 
 ## Change logs
+- v0.0.7-a: Change category and icon
 - v0.0.6-a: Add print dialog (support server side printing)
 - v0.0.5-a: Fix delete file bug
 - v0.0.4-a: Display file size in entry meta-data

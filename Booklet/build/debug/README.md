@@ -1,8 +1,10 @@
 # Booklet
-A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https://doc.iohub.dev/antos/)
+A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https://doc.iohub.dev/)
 
 
 ## Change logs
+### v0.2.3-a
+* Chage app category name
 ### v0.2.1-a
 * Chage libraries load order
 ### v0.2.1-a

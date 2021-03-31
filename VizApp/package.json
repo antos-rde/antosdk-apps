@@ -8,7 +8,7 @@
         "licences": "GPLv3"
     },
     "version":"0.0.2-a",
-    "category":"Office",
-    "iconclass": "fa fa-sitemap",
+    "category":"Graphics",
+    "iconclass": "bi bi-bounding-box",
     "mimes":["text/.*graphviz"]
 }
