@@ -140,7 +140,8 @@ class ShowCase extends this.OS.application.BaseApplication
             { text: "About dialog", id: "about" },
             { text: "File dialog", id: "file" },
             { text: "Text dialog", id: "text" },
-            { text: "Multi-input dialog", id: "minputs" }
+            { text: "Multi-input dialog", id: "minputs" },
+             { text: "Multi key value dialog", id: "mkv" }
         ]
 
         btrun.onbtclick = (e) =>
@@ -220,6 +221,18 @@ class ShowCase extends this.OS.application.BaseApplication
                             where: "Your address"
                         },
                         allow_empty: false,
+                        data: {
+                            name: "John Doe",
+                            email: "jd@mail.com",
+                            where: "Anywhere on Earth"
+                        }
+                    })
+                    .then (d) =>
+                        @notify JSON.stringify(d)
+                
+                when "mkv"
+                    @openDialog("KeyValueDialog", {
+                        title: "Multi key-values",
                         data: {
                             name: "John Doe",
                             email: "jd@mail.com",
