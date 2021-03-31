@@ -184,8 +184,8 @@
 		"name": "LuaPlayground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
 		"category": "Development",
-		"author": "Xuan Sang LEs",
-		"version": "0.0.7-a",
+		"author": "Xuan Sang LE",
+		"version": "0.0.8-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/build/release/LuaPlayground.zip"
 	},
@@ -253,7 +253,8 @@
 		"pkgname": "ShowCase",
 		"name": "ShowCase",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/README.md",
-		"category": "Utility",
+		"category": "Utility
+Other",
 		"author": "Xuan Sang LE",
 		"version": "0.0.7-a",
 		"dependencies": [],

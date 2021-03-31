@@ -3,11 +3,11 @@
     "name":"LuaPlayground",
     "description":"Module testing and analytics tool",
     "info":{
-        "author": "Xuan Sang LEs",
+        "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.0.7-a",
+    "version":"0.0.8-a",
     "category":"Development",
-    "iconclass":"bi gear-full",
+    "iconclass":"bi bi-gear-fill",
     "mimes":["none"]
 }
