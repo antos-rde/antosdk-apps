@@ -253,8 +253,7 @@
 		"pkgname": "ShowCase",
 		"name": "ShowCase",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/README.md",
-		"category": "Utility
-Other",
+		"category": "Utility",
 		"author": "Xuan Sang LE",
 		"version": "0.0.7-a",
 		"dependencies": [],

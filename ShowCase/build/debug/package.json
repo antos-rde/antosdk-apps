@@ -8,11 +8,7 @@
         "licences": "GPLv3"
     },
     "version":"0.0.7-a",
-<<<<<<< HEAD
     "category":"Utility",
-=======
-    "category":"Other",
->>>>>>> c3df98de9effd1c129b9e5b36420bda12ea4cdba
     "mimes":["none"],
     "iconclass": "fa fa-delicious",
     "locales": {
