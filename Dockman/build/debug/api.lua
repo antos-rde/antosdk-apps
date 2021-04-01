@@ -117,6 +117,15 @@ handle.stop_container = function(data)
     end
 end
 
+handle.restart_container = function(data)
+    local res = exec(data.host, "docker restart "..data.id, false)
+    res = res:gsub('[\n\r]+', '')
+    if res == data.id then
+        return result("OK")
+    else
+        return error(res)
+    end
+end
 
 handle.rm_container = function(data)
     local res = exec(data.host, "docker stop "..data.id, false)

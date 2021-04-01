@@ -115,7 +115,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Dockman/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.0-b",
+		"version": "0.1.1-b",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Dockman/build/release/Dockman.zip"
 	},

@@ -213,6 +213,22 @@ class Dockman extends this.OS.application.BaseApplication
                             return @error r.error if r.error
                             @notify __("Container {0} removed", data.ID)
                             @loadContainer(data.Image, true)
+            },
+            {
+                text: "",
+                iconclass: "bi bi-bootstrap-reboot",
+                onbtclick: () => 
+                    sel = @ctnlist.selectedItem
+                    return unless sel and sel.data
+                    data = sel.data
+                    @exec("restart_container", {
+                        host: @currenthost.url,
+                        id: data.ID
+                    })
+                    .then (r) =>
+                        return @error r.error if r.error
+                        @notify __("Container {0} restarted", data.ID)
+                        @loadContainer(data.Image, true)
             }
         ]
         
