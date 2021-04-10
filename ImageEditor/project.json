@@ -1,0 +1,12 @@
+{
+    "name": "ImageEditor",
+    "css": ["css/tui-image-ed-bundle.min.css", "css/main.css"],
+    "javascripts": [
+    ],
+    "coffees": ["coffees/main.coffee"],
+    "copies": [
+        "javascripts/tui-image-ed-bundle.min.js",
+        "assets/scheme.html", "package.json",
+        "README.md"
+    ]
+}

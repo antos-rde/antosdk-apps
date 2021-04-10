@@ -1,0 +1,15 @@
+{
+    "pkgname": "libfabric",
+    "name":"Fabric.js library",
+    "description":"Fabric.js is a framework that makes it easy to work with HTML5 canvas element",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"4.4.0-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

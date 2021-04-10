@@ -140,6 +140,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
 	},
 	{
+		"pkgname": "ImageEditor",
+		"name": "Image editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ImageEditor/README.md",
+		"category": "Graphics",
+		"author": "Xuan Sang LE",
+		"version": "0.1.0-a",
+		"dependencies": ["libfabric@4.4.0-r"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ImageEditor/build/release/ImageEditor.zip"
+	},
+	{
 		"pkgname": "Katex",
 		"name": "Katex",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/README.md",
@@ -148,6 +158,16 @@
 		"version": "0.11.1-r",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/build/release/Katex.zip"
+	},
+	{
+		"pkgname": "libfabric",
+		"name": "Fabric.js library",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libfabric/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "4.4.0-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libfabric/build/release/libfabric.zip"
 	},
 	{
 		"pkgname": "libjpeg",

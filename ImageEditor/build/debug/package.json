@@ -1,0 +1,16 @@
+{
+    "pkgname": "ImageEditor",
+    "app":"ImageEditor",
+    "name":"Image editor",
+    "description":"AntOS wrapper of the tui.image-editor",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"0.1.0-a",
+    "category":"Graphics",
+    "iconclass":"fa fa-camera-retro",
+    "mimes":["image/.*"],
+    "dependencies":["libfabric@4.4.0-r"],
+    "locale": {}
+}

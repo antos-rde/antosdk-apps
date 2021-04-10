@@ -1,0 +1,7 @@
+{
+    "name": "libfabric",
+    "css": [],
+    "javascripts": [],
+    "coffees": [],
+    "copies": ["main.js","package.json", "README.md"]
+}
