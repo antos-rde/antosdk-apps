@@ -220,6 +220,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
 	},
 	{
+		"pkgname": "MonacoCore",
+		"name": "Monaco editor core",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MonacoCore/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.23.0-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MonacoCore/build/release/MonacoCore.zip"
+	},
+	{
 		"pkgname": "OnlyOffice",
 		"name": "Office Suite",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/README.md",
