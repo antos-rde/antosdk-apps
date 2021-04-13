@@ -1,0 +1,8 @@
+{
+    "name": "MonacoCore",
+    "css": [],
+    "javascripts": [],
+    "coffees": [],
+    "ts": [],
+    "copies": ["vs","package.json", "README.md"]
+}
