@@ -19,6 +19,7 @@ class Blogger extends this.OS.application.BaseApplication
     constructor: (args) ->
         super "Blogger", args
     
+    
     main: () ->
         @user = {}
         @cvlist = @find "cv-list"

@@ -1,0 +1,24 @@
+{
+    "pkgname": "Antedit",
+    "app":"Antedit",
+    "name":"Antos Editor",
+    "description":"Antos text/code editor",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"0.1.0-a",
+    "category":"Development",
+    "iconclass":"bi bi-journal-code",
+    "mimes":[
+        "text/.*",
+        "[^/]*/json.*",
+        "[^/]*/.*ml",
+        "[^/]*/javascript",
+        "dir"
+    ],
+    "dependencies":[
+        "MonacoCore@0.23.0-r"
+    ],
+    "locale": {}
+}

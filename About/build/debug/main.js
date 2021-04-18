@@ -1,1 +1,35 @@
-(function(){var t;(t=class extends this.OS.application.BaseApplication{constructor(t){super("About",t)}main(){var t,n;return t=this,this.container=this.find("container"),(n="https://raw.githubusercontent.com/lxsang/antos/master/README.md").asFileHandle().read().then((function(n){var i;return i=new showdown.Converter,$(t.container).html(i.makeHtml(n))})).catch(()=>this.notify(__("Unable to read: {0}",n))),this.find("btnclose").onbtclick=()=>this.quit()}}).singleton=!0,t.dependencies=["os://scripts/showdown.min.js"],this.OS.register("About",t)}).call(this);
+
+(function() {
+  var About;
+
+  About = class About extends this.OS.application.BaseApplication {
+    constructor(args) {
+      super("About", args);
+    }
+
+    main() {
+      var me, path;
+      me = this;
+      this.container = this.find("container");
+      path = "https://raw.githubusercontent.com/lxsang/antos/master/README.md";
+      path.asFileHandle().read().then(function(txt) {
+        var converter;
+        converter = new showdown.Converter();
+        return ($(me.container)).html(converter.makeHtml(txt));
+      }).catch(() => {
+        return this.notify(__("Unable to read: {0}", path));
+      });
+      return this.find("btnclose").onbtclick = () => {
+        return this.quit();
+      };
+    }
+
+  };
+
+  About.singleton = true;
+
+  About.dependencies = ["os://scripts/showdown.min.js"];
+
+  this.OS.register("About", About);
+
+}).call(this);

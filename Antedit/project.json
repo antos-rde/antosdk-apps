@@ -1,8 +1,14 @@
 {
     "name": "Antedit",
-    "css": [],
+    "css": ["css/main.css"],
     "javascripts": [],
-    "coffees": ["coffees/main.coffee"],
-    "ts": [],
-    "copies": ["assets/scheme.html", "package.json", "README.md"]
+    "coffees": [],
+    "ts": [
+        "ts/monaco.d.ts",
+        "ts/BaseEditorModel.ts",
+        "ts/MonacoEditorModel.ts",
+        "ts/main.ts",
+        "ts/EditorExtensionMaker.ts"
+        ],
+    "copies": ["extensions","assets/scheme.html", "package.json", "README.md"]
 }

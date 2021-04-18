@@ -30,6 +30,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
 	{
+		"pkgname": "Antedit",
+		"name": "Antos Editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
+		"category": "Development",
+		"author": "Xuan Sang LE",
+		"version": "0.1.0-a",
+		"dependencies": ["MonacoCore@0.23.0-r"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
+	},
+	{
 		"pkgname": "Antunnel",
 		"name": "Antunnel",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/README.md",
@@ -158,6 +168,16 @@
 		"version": "0.11.1-r",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/build/release/Katex.zip"
+	},
+	{
+		"pkgname": "libantosdk",
+		"name": "AntOSDK",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/README.md",
+		"category": "Other",
+		"author": "Xuan Sang LE",
+		"version": "0.0.2-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/build/release/libantosdk.zip"
 	},
 	{
 		"pkgname": "libfabric",

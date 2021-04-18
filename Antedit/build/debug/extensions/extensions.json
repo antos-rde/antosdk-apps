@@ -1,0 +1,33 @@
+[
+    {
+        "name": "EditorExtensionMaker",
+        "text": "Antedit Extension",
+        "version": "0.0.1-a",
+        "actions" : [
+            {
+                "text": "__(New Extension)",
+                "name": "create"
+            },
+            {
+                "text": "__(Build)",
+                "name": "build"
+            },
+            {
+                "text": "__(Run)",
+                "name": "run"
+            },
+            {
+                "text": "__(Build release)",
+                "name": "release"
+            },
+            {
+                "text": "__(Install extension from file)",
+                "name": "install"
+            },
+            {
+                "text": "__(Install extension from URL)",
+                "name": "installFromURL"
+            }
+        ]
+    }
+]
