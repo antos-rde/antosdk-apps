@@ -45,7 +45,6 @@
                         "src": [
                             "package.json",
                             "README.md",
-                            "scheme.html",
                             "core"
                         ],
                         "dest":"build/debug"
@@ -54,7 +53,7 @@
             ]
         },
         "release": {
-            "depend": ["clean","build","uglify", "copy"],
+            "depend": ["build","uglify", "copy"],
             "require": ["zip"],
             "jobs": [
                 {

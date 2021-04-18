@@ -3,6 +3,6 @@
     "css": [],
     "javascripts": [],
     "coffees": [],
-    "ts": ["ts/main.ts", "ts/test.ts"],
-    "copies": ["core","package.json", "scheme.html", "README.md"]
+    "ts": ["ts/main.ts"],
+    "copies": ["core","package.json", "README.md"]
 }
