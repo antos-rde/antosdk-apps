@@ -2,6 +2,15 @@ String.prototype.getlink = function(root)
 {
     return API.REST  + "/VFS/get/"  + this.abspath(root);
 }
+String.prototype.asBase64 = function () {
+        const tmp = encodeURIComponent(this);
+        return btoa(
+            tmp.replace(/%([0-9A-F]{2})/g, (match, p1) =>
+                String.fromCharCode(parseInt(p1, 16))
+            )
+        );
+    };
+    
 String.prototype.abspath = function(root)
 {
     const list = this.split("://");
@@ -206,10 +215,10 @@ class AntOSDKBaseJob {
             if (t === "object" || typeof data === "string") {
                 let b64;
                 if (t === "object") {
-                    b64 = btoa(JSON.stringify(data, undefined, 4));
+                    b64 = JSON.stringify(data, undefined, 4).asBase64();
                 }
                 else {
-                    b64 = btoa(data);
+                    b64 = data.asBase64();
                 }
                 b64 = `data:${m};base64,${b64}`;
                 return resolve(b64);

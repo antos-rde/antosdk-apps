@@ -49,11 +49,14 @@ class ZipJob extends AntOSDKBaseJob {
                     }
                     else {
                         const ret = await this.read_files([file], "arraybuffer");
-                        const u_data = ret[0];
+                        const blob = new Blob( [ret[0]], {
+                                    type: "octet/stream",
+                                });
+                        const b64 = await this.b64("binary", blob);
                         const z_path = `${base}${basename}`.replace(
                             /^\/+|\/+$/g,
                             "");
-                        zip.file(z_path, u_data, { binary: true });
+                        zip.file(z_path, b64.replace("data:octet/stream;base64,",""), { base64: true, compression : "DEFLATE" });
                         this.log_info(`${file} added to zip`);
                         resolve(undefined);
                     }
@@ -83,8 +86,10 @@ class ZipJob extends AntOSDKBaseJob {
                     const ret = await this.scandir(src);
                     await this.aradd(ret.map(v => v.path), zip, "/");
                 }
-                const z_data = await zip.generateAsync({ type: "base64" });
-                await this.save_file(dest, "data:application/zip;base64," + z_data, "base64");
+                const z_data = await zip.generateAsync({ type: "arraybuffer" });
+                const blob = new Blob([z_data], {
+                            type: "application/octet-stream"});
+                await this.save_file(dest, blob,"binary");
                 this.log_info(`Zip archive saved in ${dest}`);
                 resolve(dest);
             } catch (error) {

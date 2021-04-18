@@ -43,9 +43,9 @@
                     "name": "vfs-cp",
                     "data": {
                         "src": [
+                             "core",
                             "package.json",
-                            "README.md",
-                            "core"
+                            "README.md"
                         ],
                         "dest":"build/debug"
                     }
@@ -53,7 +53,7 @@
             ]
         },
         "release": {
-            "depend": ["build","uglify", "copy"],
+            "depend": ["clean","build","uglify", "copy"],
             "require": ["zip"],
             "jobs": [
                 {
