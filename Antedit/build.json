@@ -1,0 +1,66 @@
+{
+    "name": "Antedit",
+    "targets": {
+        "build": {
+            "require":["ts"],
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": ["build","build/debug","build/release"]
+                },
+                {
+                    "name": "ts-import",
+                    "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": [
+                            "ts/monaco.d.ts",
+                            "ts/BaseEditorModel.ts",
+                            "ts/MonacoEditorModel.ts",
+                            "ts/main.ts",
+                            "ts/EditorExtensionMaker.ts"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                },
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "extensions",
+                            "assets/scheme.html",
+                            "package.json",
+                            "README.md",
+                            "css/main.css"
+                        ],
+                        "dest":"build/debug"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": ["terser"],
+            "jobs": [
+                {
+                    "name":"terser-uglify",
+                    "data": ["build/debug/main.js"]
+                }
+            ]
+        },
+        "release": {
+            "depend": ["build","uglify"],
+            "require": ["zip"],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src":"build/debug",
+                        "dest":"build/release/Antedit.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

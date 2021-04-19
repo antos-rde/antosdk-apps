@@ -220,10 +220,10 @@ namespace OS {
         release(): void {
             this.logger().clear();
             this.metadata("extension.json")
-                .then((meta) => {
+                .then(async (meta) => {
                     this.build(async () => {
                         try {
-                            API.VFS.mkar(
+                            await API.VFS.mkar(
                                 `${meta.root}/build/debug`,
                                 `${meta.root}/build/release/${meta.meta.name}.zip`
                             );
@@ -298,7 +298,7 @@ namespace OS {
                 ["main.tpl", `${rpath}/${name}.js`],
                 ["meta.tpl", `${rpath}/extension.json`],
             ];
-            API.VFS.mkdirAll(dirs)
+            API.VFS.mkdirAll(dirs, true)
                 .then(async () => {
                     try {
                         await API.VFS.mktpl(files, this.basedir(), (data)=>{
@@ -331,51 +331,36 @@ namespace OS {
          * @memberof EditorExtensionMaker
          */
         private installZip(path: string): Promise<void> {
-            return new Promise((resolve, reject) => {
-                API.requires("os://scripts/jszip.min.js")
-                    .then(() => {
-                        path.asFileHandle()
-                            .read("binary")
-                            .then((data) => {
-                                JSZip.loadAsync(data)
-                                    .then((zip: any) => {
-                                        zip.file("extension.json").async("uint8array")
-                                        .then((d) =>{
-                                            const meta = JSON.parse(new TextDecoder("utf-8").decode(d));
-                                            const pth = this.ext_dir(meta.name);
-                                            const dir = [pth];
-                                            const files = [];
-                                            for (let name in zip.files) {
-                                                const file = zip.files[name];
-                                                if (file.dir) {
-                                                    dir.push(pth + "/" + name);
-                                                } else if(name != "extension.json") {
-                                                    files.push(name);
-                                                }
-                                            }
-                                            if (dir.length > 0) {
-                                                API.VFS.mkdirAll(dir)
-                                                    .then(() => {
-                                                        this.installFiles(files, zip, meta)
-                                                            .then(() => resolve())
-                                                            .catch((e) =>
-                                                                reject(__e(e))
-                                                            );
-                                                    })
-                                                    .catch((e) => reject(__e(e)));
-                                            } else {
-                                                this.installFiles(files, zip, meta)
-                                                    .then(() => resolve())
-                                                    .catch((e) => reject(__e(e)));
-                                            }
-                                        })
-                                        .catch(e => reject(__e(e)));
-                                    })
-                                    .catch((e: Error) => reject(__e(e)));
-                            })
-                            .catch((e) => reject(__e(e)));
-                    })
-                    .catch((e) => reject(__e(e)));
+            return new Promise(async (resolve, reject) => {
+                try{
+                    await API.requires("os://scripts/jszip.min.js");
+                    const data = await path.asFileHandle().read("binary");
+                    const zip = await JSZip.loadAsync(data);
+                    const d = await zip.file("extension.json").async("uint8array");
+                    const meta = JSON.parse(new TextDecoder("utf-8").decode(d));
+                    const pth = this.ext_dir(meta.name);
+                    const dir = [pth];
+                    const files = [];
+                    for (let name in zip.files) {
+                        const file = zip.files[name];
+                        if (file.dir) {
+                            dir.push(pth + "/" + name);
+                        } else if(name != "extension.json") {
+                            files.push(name);
+                        }
+                    }
+                    if (dir.length > 0) {
+                        await API.VFS.mkdirAll(dir, true)
+                        await this.installFiles(files, zip, meta);
+                    } else {
+                        await this.installFiles(files, zip, meta);
+                    }
+                    resolve();
+                }
+                catch(e)
+                {
+                    reject(__e(e));
+                }
             });
         }
         
@@ -403,28 +388,25 @@ namespace OS {
             if (files.length === 0) {
                 return this.installMeta(meta);
             }
-            return new Promise((resolve, reject) => {
-                const file = files.splice(0, 1)[0];
-                const path = `${this.ext_dir(meta.name)}/${file}`;
-                return zip
-                    .file(file)
-                    .async("uint8array")
-                    .then((d: Uint8Array) => {
-                        return path
-                            .asFileHandle()
-                            .setCache(new Blob([d], { type: "octet/stream" }))
-                            .write("text/plain")
-                            .then((r) => {
-                                if (r.error) {
-                                    return reject(r.error);
-                                }
-                                return this.installFiles(files, zip, meta)
-                                    .then(() => resolve())
-                                    .catch((e) => reject(__e(e)));
-                            })
-                            .catch((e) => reject(__e(e)));
-                    })
-                    .catch((e: Error) => reject(__e(e)));
+            return new Promise(async (resolve, reject) => {
+                try{
+                    const file = files.splice(0, 1)[0];
+                    const path = `${this.ext_dir(meta.name)}/${file}`;
+                    const d = await zip.file(file).async("uint8array");
+                    const r = await path.asFileHandle()
+                                .setCache(new Blob([d], { type: "octet/stream" }))
+                                .write("text/plain");
+
+                    if (r.error) {
+                        return reject(r.error);
+                    }
+                    await this.installFiles(files, zip, meta);
+                    resolve();
+                }
+                catch(e)
+                {
+                    reject(__e(e));
+                }
             });
         }
 

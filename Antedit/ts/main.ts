@@ -1,3 +1,5 @@
+declare var __monaco_public_path__;
+__monaco_public_path__ = "VFS/get/"+ "pkg://MonacoCore/bundle/".asFileHandle().path + "/";
 namespace OS {
     export namespace application {
         
@@ -198,29 +200,31 @@ namespace OS {
                     
                 const wrapper = this.find("wrapper");
                 $(wrapper).css('visibility', 'hidden');
-                    
-                this.load(new Promise((resolve, reject) => {
+                
+                monaco.editor.setTheme("vs-dark");
+                // add editor instance
+                this.eum
+                    .add(new MonacoEditorModel(
+                        this,
+                        this.find("left-tabbar") as GUI.tag.TabBarTag,
+                        this.find("left-editorarea")) as BaseEditorModel)
+                    .add(new MonacoEditorModel(
+                        this,
+                        this.find("right-tabbar") as GUI.tag.TabBarTag,
+                        this.find("right-editorarea")) as BaseEditorModel);
+                this.eum.onstatuschange = (st) =>
+                    this.updateStatus(st)
+                $(wrapper).css('visibility', 'visible');
+                this.setup();
+                this.eum.active.openFile(file);
+                
+                /*this.load(new Promise((resolve, reject) => {
                     require.config({ paths: { 'vs': "pkg://MonacoCore/vs".asFileHandle().getlink() }});
                     require(['vs/editor/editor.main'], () => {
-                        monaco.editor.setTheme("vs-dark");
-                        // add editor instance
-                        this.eum
-                            .add(new MonacoEditorModel(
-                                this,
-                                this.find("left-tabbar") as GUI.tag.TabBarTag,
-                                this.find("left-editorarea")) as BaseEditorModel)
-                            .add(new MonacoEditorModel(
-                                this,
-                                this.find("right-tabbar") as GUI.tag.TabBarTag,
-                                this.find("right-editorarea")) as BaseEditorModel);
-                        this.eum.onstatuschange = (st) =>
-                            this.updateStatus(st)
-                        $(wrapper).css('visibility', 'visible');
-                        this.setup();
-                        this.eum.active.openFile(file);
+                        
                         resolve(undefined);
                     });
-                }))
+                }))*/
             }
 
             /**
@@ -1111,7 +1115,7 @@ namespace OS {
         Antedit.Logger = Logger;
         
         Antedit.dependencies = [
-            "pkg://MonacoCore/vs/loader.js"
+            "pkg://MonacoCore/bundle/app.bundle.js"
         ];
     }
 }

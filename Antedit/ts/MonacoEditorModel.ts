@@ -59,7 +59,10 @@ namespace OS {
             protected setTextModel(model: any): void {
                 this.editor.setModel(model.model);
                 if(model.position)
+                {
                     this.editor.setPosition(model.position);
+                    this.editor.revealLine(model.position.lineNumber);
+                }
             }
 
 
