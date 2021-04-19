@@ -4,5 +4,5 @@
     "javascripts": [],
     "coffees": [],
     "ts": [],
-    "copies": ["vs","package.json", "README.md"]
+    "copies": ["bundle","package.json", "README.md"]
 }
