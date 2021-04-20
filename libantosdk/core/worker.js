@@ -465,9 +465,21 @@ API.jobhandle["vfs-mkdir"] = VFSJob;
 API.jobhandle["vfs-cp"] = VFSJob;
 
 onmessage = (e) => {
-    if(API.jobhandle[e.data.cmd])
-    {
-        return (new API.jobhandle[e.data.cmd](e.data)).execute();
+    try{
+        if(API.jobhandle[e.data.cmd])
+        {
+            return (new API.jobhandle[e.data.cmd](e.data)).execute();
+        }
+        (new UnknownJob(e.data)).execute();
     }
-    (new UnknownJob(e.data)).execute();
+    catch(error)
+    {
+        const result = {
+            id: e.data.id,
+            type: "result",
+            error: error.toString(),
+            result: false
+        };
+        postMessage(result);
+    }
 }
