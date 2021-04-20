@@ -204,11 +204,11 @@ namespace OS {
                 monaco.editor.setTheme("vs-dark");
                 // add editor instance
                 this.eum
-                    .add(new MonacoEditorModel(
+                    .add(new OS.application.MonacoEditorModel(
                         this,
                         this.find("left-tabbar") as GUI.tag.TabBarTag,
                         this.find("left-editorarea")) as BaseEditorModel)
-                    .add(new MonacoEditorModel(
+                    .add(new OS.application.MonacoEditorModel(
                         this,
                         this.find("right-tabbar") as GUI.tag.TabBarTag,
                         this.find("right-editorarea")) as BaseEditorModel);
@@ -919,7 +919,7 @@ namespace OS {
                 this.models = [];
             }
 
-            get editors(): BaseEditorModel[] {
+            get editors(): OS.application.BaseEditorModel[] {
                 return this.models;
             }
             set contextmenuHandle(cb: (e: any, m: any) => void) {

@@ -1,4 +1,5 @@
 namespace OS {
+    declare var monaco;
     export namespace application {
         /**
          * Wrapper model for the ACE text editor
@@ -7,7 +8,7 @@ namespace OS {
          * @class MonacoEditorModel
          * @extends {BaseEditorModel}
          */
-        export class MonacoEditorModel extends BaseEditorModel {
+        export class MonacoEditorModel extends OS.application.BaseEditorModel {
             
             static modes: GenericObject<monaco.languages.ILanguageExtensionPoint>;
 
@@ -61,7 +62,7 @@ namespace OS {
                 if(model.position)
                 {
                     this.editor.setPosition(model.position);
-                    this.editor.revealLine(model.position.lineNumber);
+                    this.editor.revealLineInCenter(model.position.lineNumber);
                 }
             }
 

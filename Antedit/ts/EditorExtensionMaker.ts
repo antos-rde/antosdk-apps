@@ -307,7 +307,7 @@ namespace OS {
                         this.app.currdir = rpath.asFileHandle();
                         this.app.toggleSideBar();
                         return this.app.eum.active.openFile(
-                            `${rpath}/${name}.js`.asFileHandle() as application.EditorFileHandle
+                            `${rpath}/${name}.js`.asFileHandle() as OS.application.EditorFileHandle
                         );
                     } catch (e) {
                         return this.logger().error(

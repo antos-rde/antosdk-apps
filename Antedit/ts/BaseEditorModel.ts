@@ -27,7 +27,6 @@ namespace OS {
              * @type {boolean}
              */
             selected: boolean;
-
         };
 
         export abstract class BaseEditorModel {
