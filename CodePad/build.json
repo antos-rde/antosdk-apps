@@ -24,9 +24,9 @@
                     "name": "ts-compile",
                     "data": {
                         "src": [
-                            "ts/ACEModel.ts",
+                            "ts/main.ts",
                             "ts/BaseEditorModel.ts",
-                            "ts/main.ts"
+                            "ts/ACEModel.ts"
                         ],
                         "dest": "build/debug/main.js"
                     }
