@@ -1,4 +1,5 @@
 namespace OS {
+    declare var $:any;
     export namespace application {
         
         /**
@@ -117,7 +118,6 @@ namespace OS {
                     if (this.onstatuschange)
                         this.onstatuschange(this.getEditorStatus());
                 });
-
                 this.tabbar.ontabselect = (e) => {
                     return this.selecteTab($(e.data.item).index());
                 };

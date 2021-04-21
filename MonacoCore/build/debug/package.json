@@ -1,0 +1,15 @@
+{
+    "pkgname": "MonacoCore",
+    "name":"Monaco editor core",
+    "description":"Monaco editor core library",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.23.0-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

@@ -1,5 +1,5 @@
 namespace OS {
-    declare var monaco;
+    //declare var monaco: any;
     export namespace application {
         /**
          * Wrapper model for the ACE text editor
@@ -42,7 +42,7 @@ namespace OS {
              * @return {*} 
              * @memberof MonacoEditorModel
              */
-            protected getTexModel() {
+            protected getTexModel(): any {
                 return {
                     model: this.editor.getModel(),
                     position: this.editor.getPosition()
@@ -85,6 +85,7 @@ namespace OS {
                 const model = monaco.editor.getModel(uri);
                 if(model)
                 {
+                    model.setValue(file.cache);
                     return { model: model };
                 }
                 return {

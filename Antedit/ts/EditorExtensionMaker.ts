@@ -2,7 +2,7 @@
 namespace OS {
     
     declare var JSZip: any;
-    
+    declare var $:any;
     export namespace application {
         export type AnteditBaseExtension = typeof EditorBaseExtension;
     }

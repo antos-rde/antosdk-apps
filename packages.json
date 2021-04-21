@@ -10,13 +10,23 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/About/build/release/About.zip"
 	},
 	{
+		"pkgname": "ACECore",
+		"name": "ACE Editor core",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ACECore/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "1.4.12-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ACECore/build/release/ACECore.zip"
+	},
+	{
 		"pkgname": "AceDiff",
 		"name": "AceDiff addon library",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AceDiff/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "3.0.3-r",
-		"dependencies": [],
+		"dependencies": ["ACECore@1.4.12-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AceDiff/build/release/AceDiff.zip"
 	},
 	{
@@ -35,7 +45,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.5-a",
+		"version": "0.1.7-a",
 		"dependencies": ["MonacoCore@0.23.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
 	},
@@ -90,6 +100,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/build/release/Clipper.zip"
 	},
 	{
+		"pkgname": "CodePad",
+		"name": "Code",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/CodePad/README.md",
+		"category": "Development",
+		"author": "Xuan Sang LE",
+		"version": "0.1.5-b",
+		"dependencies": ["ACECore@1.4.12-r"],"mimes":["text/.*","[^/]*/json.*","[^/]*/.*ml","[^/]*/javascript","dir"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/CodePad/build/release/CodePad.zip"
+	},
+	{
 		"pkgname": "DBDecoder",
 		"name": "DBDecoder",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/README.md",
@@ -105,7 +125,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/README.md",
 		"category": "Development",
 		"author": "",
-		"version": "0.1.3-a",
+		"version": "0.1.5-a",
 		"dependencies": ["AceDiff@3.0.3-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/build/release/DiffEditor.zip"
 	},
@@ -145,8 +165,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
-		"version": "0.0.9-a",
-		"dependencies": [],
+		"version": "0.1.2-a",
+		"dependencies": ["ACECore@1.4.12-r"],"iconclass":"fafa-sitemap","mimes":["text/.*graphviz"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
 	},
 	{
@@ -225,8 +245,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.8-a",
-		"dependencies": [],
+		"version": "0.1.0-a",
+		"dependencies": ["ACECore@1.4.12-r"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/build/release/LuaPlayground.zip"
 	},
 	{
@@ -345,8 +365,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
-		"version": "0.0.2-a",
-		"dependencies": [],
+		"version": "0.1.0-a",
+		"dependencies": ["ACECore@1.4.12-r"],"iconclass":"bibi-bounding-box","mimes":["text/.*graphviz"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/build/release/VizApp.zip"
 	},
 	{

@@ -1,0 +1,87 @@
+{
+    "name": "CodePad",
+    "targets":{
+        "clean": {
+            "jobs": [
+                {
+                    "name": "vfs-rm",
+                    "data": ["build/debug","build/release"]
+                }
+            ]
+        },
+        "build": {
+            "require": ["ts"],
+            "jobs":[
+                {
+                    "name": "vfs-mkdir",
+                    "data": ["build","build/debug","build/release"]
+                },
+                {
+                    "name": "ts-import",
+                    "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": [
+                            "ts/ACEModel.ts",
+                            "ts/BaseEditorModel.ts",
+                            "ts/main.ts"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": ["terser"],
+            "jobs": [
+                {
+                    "name":"terser-uglify",
+                    "data": ["build/debug/main.js"]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "assets/main.css",
+                            "assets/scheme.html",
+                            "package.json",
+                            "README.md"
+                        ],
+                        "dest":"build/debug"
+                    }
+                }
+            ]
+        },
+        "debug": {
+            "depend": ["build", "copy"]
+        },
+        "run": {
+            "depend": ["debug"],
+            "jobs": [
+                {
+                    "name": "sdk-run-app",
+                    "data": "build/debug"
+                }
+            ]
+        },
+        "release": {
+            "depend": ["debug","uglify"],
+            "require": ["zip"],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src":"build/debug",
+                        "dest":"build/release/CodePad.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

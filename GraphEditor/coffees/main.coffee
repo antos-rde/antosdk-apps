@@ -30,7 +30,6 @@ class GraphEditor extends this.OS.application.BaseApplication
         @datarea = @find "datarea"
         @preview = @find "preview"
         @btctn = @find "btn-container"
-        ace.config.set("basePath", "scripts/ace")
         @editor = ace.edit @datarea
         @editor.setOptions {
             enableBasicAutocompletion: true,
@@ -275,6 +274,7 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
 """
 GraphEditor.dependencies = [
-    "os://scripts/ace/ace.js"
+    "pkg://ACECore/core/ace.js",
+    "pkg://ACECore/path.js",
 ]
 this.OS.register "GraphEditor", GraphEditor

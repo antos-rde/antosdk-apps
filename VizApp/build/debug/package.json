@@ -7,8 +7,9 @@
         "email": "xsang.le@gmail.com",
         "licences": "GPLv3"
     },
-    "version":"0.0.2-a",
+    "version":"0.1.0-a",
     "category":"Graphics",
+    "dependencies":["ACECore@1.4.12-r"],
     "iconclass": "bi bi-bounding-box",
     "mimes":["text/.*graphviz"]
 }

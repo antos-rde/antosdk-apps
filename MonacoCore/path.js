@@ -1,0 +1,1 @@
+__monaco_public_path__ = "VFS/get/"+ "pkg://MonacoCore/bundle/".asFileHandle().path + "/";

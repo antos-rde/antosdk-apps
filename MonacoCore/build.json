@@ -1,0 +1,143 @@
+{
+    "name": "MonacoCore",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/debug/bundle",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/bundle/app.bundle.js",
+                        "build/debug/bundle/css.worker.bundle.js",
+                        "build/debug/bundle/editor.worker.bundle.js",
+                        "build/debug/bundle/html.worker.bundle.js",
+                        "build/debug/bundle/json.worker.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_apex_apex_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_azcli_azcli_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_bat_bat_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_cameligo_cameligo_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_coffee_coffee_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_csharp_csharp_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_csp_csp_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_css_css_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_dart_dart_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_dockerfile_dockerfile_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_fsharp_fsharp_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_go_go_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_graphql_graphql_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_hcl_hcl_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_html_html_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_ini_ini_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_java_java_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_kotlin_kotlin_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_less_less_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_lexon_lexon_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_lua_lua_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_m3_m3_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_markdown_markdown_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_mips_mips_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_msdax_msdax_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_objective-c_objective-c_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_pascaligo_pascaligo_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_pascal_pascal_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_powershell_powershell_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_python_python_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_redis_redis_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_restructuredtext_restructuredtext_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_r_r_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_rust_rust_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_sb_sb_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_scheme_scheme_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_shell_shell_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_sophia_sophia_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_swift_swift_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_tcl_tcl_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_typescript_typescript_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_xml_xml_js.bundle.js",
+                        "build/debug/bundle/node_modules_monaco-editor_esm_vs_basic-languages_yaml_yaml_js.bundle.js",
+                        "build/debug/bundle/ts.worker.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_abap_abap_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_clojure_clojure_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_cpp_cpp_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_ecl_ecl_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_handlebars_handlebars_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_javascript_javascript_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_julia_julia_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_mysql_mysql_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_perl_perl_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_pgsql_pgsql_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_php_php_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_postiats_postiats_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_powerquery_powerquery_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_pug_pug_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_razor_razor_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_redshift_redshift_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_ruby_ruby_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_scala_scala_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_scss_scss_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_solidity_solidity_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_sql_sql_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_st_st_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_systemverilog_systemverilog_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_twig_twig_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_basic-languages_vb_vb_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_language_css_cssMode_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_language_html_htmlMode_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_language_json_jsonMode_js.bundle.js",
+                        "build/debug/bundle/vendors-node_modules_monaco-editor_esm_vs_language_typescript_tsMode_js.bundle.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "bundle",
+                            "path.js",
+                            "package.json",
+                            "README.md"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "copy",
+                "uglify"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/MonacoCore.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

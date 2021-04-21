@@ -1,0 +1,15 @@
+{
+    "pkgname": "ACECore",
+    "name":"ACE Editor core",
+    "description":"ACE Editor base library",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"1.4.12-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

@@ -148,6 +148,47 @@ namespace OS {
             
             run(job: string, data: any): Promise<any>
             {
+                if(job === "sdk-run-app")
+                {
+                    return new Promise(async (resolve, reject) =>
+                    {
+                        try{
+                            let app_root = data;
+                            if(app_root.split("://").length == 1)
+                            {
+                                app_root = `${this.root}/${data}`;
+                            }
+                            const v = await `${app_root}/package.json`.asFileHandle().read("json");
+                            v.text = v.name;
+                            v.path = app_root;
+                            v.filename = v.pkgname;
+                            v.type = "app";
+                            v.mime = "antos/app";
+                            if (v.icon) {
+                                v.icon = `${v.path}/${v.icon}`;
+                            }
+                            if (!v.iconclass && !v.icon) {
+                                v.iconclass = "fa fa-adn";
+                            }
+                            this.logger.info(__("Installing..."));
+                            OS.setting.system.packages[v.pkgname] = v;
+                            if(v.app)
+                            {
+                                this.logger.info(__("Running {0}...", v.app));
+                                OS.GUI.forceLaunch(v.app, []);
+                            }
+                            else
+                            {
+                                this.logger.error(__("{0} is not an application", v.pkgname));
+                            }
+                            return resolve(undefined);
+                        }
+                        catch(error)
+                        {
+                            reject(error);
+                        }
+                    });
+                }
                 return AntOSDKBuilder.worker.submit(job,data, this.root, this.logger);
             }
             

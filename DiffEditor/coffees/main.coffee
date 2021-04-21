@@ -20,7 +20,6 @@ class DiffEditor extends @OS.application.BaseApplication
             return @openFile e.data.path.asFileHandle()
         
         @currdir = undefined
-        ace.config.set('basePath', "scripts/ace")
         ace.require("ace/ext/language_tools")
         @modelist = ace.require("ace/ext/modelist")
         
@@ -199,10 +198,11 @@ class DiffEditor extends @OS.application.BaseApplication
             @differ.destroy()
         
 DiffEditor.dependencies = [
-    "os://scripts/ace/ace.js",
-    "os://scripts/ace/ext-language_tools.js",
-    "os://scripts/ace/ext-themelist.js",
-     "os://scripts/ace/ext-modelist.js",
+    "pkg://ACECore/core/ace.js",
+    "pkg://ACECore/path.js",
+    "pkg://ACECore/core/ext-language_tools.js",
+    "pkg://ACECore/core/ext-modelist.js",
+    "pkg://ACECore/core/ext-themelist.js",
     "pkg://AceDiff/main.js",
     "pkg://AceDiff/main.css"
 ]

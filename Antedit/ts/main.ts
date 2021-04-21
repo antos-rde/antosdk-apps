@@ -1,6 +1,5 @@
-declare var __monaco_public_path__;
-__monaco_public_path__ = "VFS/get/"+ "pkg://MonacoCore/bundle/".asFileHandle().path + "/";
 namespace OS {
+    declare var $: any;
     export namespace application {
         
         declare var require: any;
@@ -959,12 +958,7 @@ namespace OS {
                 const ed_action = {
                     id: `${extension.name}:${action.name}`,
                     label: `${extension.text.__()}: ${action.text.__()}`,
-                    /*
-                    keybindings: [
-                    	monaco.KeyMod.CtrlCmd | monaco.KeyCode.F10,
-                    	// chord
-                    	monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
-                    ]*/
+                    keybindings: [],
                     precondition: null,
                     keybindingContext: null,
                     
@@ -972,6 +966,41 @@ namespace OS {
                     //contextMenuOrder: 1.5,
                     run: () => callback(extension.name, action.name)
                 };
+                if(action.shortcut)
+                {
+                    const keys = action.shortcut.split("-");
+                    let binding: number = 0;
+                    for(const key of keys)
+                    {
+                        switch(key)
+                        {
+                            case "CTRL":
+                                binding = binding | monaco.KeyMod.CtrlCmd;
+                                break;
+                            case "ALT":
+                                binding = binding | monaco.KeyMod.Alt;
+                                break;
+                            case "SHIFT":
+                                binding = binding | monaco.KeyMod.Shift;
+                                break;
+                            case "SUPPER":
+                                binding = binding | monaco.KeyMod.WinCtrl;
+                                break;
+                            default:
+                                const k = `KEY_${key}`;
+                                if(monaco.KeyCode[k])
+                                {
+                                    binding = binding | monaco.KeyCode[k];
+                                }
+                                else
+                                {
+                                    binding = 0;
+                                }
+                        }
+                    }
+                    if(binding != 0)
+                        ed_action.keybindings.push(binding);
+                }
                 for(let ed of this.models)
                 {
                     const editor = ed.getEditor();
@@ -1115,6 +1144,7 @@ namespace OS {
         Antedit.Logger = Logger;
         
         Antedit.dependencies = [
+            "pkg://MonacoCore/path.js",
             "pkg://MonacoCore/bundle/app.bundle.js"
         ];
     }

@@ -28,7 +28,6 @@ class VizApp extends this.OS.application.BaseApplication
         @btctn = @find "btn-container"
         @previewSVG = undefined
         $(@preview).append @btctn
-        ace.config.set("basePath", "scripts/ace")
         @editor = ace.edit @datarea
         @editor.setOptions {
             enableBasicAutocompletion: true,
@@ -249,6 +248,7 @@ digraph D {
 }
 """
 VizApp.dependencies = [
-    "os://scripts/ace/ace.js"
+    "pkg://ACECore/core/ace.js",
+    "pkg://ACECore/path.js"
 ]
 this.OS.register "VizApp", VizApp
