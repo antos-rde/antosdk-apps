@@ -102,7 +102,10 @@ namespace OS {
             getModes(): GenericObject<any>[] {
                 //const list = [];
                 //return list;
-                return monaco.languages.getLanguages();
+                return monaco.languages.getLanguages().map(e=>{
+                    (e as GenericObject<any>).text = e.aliases[0];
+                    return e;
+                });
             }
 
 
@@ -131,6 +134,9 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             setMode(m: GenericObject<any>): void {
+                monaco.editor.setModelLanguage(this.editor.getModel(), m.id);
+                if(this.onstatuschange)
+                    this.onstatuschange(this.getEditorStatus());
             }
 
 

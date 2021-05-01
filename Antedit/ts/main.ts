@@ -216,14 +216,6 @@ namespace OS {
                 $(wrapper).css('visibility', 'visible');
                 this.setup();
                 this.eum.active.openFile(file);
-                
-                /*this.load(new Promise((resolve, reject) => {
-                    require.config({ paths: { 'vs': "pkg://MonacoCore/vs".asFileHandle().getlink() }});
-                    require(['vs/editor/editor.main'], () => {
-                        
-                        resolve(undefined);
-                    });
-                }))*/
             }
 
             /**
@@ -321,7 +313,29 @@ namespace OS {
                 if (this.setting.showBottomBar === undefined) {
                     this.setting.showBottomBar = false;
                 }
+                //TODO: support change editor model languages
+                const extension = {
+                    name: "Editor",
+                    text: __("Editor")
+                };
+                const action = {
+                    name: "langmode",
+                    text: __("Change language mode"),
+                    shortcut: 'CTRL-K'
+                }
+                this.eum.addAction(extension, action, async (e) =>
+                {
+                    try{
+                        const data = await this.openDialog("SelectionDialog", {
+                            "title": __("Select language"),
+                            data: this.eum.active.getModes()
+                        });
+                        this.eum.active.setMode(data);
+                    }catch(e)
+                    {
 
+                    }
+                });
                 this.loadExtensionMetaData();
                 this.toggleSideBar();
                 this.toggleSplitMode();
