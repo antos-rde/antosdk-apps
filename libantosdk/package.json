@@ -1,15 +1,25 @@
 {
     "pkgname": "libantosdk",
-    "name":"AntOSDK",
-    "description":"AntOS Software Development Kit",
-    "info":{
+    "name": "AntOSDK",
+    "description": "AntOS Software Development Kit",
+    "info": {
         "author": "Xuan Sang LE",
         "email": "mrsang@iohub.dev"
     },
-    "version":"0.0.3-a",
-    "category":"Other",
-    "iconclass":"fa fa-cog",
-    "mimes":["none"],
-    "dependencies":[],
-    "locale": {}
+    "version": "0.0.4-a",
+    "category": "Other",
+    "iconclass": "fa fa-cog",
+    "mimes": [
+        "none"
+    ],
+    "dependencies": [],
+    "locale": {
+        "en_GB": {
+            "Installing...": "Installing...",
+            "Running {0}...": "Running {0}...",
+            "{0} is not an application": "{0} is not an application",
+            "No target: {0}": "No target: {0}",
+            "### RUNNING STAGE: {0}###": "### RUNNING STAGE: {0}###"
+        }
+    }
 }

@@ -208,7 +208,7 @@ namespace OS {
                         {
                             const target = options.targets[name];
                             if(!target)
-                                return reject(__(`No target: ${name}`));
+                                return reject(__("No target: {0}", name));
                             
                             if(target.depend)
                             {
@@ -219,7 +219,7 @@ namespace OS {
                                 await this.require(target.require);
                             }
                             if(this.logger)
-                                this.logger.info(__(`### RUNNING STAGE: ${name}###`).__());
+                                this.logger.info(__("### RUNNING STAGE: {0}###", name).__());
                             if(target.jobs)
                                 for(const job of target.jobs)
                                 {

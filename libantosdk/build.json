@@ -8,6 +8,20 @@
                 }
             ]
         },
+        "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/debug/", "core/", "ts/test\\.ts", "scheme\\.html"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
+        },
         "build": {
             "require": ["ts"],
             "jobs":[
