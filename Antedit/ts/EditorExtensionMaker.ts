@@ -150,7 +150,7 @@ namespace OS {
             this.logger().clear();
             this.app
                 .openDialog("FileDialog", {
-                    title: "__(New CodePad extension at)",
+                    title: "__(New extension at)",
                     file: { basename: __("ExtensionName") },
                     mimes: ["dir"],
                 })

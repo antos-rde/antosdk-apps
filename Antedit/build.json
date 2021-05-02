@@ -40,6 +40,20 @@
                 }
             ]
         },
+        "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/", "css/"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
+        },
         "uglify": {
             "require": ["terser"],
             "jobs": [
