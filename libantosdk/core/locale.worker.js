@@ -1,5 +1,3 @@
-importScripts('coffeescript.js');
-
 class LocaleJob extends AntOSDKBaseJob {
     constructor(data)
     {
