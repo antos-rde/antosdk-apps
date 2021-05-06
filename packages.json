@@ -191,11 +191,11 @@
 	},
 	{
 		"pkgname": "libantosdk",
-		"name": "AntOSDK",
+		"name": "AntOS SDK builder",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/README.md",
-		"category": "Other",
+		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.5-a",
+		"version": "0.0.6-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/build/release/libantosdk.zip"
 	},

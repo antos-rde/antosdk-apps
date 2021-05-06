@@ -4,7 +4,7 @@
             "jobs": [
                 {
                     "name": "vfs-rm",
-                    "data": ["build/debug/scheme.html"]
+                    "data": ["build"]
                 }
             ]
         },
@@ -15,7 +15,7 @@
                     "name":"locale-gen",
                     "data": {
                         "src": "",
-                        "exclude": ["build/debug/", "core/", "ts/test\\.ts", "scheme\\.html"],
+                        "exclude": ["build/debug/", "core/"],
                         "locale": "en_GB",
                         "dest": "package.json"
                     }
@@ -36,7 +36,7 @@
                 {
                     "name": "ts-compile",
                     "data": {
-                        "src": ["ts/main.ts"],
+                        "src": ["ts/main.ts", "ts/app.ts"],
                         "dest": "build/debug/main.js"
                     }
                 }
@@ -59,12 +59,18 @@
                         "src": [
                             "core",
                             "package.json",
-                            "README.md"
+                            "README.md",
+                            "main.css",
+                            "scheme.html"
                         ],
                         "dest":"build/debug"
                     }
                 }
             ]
+        },
+        "debug": {
+            "depend": ["build","copy"],
+            "jobs": []
         },
         "release": {
             "depend": ["build","uglify", "copy"],

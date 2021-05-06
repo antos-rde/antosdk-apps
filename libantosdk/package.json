@@ -1,25 +1,33 @@
 {
     "pkgname": "libantosdk",
-    "name": "AntOSDK",
+    "name": "AntOS SDK builder",
+    "app": "libantosdk",
     "description": "AntOS Software Development Kit",
     "info": {
         "author": "Xuan Sang LE",
         "email": "mrsang@iohub.dev"
     },
-    "version": "0.0.5-a",
-    "category": "Other",
+    "version": "0.0.6-a",
+    "category": "Development",
     "iconclass": "fa fa-cog",
     "mimes": [
-        "none"
+        "application/json"
     ],
     "dependencies": [],
     "locale": {
         "en_GB": {
+            "Select build file": "Select build file",
+            "Invalid build file: {0}": "Invalid build file: {0}",
+            "Loaded: {0}": "Loaded: {0}",
+            "Unable to load build file: {0}: {1}": "Unable to load build file: {0}: {1}",
             "Installing...": "Installing...",
             "Running {0}...": "Running {0}...",
             "{0} is not an application": "{0} is not an application",
             "No target: {0}": "No target: {0}",
-            "### RUNNING STAGE: {0}###": "### RUNNING STAGE: {0}###"
+            "### RUNNING STAGE: {0}###": "### RUNNING STAGE: {0}###",
+            "AntOSDK Builder": "AntOSDK Builder",
+            "Run": "Run",
+            "Clear log": "Clear log"
         }
     }
 }

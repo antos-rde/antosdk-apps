@@ -1,16 +1,30 @@
-<afx-app-window apptitle="__(Test SDK)" width="450" height="500" data-id="TestSDK">
-    <afx-vbox >
-        <div data-height="10"></div>
-        <afx-hbox data-id="wrapper">
-            <div data-width="10"></div>
-            <div data-id="container"></div>
-            <div data-width="10"></div>
-        </afx-hbox>
-        <div data-height="5"></div>
-        <afx-hbox data-height="23" style="text-align: right;">
-            <afx-button data-id="btnsend" text="__(Send)"></afx-button>
-            <div data-width="5"></div>
-        </afx-hbox>
-        <div data-height="10"></div>
-    </afx-vbox>
+<afx-app-window apptitle="__(AntOSDK Builder)" width="600" height="500" data-id="SDKBuilder">
+    <afx-hbox>
+        <afx-vbox data-width="150">
+            <div data-height="10"></div>
+            <afx-list-view data-id="target-list"></afx-list-view>
+            <div data-height="5"></div>
+            <afx-hbox data-height="23" style="text-align: left;">
+                <afx-button data-id="btnopen" data-width="25" iconclass ="bi bi-file-arrow-up-fill"></afx-button>
+                <afx-button data-id="btnrefresh" data-width="25" iconclass ="fa fa-refresh"></afx-button>
+                <afx-button data-id="btnbuild" text="__(Run)"></afx-button>
+                <div data-width="5"></div>
+            </afx-hbox>
+            <div data-height="10"></div>
+        </afx-vbox>
+        <afx-resizer data-width="3"></afx-resizer>
+        <afx-vbox data-id="right-pannel">
+            <div data-height="10"></div>
+            <afx-hbox data-id="wrapper">
+                <div data-width="10"></div>
+                <div data-id="container"></div>
+            </afx-hbox>
+            <div data-height="5"></div>
+            <afx-hbox data-height="23" style="text-align: right;">
+                <afx-button data-id="btnclear" iconclass="fa fa-trash" text="__(Clear log)"></afx-button>
+                <div data-width="5"></div>
+            </afx-hbox>
+            <div data-height="10"></div>
+        </afx-vbox>
+    </afx-hbox>
 </afx-app-window>
