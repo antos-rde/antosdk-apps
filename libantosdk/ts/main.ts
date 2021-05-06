@@ -13,6 +13,7 @@ namespace OS {
             type: "result"|"log";
             error?: any;
             result?: any;
+            show_time?:boolean;
         }
         
         interface AntOSDKWorkerJob {
@@ -44,7 +45,12 @@ namespace OS {
                                 if(ret.error)
                                     job.logger.error(ret.result);
                                 else
-                                    job.logger.info(ret.result);
+                                {
+                                    if(ret.show_time === false && job.logger.print)
+                                        job.logger.print(ret.result);
+                                    else
+                                        job.logger.info(ret.result);
+                                }
                             }
                         }
                         else
@@ -77,7 +83,7 @@ namespace OS {
                 return `job_${Math.random().toString(36).replace(".","")}`;
             }
             
-            private exectue_job(cmd: string, data: any, root:string, callback: (AntOSDKWorkerResult) => void, logger?: AntOSDKLogger): void
+            private exectue_job(cmd: string, data: any, root:string, callback: (arg: AntOSDKWorkerResult) => void, logger?: AntOSDKLogger): void
             {
                 const id = this.newJobID();
                 const job: AntOSDKWorkerJob = {

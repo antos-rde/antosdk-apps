@@ -72,7 +72,18 @@ class AntOSDKBaseJob {
             id: this.job.id,
             type: "log",
             error: false,
-            result: data
+            result: data,
+            show_time: true
+        });
+    }
+
+    log_print(data) {
+        postMessage({
+            id: this.job.id,
+            type: "log",
+            error: false,
+            result: data,
+            show_time: false
         });
     }
     
@@ -81,7 +92,8 @@ class AntOSDKBaseJob {
             id: this.job.id,
             type: "log",
             error: true,
-            result: data
+            result: data,
+            show_time: true
         });
     }
     

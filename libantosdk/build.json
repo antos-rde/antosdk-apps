@@ -78,6 +78,18 @@
                     }
                 }
             ]
+        },
+        "list": {
+            "require": ["linux"],
+            "jobs": [
+                {
+                    "name": "linux-exec",
+                    "data": {
+                        "cmd": "ls -al .",
+                        "pwd": "home://"
+                    }
+                }
+            ]
         }
     }
 }
