@@ -92,6 +92,7 @@ class TSJob extends AntOSDKBaseJob {
                 const program = ts.createProgram(files, {
                     "target": "es6",
                     "skipLibCheck": true,
+                    "downlevelIteration": true
                 }, host);
                 const result = program.emit();
                 const diagnostics = result.diagnostics.concat((ts.getPreEmitDiagnostics(program)));

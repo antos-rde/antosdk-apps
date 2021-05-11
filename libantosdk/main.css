@@ -1,0 +1,32 @@
+afx-app-window[data-id = "SDKBuilder"] afx-resizer {
+    border-left: 1px solid #656565;
+    background-color:transparent;
+}
+
+afx-app-window[data-id = "SDKBuilder"] div[data-id="container"] {
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: text;
+}
+
+afx-app-window[data-id = "SDKBuilder"] div[data-id="container"] pre {
+    margin: 3px;
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    font-family: monospace;
+}
+
+afx-app-window[data-id = "SDKBuilder"] div[data-id="container"] pre.sdk-log-error {
+    color: red;
+}
+
+afx-app-window[data-id = "SDKBuilder"] div[data-id="container"] pre.sdk-log-warn {
+    color: orange;
+}
+
+afx-app-window[data-id = "SDKBuilder"] div[data-id="container"] pre.sdk-log-info {
+    color: green;
+}
