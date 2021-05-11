@@ -137,6 +137,7 @@ afx-app-window[data-id = "cmd-win"] .afx-window-content{
 afx-app-window[data-id = "antedit"] div[data-id="output-tab"] {
     overflow-y: auto;
     overflow-x: hidden;
+    user-select: text;
 }
 
 afx-app-window[data-id = "antedit"] div[data-id="output-tab"] pre {
