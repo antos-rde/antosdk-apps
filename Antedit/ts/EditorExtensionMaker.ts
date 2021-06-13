@@ -321,16 +321,57 @@ namespace OS {
                 );
         }
         
-        
         /**
          *
          *
-         * @private
+         * @param {string} name extension name
+         * @returns {Promise<any>}
+         * @memberof EditorExtensionMaker
+         */
+        uninstall(name: string): Promise<void>
+        {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const ext_path = `${this.app.meta().path}/extensions`;
+                    const fp = `${ext_path}/extensions.json`.asFileHandle();
+                    const meta = await fp.read("json");
+                    let ext_meta = undefined;
+                    let ext_index = undefined;
+                    for(let idx in meta)
+                    {
+                        if(meta[idx].name === name)
+                        {
+                            ext_meta = meta[idx];
+                            ext_index = idx;
+                            break;
+                        }
+                    }
+                    if(ext_meta === undefined)
+                    {
+                        return resolve();
+                    }
+                    // remove the directory
+                    await `${ext_path}/${name}`.asFileHandle().remove();
+                    // update the extension file
+                    meta.splice(ext_index, 1);
+                    fp.cache = meta;
+                    await fp.write('object');
+                    resolve();
+                } catch(e)
+                {
+                    reject(e);
+                }
+            });
+        }
+
+        /**
+         *
+         *
          * @param {string} path
          * @returns {Promise<any>}
          * @memberof EditorExtensionMaker
          */
-        private installZip(path: string): Promise<void> {
+        installZip(path: string): Promise<void> {
             return new Promise(async (resolve, reject) => {
                 try{
                     await API.requires("os://scripts/jszip.min.js");
@@ -338,6 +379,8 @@ namespace OS {
                     const zip = await JSZip.loadAsync(data);
                     const d = await zip.file("extension.json").async("uint8array");
                     const meta = JSON.parse(new TextDecoder("utf-8").decode(d));
+                    // uninstall if exists
+                    await this.uninstall(meta.name);
                     const pth = this.ext_dir(meta.name);
                     const dir = [pth];
                     const files = [];

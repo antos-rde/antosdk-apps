@@ -21,11 +21,11 @@
                 "name": "release"
             },
             {
-                "text": "__(Install extension from file)",
+                "text": "__(Install from file)",
                 "name": "install"
             },
             {
-                "text": "__(Install extension from URL)",
+                "text": "__(Install from URL)",
                 "name": "installFromURL"
             }
         ]

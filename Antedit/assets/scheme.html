@@ -1,10 +1,26 @@
 <afx-app-window apptitle="Antos Editor" width="600" height="400" data-id="antedit">
     <afx-vbox>
         <afx-hbox data-id="wrapper">
-            <afx-vbox data-width = "155" min-width="155" data-id = "sidebar">
-                <div data-height="10"></div>
-                <afx-file-view chdir="false" data-id = "fileview" view="tree" status = "false">
-                </afx-file-view>
+            <afx-vbox data-width = "200" min-width="200" data-id = "sidebar">
+                <afx-tab-container data-id="sidebar-tab-container" dir="row" tabbarwidth="30">
+                    <!--File tab-->
+                    <afx-hbox data-height="100%" iconclass="bi bi-files" >
+                        <afx-vbox>
+                            <div data-height="5"></div>
+                            <afx-file-view chdir="false" data-id = "fileview" view="tree" status = "false">
+                            </afx-file-view>
+                        </afx-vbox>
+                    </afx-hbox>
+
+                    <!--extension tab-->
+                    <afx-hbox data-height="100%" iconclass="bi bi-puzzle" >
+                        <afx-vbox>
+                            <input data-id="txt_ext_search" type="text" data-height="23">
+                            <afx-list-view data-id="extension-list"></afx-list-view>
+                        </afx-vbox>
+                    </afx-hbox>
+
+                </afx-tab-container>
             </afx-vbox>
             <afx-resizer data-width = "3" ></afx-resizer>
             <afx-vbox>

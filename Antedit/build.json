@@ -1,13 +1,31 @@
 {
     "name": "Antedit",
     "targets": {
-        "build": {
-            "require":["ts"],
+        "copy": {
             "jobs": [
                 {
                     "name": "vfs-mkdir",
                     "data": ["build","build/debug","build/release"]
                 },
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "extensions",
+                            "assets/scheme.html",
+                            "package.json",
+                            "README.md",
+                            "css/main.css"
+                        ],
+                        "dest":"build/debug"
+                    }
+                }
+            ]
+        },
+        "build": {
+            "depend": ["copy"],
+            "require":["ts"],
+            "jobs": [
                 {
                     "name": "ts-import",
                     "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
@@ -23,19 +41,6 @@
                             "ts/EditorExtensionMaker.ts"
                         ],
                         "dest": "build/debug/main.js"
-                    }
-                },
-                {
-                    "name": "vfs-cp",
-                    "data": {
-                        "src": [
-                            "extensions",
-                            "assets/scheme.html",
-                            "package.json",
-                            "README.md",
-                            "css/main.css"
-                        ],
-                        "dest":"build/debug"
                     }
                 }
             ]
@@ -73,6 +78,14 @@
                         "src":"build/debug",
                         "dest":"build/release/Antedit.zip"
                     }
+                }
+            ]
+        },
+        "run": {
+            "jobs": [
+                {
+                    "name": "sdk-run-app",
+                    "data": "build/debug"
                 }
             ]
         }

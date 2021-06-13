@@ -1,5 +1,4 @@
 namespace OS {
-    declare var $: any;
     export namespace application {
         class Logger {
 

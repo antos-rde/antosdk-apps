@@ -1,9 +1,110 @@
 namespace OS {
-    declare var $: any;
+
+    export namespace GUI {
+        export namespace tag {
+            class AntEditExtensionListItem extends ListViewItemTag
+            {
+                protected itemlayout(): TagLayoutType {
+                     return { 
+                        el: "div",
+                        children: [
+                            {el:"afx-label", ref: "label"},
+                            {el:"p", ref:"desc", id: "ext-list-item-d-p"},
+                            {
+                                el:"p",
+                                id: "ext-list-item-b-p",
+                                children:[
+                                    {
+                                        el: "i",
+                                        ref:"intall_status"
+                                    },
+                                    {
+                                        el: "afx-button",
+                                        ref:"btn_remove"
+                                    },
+                                    {
+                                        el: "afx-button",
+                                        ref:"btn_install"
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+                }
+                protected ondatachange(): void {
+                    const v = this.data;
+                    if (!v) {
+                        return;
+                    }
+                    const label = this.refs.label as LabelTag;
+                    label.iconclass = "bi bi-puzzle";
+                    label.text = `${v.text} - v${v.version}`;
+                    // add description
+                    const p_desc = this.refs.desc as HTMLParagraphElement;
+                    $(p_desc).text(v.description);
+                    
+                    // button install
+                    const btn_install = this.refs.btn_install as ButtonTag;
+                    // button remove
+                    const btn_remove = this.refs.btn_remove as ButtonTag;
+                    
+                    if(v.installed)
+                    {
+                        $(btn_remove).show();
+                        btn_remove.iconclass = "bi bi-trash-fill";
+                         btn_install.iconclass = "bi bi-arrow-repeat";
+                         $(this.refs.intall_status).text(__("Installed: v{0} ", v.installed).__());
+                    }
+                    else
+                    {
+                        $(btn_remove).hide();
+                        btn_install.iconclass = "fa bi-cloud-download-fill";
+                        $(this.refs.intall_status).text(" ");
+                    }
+                }
+                protected init(): void {
+                    this.closable = false;
+                    this.data = {};
+                    // button install
+                    const btn_install = this.refs.btn_install as ButtonTag;
+                    // button remove
+                    const btn_remove = this.refs.btn_remove as ButtonTag;
+                    btn_install.onbtclick = (e) => {
+                        if(!this.data.download || !this.data.install_action)
+                        {
+                            return;
+                        }
+                        this.data.install_action(this.data.download, (v: string) =>{
+                            this.data.installed = v;
+                            this.update(undefined);
+                        });
+                    };
+
+                    btn_remove.onbtclick = (e) => {
+                        if(!this.data.installed || !this.data.uninstall_action)
+                        {
+                            return;
+                        }
+                        this.data.uninstall_action(this.data.name, () => {
+                            delete this.data.installed;
+                            this.update(undefined);
+                        });
+                    };
+                }
+                protected reload(d?: any): void {
+                    this.data = this.data;
+                }
+            }
+
+            define("afx-antedit-ext-list-item", AntEditExtensionListItem)
+        }
+    }
     export namespace application {
         
         declare var require: any;
         export type AnteditLogger = typeof Logger;
+        const DEFAULT_REPO = "https://raw.githubusercontent.com/lxsang/antos-antedit-extensions/master/extensions.json"
+
         /**
          * A simple yet powerful code/text editor.
          *
@@ -45,6 +146,13 @@ namespace OS {
             extensions: GenericObject<any>;
 
             /**
+             * Variable stores all available extension meta-data
+             * @type {GenericObject<any>[]}
+             * @meberof Antedit
+             */
+            private extension_meta_data: GenericObject<any>[];
+
+            /**
              * Reference to the sidebar file view UI
              *
              * @private
@@ -61,6 +169,24 @@ namespace OS {
              * @memberof Antedit
              */
             private sidebar: GUI.tag.VBoxTag;
+            
+            /**
+             * Reference to the sidebar tab container
+             *
+             * @private
+             * @type {GUI.tag.TabContainerTag}
+             * @memberof Antedit
+             */
+            private sidebar_container: GUI.tag.TabContainerTag;
+            
+             /**
+             * Reference to the extension list UI
+             *
+             * @private
+             * @type {GUI.tag.ListViewTag}
+             * @memberof Antedit
+             */
+            private extension_list_view: GUI.tag.ListViewTag;
 
             /**
              * Reference to the bottom bar
@@ -157,10 +283,12 @@ namespace OS {
                 this.eum = new EditorModelManager();
                 this.fileview = this.find("fileview") as GUI.tag.FileViewTag;
                 this.sidebar = this.find("sidebar") as GUI.tag.VBoxTag;
+                this.sidebar_container = this.find("sidebar-tab-container") as GUI.tag.TabContainerTag;
                 this.bottombar = this.find("bottombar") as GUI.tag.TabContainerTag;
                 this.langstat = this.find("langstat") as GUI.tag.LabelTag;
                 this.editorstat = this.find("editorstat") as GUI.tag.LabelTag;
                 this.filestat = this.find("current-file-lbl") as GUI.tag.LabelTag;
+                this.extension_list_view = this.find("extension-list") as GUI.tag.ListViewTag;
                 this.logger = new Logger(this.find("output-tab"));
 
                 this.split_mode = true;
@@ -196,6 +324,8 @@ namespace OS {
                 }
                 if (!this.setting.recent)
                     this.setting.recent = [];
+                if(!this.setting.extension_repos)
+                    this.setting.extension_repos = [DEFAULT_REPO];
                     
                 const wrapper = this.find("wrapper");
                 $(wrapper).css('visibility', 'hidden');
@@ -226,6 +356,8 @@ namespace OS {
              * @memberof Antedit
              */
             private setup(): void {
+                this.sidebar_container.selectedIndex = 0;
+                this.extension_list_view.itemtag = "afx-antedit-ext-list-item";
                 this.fileview.onfileopen = (e) => {
                     if (!e.data || !e.data.path) {
                         return;
@@ -313,7 +445,6 @@ namespace OS {
                 if (this.setting.showBottomBar === undefined) {
                     this.setting.showBottomBar = false;
                 }
-                //TODO: support change editor model languages
                 const extension = {
                     name: "Editor",
                     text: __("Editor")
@@ -336,12 +467,126 @@ namespace OS {
 
                     }
                 });
+                $(this.find("txt_ext_search")).keyup((e) => this.extension_search(e));
                 this.loadExtensionMetaData();
                 this.toggleSideBar();
                 this.toggleSplitMode();
                 this.applyAllSetting();
             }
 
+            /**
+             * Search an extension from the extension list
+             * 
+             * @private
+             * @meberof Antedit
+             */
+            private extension_search(e: JQuery.KeyUpEvent): void
+            {
+                let k: string;
+                const search_box = this.find("txt_ext_search") as HTMLInputElement;
+                switch (e.which) {
+                    case 37:
+                        return e.preventDefault();
+                    case 38:
+                        this.extension_list_view.selectPrev();
+                        return e.preventDefault();
+                    case 39:
+                        return e.preventDefault();
+                    case 40:
+                        this.extension_list_view.selectNext();
+                        return e.preventDefault();
+                    case 13:
+                        return e.preventDefault();
+                    default:
+                        var text = search_box.value;
+                        var result = [];
+                        if (text.length === 2) {
+                            this.extension_list_view.data = this.extension_meta_data;
+                            return;
+                        }
+                        if (text.length < 3) {
+                            return;
+                        }
+                        
+                        var term = new RegExp(text, "i");
+                        for (k in this.extension_meta_data) {
+                            if (this.extension_meta_data[k].text.match(term)) {
+                                result.push(this.extension_meta_data[k]);
+                            }
+                        }
+                        this.extension_list_view.data = result;
+                }
+            }
+
+            /**
+             * Refresh editor extensions list on the side bar
+             *
+             * @private
+             * @memberof Antedit
+             */
+            private refreshExtensionRepositories(): void {
+                const promises = [];
+                const meta_file = `${this.meta().path}/extensions/extensions.json`;
+                for(let url of [meta_file].concat(this.setting.extension_repos))
+                {
+                    promises.push(url.asFileHandle().read('json'));
+                }
+                Promise.all(promises)
+                    .then((results) => {
+                        const meta = {};
+                        for(let el of results.shift())
+                        {
+                            meta[el.name] = el;
+                        }
+                        this.extension_meta_data = [];
+                        for(let result of results)
+                        {
+                            for(let ext of result)
+                            {
+                                if(meta[ext.name])
+                                {
+                                    ext.installed = meta[ext.name].version;
+                                }
+                                ext.install_action = (url: string,callback: (arg0: string) => void) => {
+                                    (new Antedit.extensions["EditorExtensionMaker"](this))
+                                        .installZip(url)
+                                        .then(() => {
+                                            this.loadExtensionMetaData();
+                                            if(callback)
+                                            {
+                                                callback(ext.version);
+                                            }
+                                            this.notify(__("Extension '{0}' installed", ext.text));
+                                        })
+                                        .catch((error: Error) => {
+                                            this.error(__("Unable to install '{0}': {1}", ext.text , error.toString()), error);
+                                        });
+                                    
+                                };
+                                ext.uninstall_action = (name: string, callback: () => void) => {
+                                    (new Antedit.extensions["EditorExtensionMaker"](this))
+                                        .uninstall(name)
+                                        .then(() => {
+                                            this.loadExtensionMetaData();
+                                            if(callback)
+                                            {
+                                                callback();
+                                            }
+                                            this.notify(__("Extension '{0}' uninstalled", name));
+                                        })
+                                        .catch((error: Error) => {
+                                            this.error(__("Unable to uninstall '{0}': {1}", name , error.toString()), error);
+                                        });
+                                };
+                                this.extension_meta_data.push(ext);
+                            }
+                        }
+                        this.extension_list_view.data = this.extension_meta_data;
+                    })
+                    .catch((error) => {
+                        this.error(__("Unable to read extension from repositories: {0}", error.toString()), error);
+                    });
+            }
             /**
              * Update the editor status bar
              *
@@ -374,6 +619,7 @@ namespace OS {
                 if (this.currdir) {
                     $(this.sidebar).show();
                     this.fileview.path = this.currdir.path;
+                    this.refreshExtensionRepositories();
                 } else {
                     $(this.sidebar).hide();
                 }
@@ -425,7 +671,12 @@ namespace OS {
             private toggleBottomBar(): void {
                 this.showBottomBar(!this.setting.showBottomBar);
             }
-
+            
+            /**
+             * Toogle split mode
+             * 
+             * #memberof Antedit
+            **/
             private toggleSplitMode(): void {
                 const right_pannel = this.find("right-panel");
                 const right_editor = this.eum.editors[1];
@@ -968,6 +1219,14 @@ namespace OS {
                 return this;
             }
             
+            /**
+             * Add an action to the editor
+             *
+             * @param {GenericObject<any>} extension
+             * @param {GenericObject<any>} action
+             * @param callback
+             * @memberof EditorModelManager
+             */
             addAction(extension: GenericObject<any>, action: GenericObject<any>, callback): void {
                 const ed_action = {
                     id: `${extension.name}:${action.name}`,
