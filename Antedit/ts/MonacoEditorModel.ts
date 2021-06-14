@@ -81,7 +81,7 @@ namespace OS {
                         model: monaco.editor.createModel(file.cache, "textplain")
                     }
                 }
-                const uri = monaco.Uri.parse(file.path);
+                const uri = monaco.Uri.parse(file.protocol + "://antedit/file/" + file.genealogy.join("/"));
                 const model = monaco.editor.getModel(uri);
                 if(model)
                 {
