@@ -133,7 +133,7 @@ class LocaleJob extends AntOSDKBaseJob {
                     // read the meta file
                     const contents = await this.read_files([this.job.data.dest]);
                     const pkg = JSON.parse(contents[0]);
-                    pkg.locale = locale;
+                    pkg.locales = locale;
                     // save data
                     const result = await this.save_file(this.job.data.dest,pkg,"object");
                     this.log_info(`locale-gen: locale file generated at ${this.job.data.dest}`);
