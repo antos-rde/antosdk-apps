@@ -230,6 +230,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libpdfjs/build/release/libpdfjs.zip"
 	},
 	{
+		"pkgname": "libthreejs",
+		"name": "libthreejs",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libthreejs/README.md",
+		"category": "Library",
+		"author": "",
+		"version": "0.0.129-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libthreejs/build/release/libthreejs.zip"
+	},
+	{
 		"pkgname": "libwvnc",
 		"name": "libwvnc",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/README.md",
@@ -318,6 +328,16 @@
 		"version": "0.1.6-a",
 		"dependencies": ["libwvnc@0.1.2-a"],"category":"Internet","icon":"icon.png","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
+	},
+	{
+		"pkgname": "ShaderPlayground",
+		"name": "OpenGL Shader Playground",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/README.md",
+		"category": "Development",
+		"author": "Xuan Sang LE",
+		"version": "0.0.1-a",
+		"dependencies": ["libthreejs@0.0.129-r"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/build/release/ShaderPlayground.zip"
 	},
 	{
 		"pkgname": "ShowCase",

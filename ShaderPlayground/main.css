@@ -1,0 +1,52 @@
+afx-app-window[data-id = "ShaderPlayground"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li,
+afx-app-window[data-id = "ShaderPlayground"] afx-tab-bar> afx-list-view  > div.list-container > ul  li{
+    background-color:#333333;
+    color:#afafaf;
+    border-radius: 0;
+    border: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 20px;
+    border-right: 1px solid #272822;
+}
+
+afx-app-window[data-id = "ShaderPlayground"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li.selected,
+afx-app-window[data-id = "ShaderPlayground"] afx-tab-bar> afx-list-view > div.list-container > ul > afx-list-item > li.selected{
+    background-color:#272822;
+    color:white;
+    border: 0;
+    border-radius: 0;
+}
+
+afx-app-window[data-id = "ShaderPlayground"] afx-shader-texture-item img{
+    width: 160px;
+    height: 82px;
+    object-fit: contain;
+    border: 1px solid tomato;
+    padding: 0;
+    margin: 0;
+}
+afx-app-window[data-id = "ShaderPlayground"] afx-shader-texture-item li{
+    width: 162px !important;
+    float: left;
+    background-color: transparent !important;
+}
+afx-app-window[data-id = "ShaderPlayground"] afx-shader-texture-item p{
+    padding:0;
+    margin: 0;
+    text-align: center;
+    background-color: tomato;
+    color: white;
+    width: 162px;
+}
+afx-app-window[data-id = "ShaderPlayground"] afx-vbox[data-id = "editor-wrapper"]{
+    background-color: #333333;
+}
+afx-app-window[data-id = "ShaderPlayground"] afx-shader-texture-item i.closable{
+    margin: 0px 15px 0px 0px;
+}
+
+afx-app-window[data-id = "ShaderPlayground"] afx-shader-texture-item i.closable::before
+{
+    color: tomato;
+}

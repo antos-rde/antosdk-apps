@@ -1,0 +1,15 @@
+{
+    "pkgname": "libthreejs",
+    "name":"libthreejs",
+    "description":"libthreejs",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.0.129-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

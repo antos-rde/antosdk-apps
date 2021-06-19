@@ -1,0 +1,16 @@
+{
+    "pkgname": "ShaderPlayground",
+    "app":"ShaderPlayground",
+    "name":"OpenGL Shader Playground",
+    "description":"OpenGL Shader Playground",
+    "info":{
+        "author": "Xuan Sang LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"0.0.1-a",
+    "category":"Development",
+    "iconclass":"bi bi-lightbulb-fill",
+    "mimes":["none"],
+    "dependencies":["libthreejs@0.0.129-r"],
+    "locale": {}
+}
