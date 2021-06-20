@@ -1,16 +1,42 @@
 {
     "pkgname": "ShaderPlayground",
-    "app":"ShaderPlayground",
-    "name":"OpenGL Shader Playground",
-    "description":"OpenGL Shader Playground",
-    "info":{
+    "app": "ShaderPlayground",
+    "name": "OpenGL Shader Playground",
+    "description": "OpenGL Shader Playground",
+    "info": {
         "author": "Xuan Sang LE",
         "email": "mrsang@iohub.dev"
     },
-    "version":"0.0.1-a",
-    "category":"Development",
-    "iconclass":"bi bi-lightbulb-fill",
-    "mimes":["none"],
-    "dependencies":["libthreejs@0.0.129-r"],
-    "locale": {}
+    "version": "0.0.2-a",
+    "category": "Development",
+    "iconclass": "bi bi-lightbulb-fill",
+    "mimes": [
+        "application/json"
+    ],
+    "dependencies": [
+        "libthreejs@0.0.129-r"
+    ],
+    "locale": {},
+    "locales": {
+        "en_GB": {
+            "Name": "Name",
+            "Path/URL": "Path/URL",
+            "Ok": "Ok",
+            "Add texture": "Add texture",
+            "File": "File",
+            "New": "New",
+            "Open": "Open",
+            "Save": "Save",
+            "All fields should be filled": "All fields should be filled",
+            "Select image file": "Select image file",
+            "Unknown save path": "Unknown save path",
+            "Fragment": "Fragment",
+            "Vertex": "Vertex",
+            "Textures": "Textures",
+            "Unsaved shader": "Unsaved shader",
+            "Ignore unsaved file?": "Ignore unsaved file?",
+            "Open file": "Open file",
+            "Save as": "Save as"
+        }
+    }
 }

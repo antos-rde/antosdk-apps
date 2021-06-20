@@ -47,8 +47,7 @@
                             "scheme.html",
                             "package.json",
                             "README.md",
-                            "main.css",
-                            "glslx.js"
+                            "main.css"
                         ],
                         "dest":"build/debug"
                     }
@@ -79,6 +78,20 @@
         "build and run": {
             "depend": ["clean", "build", "copy", "run"],
             "jobs": []
+        },
+        "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
         }
     }
 }

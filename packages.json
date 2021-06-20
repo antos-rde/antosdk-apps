@@ -335,7 +335,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.1-a",
+		"version": "0.0.2-a",
 		"dependencies": ["libthreejs@0.0.129-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/build/release/ShaderPlayground.zip"
 	},
