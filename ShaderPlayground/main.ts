@@ -753,8 +753,7 @@ void main() {
             "pkg://libthreejs/main.js",
             "pkg://ACECore/core/ace.js",
             "pkg://ACECore/path.js",
-            "pkg://ACECore/core/ext-language_tools.js",
-            "pkg://ShaderPlayground/glslx.js"
+            "pkg://ACECore/core/ext-language_tools.js"
         ];
     }
 }
