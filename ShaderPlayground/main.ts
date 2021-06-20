@@ -466,7 +466,6 @@ namespace OS {
                 {
                     this.uniforms[v.name] = {value: v.texture};
                 }
-                console.log(this.uniforms);
             }
             apply_mat(fragment_shader:string, vertex_shader: string): void
             {
@@ -483,7 +482,6 @@ namespace OS {
                 const mat = new THREE.ShaderMaterial(opts);
 
                 this.mesh.material = mat;
-                console.log(this.uniforms);
             }
         }
 
