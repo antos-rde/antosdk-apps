@@ -213,7 +213,6 @@ namespace OS {
             {
                 return this._filehandle;
             }
-
             read() {
                 return new Promise(async (resolve, reject) => {
                     if (this._filehandle === undefined) {
@@ -383,7 +382,10 @@ namespace OS {
             constructor(canvas: HTMLCanvasElement)
             {
                 this.textures = [];
-                this.renderer = new THREE.WebGLRenderer({canvas});
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas:canvas,
+                    alpha: true
+                });
                 this.renderer.autoClearColor = false;
                 this.clock = new THREE.Clock();
                 this.camera = new THREE.OrthographicCamera(
@@ -394,12 +396,12 @@ namespace OS {
                     -1, // near,
                     1, // far
                 );
+                this.needupdateTexture = false;
                 this.scene = new THREE.Scene();
-                const plane = new THREE.PlaneGeometry(2, 2);
                 const material = new THREE.MeshBasicMaterial({
                     color: 'white',
                 });
-                this.needupdateTexture = false;
+                const plane = new THREE.PlaneGeometry(2, 2);
                 this.mesh = new THREE.Mesh(plane, material);
                 this.scene.add(this.mesh);
                 this.uniforms = {
@@ -411,6 +413,7 @@ namespace OS {
 
                 this.ani_request_id = requestAnimationFrame(() => this.viewport_render());
             }
+
             private viewport_render(): void
             {
                 if(this.needupdateTexture)
@@ -426,10 +429,6 @@ namespace OS {
                 catch(e)
                 {
                     console.error(e);
-                    const material = new THREE.MeshBasicMaterial({
-                        color: 'white',
-                    });
-                    this.mesh.material = material;
                 }
                 this.ani_request_id = requestAnimationFrame(() => this.viewport_render());
             }
@@ -458,13 +457,16 @@ namespace OS {
                 {
                     if(["u_resolution", "u_time", "u_mouse"].indexOf(key) === -1)
                     {
-                        delete this.uniforms[key];
+                        this.uniforms[key] = new THREE.MeshBasicMaterial({
+                            color: 'black',
+                        });
                     }
                 }
                 for(const v of this.textures)
                 {
                     this.uniforms[v.name] = {value: v.texture};
                 }
+                console.log(this.uniforms);
             }
             apply_mat(fragment_shader:string, vertex_shader: string): void
             {
@@ -481,6 +483,7 @@ namespace OS {
                 const mat = new THREE.ShaderMaterial(opts);
 
                 this.mesh.material = mat;
+                console.log(this.uniforms);
             }
         }
 
@@ -573,6 +576,7 @@ void main() {
                     {
                         this.editor.renderer.textures = [];
                         listview.data = this.editor.renderer.textures;
+                        this.editor.renderer.needupdateTexture = true;
                         return;
                     }
                     const loader = new THREE.TextureLoader();
