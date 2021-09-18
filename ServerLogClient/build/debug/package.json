@@ -1,0 +1,18 @@
+{
+    "pkgname": "ServerLogClient",
+    "app":"ServerLogClient",
+    "name":"Server log monitor",
+    "description":"Client for server Syslog monitoring",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.0.1-b",
+    "category":"System",
+    "iconclass":"bi bi-receipt-cutoff",
+    "mimes":["none"],
+    "dependencies": [
+        "Antunnel@0.1.8-a"
+    ],
+    "locale": {}
+}

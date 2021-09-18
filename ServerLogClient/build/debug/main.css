@@ -1,0 +1,55 @@
+afx-app-window[data-id="ServerLogClient"] p {
+    margin: 0;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-family: "Courier New";
+    border-bottom: 1px solid gray;
+}
+
+afx-app-window[data-id="ServerLogClient"] p:hover {
+    background-color: gray;
+}
+
+afx-app-window[data-id="ServerLogClient"] p.debug{
+    color:green;
+}
+
+/*
+afx-app-window[data-id="ServerLogClient"] p.notice, afx-app-window[data-id="ServerLogClient"] p.info{
+    color:green;
+}*/
+
+afx-app-window[data-id="ServerLogClient"] p.warning {
+    color: orange;
+}
+
+afx-app-window[data-id="ServerLogClient"] p.err {
+    color: orangered;
+}
+
+afx-app-window[data-id="ServerLogClient"] p.crit, afx-app-window[data-id="ServerLogClient"] p.alert {
+    color: orangered;
+    font-weight: bold;
+}
+afx-app-window[data-id="ServerLogClient"] p.emerg {
+    color: red;
+    font-weight: bold;
+}
+afx-app-window[data-id="ServerLogClient"] input {
+    height: 25px;
+}
+
+afx-app-window[data-id="ServerLogClient"] afx-hbox[data-id="top-header"] {
+    border-bottom: 1px solid gray;
+}
+
+afx-app-window[data-id="ServerLogClient"] afx-hbox[data-id="top-header"] afx-label.field-label{
+    text-align: right;
+    padding-top: 5px;
+    padding-right: 3px;
+}
+
+afx-app-window[data-id="ServerLogClient"] afx-hbox[data-id="top-header"] afx-label.field-label i.label-text{
+    font-weight: bold;
+}

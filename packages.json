@@ -330,6 +330,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
 	},
 	{
+		"pkgname": "ServerLogClient",
+		"name": "Server log monitor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/README.md",
+		"category": "System",
+		"author": "",
+		"version": "0.0.1-b",
+		"dependencies": ["Antunnel@0.1.8-a"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/build/release/ServerLogClient.zip"
+	},
+	{
 		"pkgname": "ShaderPlayground",
 		"name": "OpenGL Shader Playground",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/README.md",
