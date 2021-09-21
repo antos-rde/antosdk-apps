@@ -335,7 +335,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/README.md",
 		"category": "System",
 		"author": "",
-		"version": "0.0.1-b",
+		"version": "0.1.1-b",
 		"dependencies": ["Antunnel@0.1.8-a"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/build/release/ServerLogClient.zip"
 	},

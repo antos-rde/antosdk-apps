@@ -6,4 +6,5 @@ using Antunnel protocol. Features:
 * Recording last n log messages
 
 ## Change logs
+* v0.1.1-b minor fix on dialog handling, fix incorrect package version
 * v0.1.0-b first beta version

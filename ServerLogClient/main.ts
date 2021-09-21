@@ -310,7 +310,7 @@ namespace OS {
                 }
                 if(!this.setting.topic)
                 {
-                    this._gui.openDialog("PromptDialog", { 
+                    this.openDialog("PromptDialog", { 
                         title: __("Enter topic name"),
                         label: __("Please enter Antunnel topic name")
                     })
