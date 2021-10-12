@@ -362,10 +362,10 @@ namespace OS {
                     if (!e.data || !e.data.path) {
                         return;
                     }
+                    this.addRecent(e.data.path);
                     if (e.data.type === "dir") {
                         return;
                     }
-                    this.addRecent(e.data.path);
                     return this.eum.active.openFile(
                         e.data.path.asFileHandle() as EditorFileHandle
                     );
@@ -904,7 +904,7 @@ namespace OS {
                 if (this.setting.recent.includes(file)) {
                     return;
                 }
-                this.setting.recent.push(file);
+                this.setting.recent.unshift(file);
                 if(this.setting.recent.length > 10)
                     this.setting.recent = this.setting.recent.slice(0, 10);
                 
