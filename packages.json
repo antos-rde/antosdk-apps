@@ -390,6 +390,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/build/release/TinyEditor.zip"
 	},
 	{
+		"pkgname": "vfsx",
+		"name": "AntOS VFS handles",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vfsx/README.md",
+		"category": "Library",
+		"author": "Dany LE",
+		"version": "0.1.0-b",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vfsx/build/release/vfsx.zip"
+	},
+	{
 		"pkgname": "VizApp",
 		"name": "Viz editor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/README.md",

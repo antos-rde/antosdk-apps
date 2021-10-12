@@ -1,0 +1,81 @@
+{
+    "name": "Antunnel",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+        "coffee": {
+            "require": [
+                "coffee"
+            ],
+            "jobs": [
+                {
+                    "name": "coffee-compile",
+                    "data": {
+                        "src": [
+                            "coffees/Antunnel.coffee",
+                            "coffees/AntunnelService.coffee"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/main.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "package.json",
+                            "README.md"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "coffee",
+                "copy",
+                "uglify"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/Antunnel.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "pkgname": "vfsx",
+    "name": "AntOS VFS handles",
+    "description": "AntOS VFS handles for various file protocols which are not included by default int core release",
+    "info": {
+        "author": "Dany LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version": "0.1.0-b",
+    "category": "Library",
+    "iconclass": "fa fa-cog",
+    "mimes": [
+        "none"
+    ],
+    "dependencies": [],
+    "locale": {},
+    "locales": {
+        "en_GB": {
+            "Unknown API setting for GAPI": "Unknown API setting for GAPI",
+            "VFS cannot download file : {0}": "VFS cannot download file : {0}",
+            "VFS cannot get meta data for {0}": "VFS cannot get meta data for {0}",
+            "No GAPI meta found": "No GAPI meta found",
+            "Authentication": "Authentication",
+            "Would you like to login to GoogleDrive?": "Would you like to login to GoogleDrive?",
+            "User abort the authentication": "User abort the authentication",
+            "File ID is not valid": "File ID is not valid",
+            "File {0} not found": "File {0} not found",
+            "Cannot find local copy of file; {0}": "Cannot find local copy of file; {0}",
+            "VFS cannot save : {0}": "VFS cannot save : {0}",
+            "VFS cannot write : {0}": "VFS cannot write : {0}",
+            "{0} is not a directory": "{0} is not a directory",
+            "VFS cannot create : {0}": "VFS cannot create : {0}",
+            "Cannot identify file id of {0}": "Cannot identify file id of {0}",
+            "VFS cannot delete : {0}": "VFS cannot delete : {0}",
+            "VFS cannot move : {0}": "VFS cannot move : {0}",
+            "Target file should be a folder": "Target file should be a folder"
+        }
+    }
+}

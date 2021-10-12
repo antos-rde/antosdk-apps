@@ -1,7 +1,0 @@
-{
-    "name": "Antunnel",
-    "css": [],
-    "javascripts": [],
-    "coffees": ["coffees/Antunnel.coffee", "coffees/AntunnelService.coffee"],
-    "copies": ["package.json", "README.md"]
-}

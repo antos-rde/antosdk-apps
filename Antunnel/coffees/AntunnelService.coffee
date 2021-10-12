@@ -24,8 +24,10 @@ class AntunnelService extends OS.application.BaseService
             @iconclass = "fa fa-close" unless @is_connect
             @update()
         OS.onexit "cleanupAntunnel", () =>
-            Antunnel.tunnel.close() if Antunnel.tunnel
-            @quit()
+            return new Promise (resolve, reject) =>
+                Antunnel.tunnel.close() if Antunnel.tunnel
+                @quit()
+                resolve(true)
         
     
     action: (e) ->
