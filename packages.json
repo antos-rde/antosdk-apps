@@ -285,7 +285,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.1.6-a",
+		"version": "0.1.7-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/build/release/OnlyOffice.zip"
 	},

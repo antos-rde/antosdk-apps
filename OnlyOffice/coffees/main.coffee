@@ -282,6 +282,3 @@ this.OS.register "OnlyOffice", OnlyOffice
 this.extensionParams = {
     url: "https://office.iohub.dev/web-apps/"
 }
-# dirty hack that allow subdomain iframes access each other
-# FIXME: may be the domain should be defined by ATOS API
-document.domain = "iohub.dev" if document.domain is "os.iohub.dev"
