@@ -148,7 +148,7 @@ class AntOSDKBaseJob {
             req.send(JSON.stringify(data));
         });
     }
-    read_files(files)
+    read_files(files, type)
     {
         return new Promise( async (resolve, reject) => {
             try{
@@ -161,7 +161,7 @@ class AntOSDKBaseJob {
                 promises = [];
                 for(let file of files)
                 {
-                    promises.push(this.get(file.getlink(this.job.root)));
+                    promises.push(this.get(file.getlink(this.job.root), type));
                 }
                 const contents = await Promise.all(promises);
                 resolve(contents);

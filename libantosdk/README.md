@@ -2,6 +2,7 @@
 AntOSDK: development API for AntOS based applications/projects
 
 ## Change logs
+- 0.0.10: fix binary readfile bug
 - 0.0.9: Fix locale gen bug
 - 0.0.8: Update JQuery support in typescript
 - 0.0.7: enable typescript downlevelIteration compile option
