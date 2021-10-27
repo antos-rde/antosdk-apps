@@ -1,0 +1,114 @@
+{
+    "name": "SystemControl",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+        "coffee": {
+            "require": [
+                "coffee"
+            ],
+            "jobs": [
+                {
+                    "name": "coffee-compile",
+                    "data": {
+                        "src": [
+                            "coffees/SysmondService.coffee",
+                            "coffees/main.coffee"
+                        ],
+                        "dest": "build/debug/coffee-main.js"
+                    }
+                }
+            ]
+        },
+        "cat": {
+            "jobs": [
+                {
+                    "name": "vfs-cat",
+                    "data": {
+                        "src": [
+                            "build/debug/coffee-main.js",
+                            "javascripts/d3.v3.js",
+                            "javascripts/epoch.js"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                },
+                {
+                    "name": "vfs-cat",
+                    "data": {
+                        "src": [
+                            "css/epoch.css",
+                            "css/main.css"
+                        ],
+                        "dest": "build/debug/main.css"
+                    }
+                },
+                {
+                    "name": "vfs-rm",
+                    "data": [
+                        "build/debug/coffee-main.js"
+                    ]
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/main.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "assets/scheme.html",
+                            "package.json",
+                            "README.md"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "coffee",
+                "cat",
+                "uglify",
+                "copy"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/SystemControl.zip"
+                    }
+                }
+            ]
+        }
+    }
+}
