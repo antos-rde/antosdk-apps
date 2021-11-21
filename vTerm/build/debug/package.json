@@ -6,12 +6,12 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.14-a",
+    "version":"0.1.15-a",
     "category":"System",
     "iconclass":"bi bi-terminal-fill",
     "mimes":["none"],
     "dependencies": [
-        "Antunnel@0.1.8-a",
+        "Antunnel@0.1.9-b",
         "xTerm@4.8.1-r"
     ],
     "locales":{

@@ -7,12 +7,12 @@
         "author": "",
         "email": ""
     },
-    "version":"0.1.1-b",
+    "version":"0.1.2-b",
     "category":"System",
     "iconclass":"bi bi-receipt-cutoff",
     "mimes":["none"],
     "dependencies": [
-        "Antunnel@0.1.8-a"
+        "Antunnel@0.1.9-b"
     ],
     "locale": {}
 }

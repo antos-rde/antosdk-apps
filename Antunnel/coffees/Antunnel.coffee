@@ -12,33 +12,27 @@ class Msg
     
     
     as_raw:() ->
-        length = 13 + @header.size
+        length = 5 + @header.size
         arr = new Uint8Array(length)
-        arr.set(Msg.MAGIC_START, 0)
-        arr[2] = @header.type
+        arr[0] = @header.type
         bytes = Msg.bytes_of @header.cid
-        arr.set(bytes,3)
+        arr.set(bytes,1)
         bytes = Msg.bytes_of @header.sid
-        arr.set(bytes,5)
-        bytes = Msg.bytes_of @header.size, 4
-        arr.set(bytes,7)
+        arr.set(bytes,3)
         if @data
-            arr.set(@data, 11)
-        arr.set(Msg.MAGIC_END, @header.size + 11)
+            arr.set(@data, 5)
         arr.buffer
 
 Msg.decode = (raw) ->
     new Promise (resolve, reject) ->
         msg = new Msg()
-        if(Msg.int_from(Msg.MAGIC_START, 0) != Msg.int_from(raw, 0))
-            return reject("Unmatch message begin magic number")
-        msg.header.type = raw[2]
-        msg.header.cid = Msg.int_from(raw, 3)
-        msg.header.sid = Msg.int_from(raw,5)
-        msg.header.size = Msg.int_from(raw, 7,4)
-        msg.data = raw.slice(11, 11+msg.header.size)
-        if(Msg.int_from(Msg.MAGIC_END, 0) != Msg.int_from(raw, 11+msg.header.size))
-            return reject("Unmatch message end magic number")
+        if(not raw or raw.length < 5)
+            return reject("Invalid message format")
+        msg.header.type = raw[0]
+        msg.header.cid = Msg.int_from(raw, 1)
+        msg.header.sid = Msg.int_from(raw,3)
+        msg.header.size = raw.length - 5
+        msg.data = raw.slice(5, 5+msg.header.size)
         resolve msg
     
     
@@ -67,8 +61,6 @@ Msg.SUBSCRIBE = 2
 Msg.UNSUBSCRIBE = 3
 Msg.CTRL = 7
 Msg.PING = 8
-Msg.MAGIC_END = [0x44, 0x54]
-Msg.MAGIC_START = [0x4e, 0x41 ]
 
 class Subscriber
     constructor: (@channel) ->
