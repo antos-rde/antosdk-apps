@@ -1,0 +1,15 @@
+{
+    "pkgname": "libplotly",
+    "name":"Plotly",
+    "description":"Plotly: Javascript data visualization library",
+    "info":{
+        "author": "Dany LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"2.6.2-r",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

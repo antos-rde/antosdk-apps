@@ -150,7 +150,12 @@ class Docify extends this.OS.application.BaseApplication
                             @clear_preview()
                         .catch (e) =>
                             @error e.toString(), e
-        
+        @find("bt-upload-doc").onbtclick = (e) =>
+            "#{@setting.docpath}/unclassified".asFileHandle().upload()
+            .then (r) =>
+                @notify __("File uploaded")
+            .catch (e) =>
+                @error e.toString(), e
         @find("bt-edit-doc").onbtclick = (e) =>
             item = @docview.selectedItem
             catiem = @catview.selectedItem

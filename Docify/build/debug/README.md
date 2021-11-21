@@ -2,6 +2,7 @@
 Simple PDF document manager
 
 ## Change logs
+- v0.0.8-b: Allow upload files directly from the app
 - v0.0.7-a: Change category and icon
 - v0.0.6-a: Add print dialog (support server side printing)
 - v0.0.5-a: Fix delete file bug

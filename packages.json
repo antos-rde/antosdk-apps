@@ -135,7 +135,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/README.md",
 		"category": "Office",
 		"author": "",
-		"version": "0.0.7-a",
+		"version": "0.0.8-b",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/build/release/Docify.zip"
 	},
@@ -228,6 +228,16 @@
 		"version": "2.6.347-r",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libpdfjs/build/release/libpdfjs.zip"
+	},
+	{
+		"pkgname": "libplotly",
+		"name": "Plotly",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libplotly/README.md",
+		"category": "Library",
+		"author": "Dany LE",
+		"version": "2.6.2-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libplotly/build/release/libplotly.zip"
 	},
 	{
 		"pkgname": "libthreejs",
