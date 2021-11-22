@@ -1,5 +1,5 @@
 namespace OS {
-    declare var $:any;
+    //declare var $:any;
     export namespace application {
         
         /**
@@ -69,6 +69,9 @@ namespace OS {
              */
             private container: HTMLElement;
 
+            /**
+             * Editor status monitoring
+             */
             onstatuschange: (stat: GenericObject<any>) => void;
 
             /**
@@ -190,12 +193,11 @@ namespace OS {
             /**
              * Close a tab when a file is closed
              *
-             * @private
              * @param {GUI.tag.ListViewItemTag} it reference to the tab to close
              * @returns {boolean}
              * @memberof BaseEditorModel
              */
-            private closeTab(it: GUI.tag.ListViewItemTag): boolean {
+            closeTab(it: GUI.tag.ListViewItemTag): boolean {
                 this.tabbar.delete(it);
                 const cnt = this.tabbar.items.length;
 
@@ -387,6 +389,28 @@ namespace OS {
                 return this.dirties().length > 0;
             }
 
+            /**
+             * Set model tabbar menu context event
+             *
+             * @memberof BaseEditorModel
+             */
+            setTabbarCtxMenu(items: GenericObject<any>[], handle:(tab:GUI.tag.ListViewItemTag, mdata: GenericObject<any>) => void): void
+            {
+                this.tabbar.contextmenuHandle = (evt, m) => {
+                    m.items = items;
+                    m.onmenuselect = (e) => {
+                        if(handle)
+                        {
+                            /**
+                             * get the tab under the cursor
+                             */
+                            const tab = $(evt.target).closest("afx-list-item");
+                            handle(tab[0], e.data.item.data);
+                        }
+                    };
+                    return m.show(evt);
+                }
+            }
 
             /**
              * Set up the editor instance

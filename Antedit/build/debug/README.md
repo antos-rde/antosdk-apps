@@ -6,6 +6,7 @@ The editor functionality can be extended by its extension mechanism.
 Extension can be developed/released/isntalled by the editor itself.
 
 ### Change logs
+- 0.1.13-b: Allow file upload in file view, add menu context in tabbar
 - 0.1.12-b: fix recent files not adding correctly
 - 0.1.11-b: fix file type parsing from path
 - 0.1.10-b: Antedit now has it own extension manager

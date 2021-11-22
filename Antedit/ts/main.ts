@@ -332,20 +332,70 @@ namespace OS {
                 
                 monaco.editor.setTheme("vs-dark");
                 // add editor instance
-                this.eum
-                    .add(new OS.application.MonacoEditorModel(
+                const left_editor = new OS.application.MonacoEditorModel(
                         this,
                         this.find("left-tabbar") as GUI.tag.TabBarTag,
-                        this.find("left-editorarea")) as BaseEditorModel)
-                    .add(new OS.application.MonacoEditorModel(
+                        this.find("left-editorarea")) as BaseEditorModel;
+                const right_editor = new OS.application.MonacoEditorModel(
                         this,
                         this.find("right-tabbar") as GUI.tag.TabBarTag,
-                        this.find("right-editorarea")) as BaseEditorModel);
+                        this.find("right-editorarea")) as BaseEditorModel;
+                left_editor.setTabbarCtxMenu(this.tb_ctxmenu, (tab, data) => this.tabbar_ctx_menu_handle(tab,data, left_editor));
+                right_editor.setTabbarCtxMenu(this.tb_ctxmenu, (tab, data) => this.tabbar_ctx_menu_handle(tab,data, right_editor));
+                this.eum.add(left_editor).add(right_editor);
                 this.eum.onstatuschange = (st) =>
                     this.updateStatus(st)
                 $(wrapper).css('visibility', 'visible');
                 this.setup();
                 this.eum.active.openFile(file);
+            }
+
+            /**
+             * Get the context menu items
+             */
+            private get tb_ctxmenu(): GenericObject<any>[]
+            {
+                return [
+                    { text: "__(Close)", id: "close" },
+                    { text: "__(Close All)", id: "close-all" },
+                    { text: "__(Move to other side)", id: "mv-side" },
+                ];
+            }
+
+            private tabbar_ctx_menu_handle(tab: GUI.tag.ListViewItemTag, data: GenericObject<any>, model: BaseEditorModel): void {
+                switch(data.id)
+                {
+                    case "close":
+                        if(!tab)
+                        {
+                            return;
+                        }
+                        model.closeTab(tab);
+                        break;
+                    case "close-all":
+                        model.closeAll();
+                        model.openFile("Untitled".asFileHandle() as EditorFileHandle)
+                        break;
+                    case "mv-side":
+                        if(!tab)
+                        {
+                            return;
+                        }
+                        let other_model = this.eum.editors[0];
+                        if(model == other_model)
+                        {
+                            other_model = this.eum.editors[1];
+                        }
+                        other_model.openFile(tab.data as EditorFileHandle);
+                        model.closeTab(tab);
+                        if(this.split_mode == false)
+                        {
+                            this.toggleSplitMode();
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             /**
@@ -390,6 +440,7 @@ namespace OS {
                         { text: "__(New folder)", id: "newdir" },
                         { text: "__(Rename)", id: "rename" },
                         { text: "__(Delete)", id: "delete" },
+                        { text: "__(Upload)", id: "upload" },
                     ];
                     m.onmenuselect = (e) => {
                         return this.ctxFileMenuHandle(e);
@@ -806,7 +857,7 @@ namespace OS {
                             } catch (e) {
                                 return this.error(
                                     __("Fail to create: {0}", e.stack),
-                                    e
+                                    __e(e)
                                 );
                             }
                         });
@@ -826,7 +877,7 @@ namespace OS {
                             } catch (e) {
                                 return this.error(
                                     __("Fail to create: {0}", dir.path),
-                                    e
+                                    __e(e)
                                 );
                             }
                         });
@@ -852,7 +903,7 @@ namespace OS {
                             } catch (e) {
                                 return this.error(
                                     __("Fail to rename: {0}", file.path),
-                                    e
+                                    __e(e)
                                 );
                             }
                         });
@@ -881,10 +932,22 @@ namespace OS {
                             } catch (e) {
                                 return this.error(
                                     __("Fail to delete: {0}", file.path),
-                                    e
+                                    __e(e)
                                 );
                             }
                         });
+                        break;
+                    case "upload":
+                        if(!dir)
+                        {
+                            return;
+                        }
+                        dir.upload()
+                        .then((d) => {
+                            this.notify(__("File uploaded to: {0}", dir.path));
+                            return this.fileview.update(dir.path);
+                        })
+                        .catch((e) => this.error(__("Unable to upload file: {e}", e.toString()), __e(e)));
                         break;
                     default:
                 }
@@ -1287,6 +1350,7 @@ namespace OS {
                     ed.onstatuschange = cb;
                 }
             }
+            
 
             dirties(): EditorFileHandle[] {
                 let list = [];
