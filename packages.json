@@ -155,7 +155,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.1.2-a",
+		"version": "0.1.3-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/build/release/GPClient.zip"
 	},
