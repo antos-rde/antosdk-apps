@@ -425,7 +425,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.1.15-a",
+		"version": "0.1.16-a",
 		"dependencies": ["Antunnel@0.2.0-b","xTerm@4.8.1-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},

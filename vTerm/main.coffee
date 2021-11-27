@@ -120,8 +120,8 @@ class vTerm extends this.OS.application.BaseApplication
         nrow = @term.rows
         return unless @sub
         arr = new Uint8Array(8)
-        arr.set Antunnel.Msg.bytes_of(ncol), 0
-        arr.set Antunnel.Msg.bytes_of(nrow), 4
+        arr.set Antunnel.Msg.bytes_of(ncol,4), 0
+        arr.set Antunnel.Msg.bytes_of(nrow,4), 4
         @sub.send Antunnel.Msg.CTRL, arr
 
     openSession: () ->
