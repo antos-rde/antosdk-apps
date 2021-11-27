@@ -11,7 +11,7 @@
     "iconclass":"bi bi-terminal-fill",
     "mimes":["none"],
     "dependencies": [
-        "Antunnel@0.1.9-b",
+        "Antunnel@0.2.0-b",
         "xTerm@4.8.1-r"
     ],
     "locales":{

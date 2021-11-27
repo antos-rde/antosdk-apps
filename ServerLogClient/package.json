@@ -12,7 +12,7 @@
     "iconclass":"bi bi-receipt-cutoff",
     "mimes":["none"],
     "dependencies": [
-        "Antunnel@0.1.9-b"
+        "Antunnel@0.2.0-b"
     ],
     "locale": {}
 }
