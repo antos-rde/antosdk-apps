@@ -39,19 +39,23 @@ Msg.decode = (raw) ->
 Msg.bytes_of = (x,s) ->
     s = 2 unless s is 4
     bytes=new Uint8Array(s)
-    bytes[0]=x & (255)
-    x=x>>8
-    bytes[1]=x & (255)
-    return bytes unless s is 4
+    if s is 2
+        bytes[1]=x & (255)
+        x=x>>8
+        bytes[0]=x & (255)
+        return bytes
+    bytes[3]=x & (255)
     x=x>>8
     bytes[2]=x & (255)
     x=x>>8
-    bytes[3]=x & (255)
+    bytes[1]=x & (255)
+    x=x>>8
+    bytes[0]=x & (255)
     return bytes
 
 Msg.int_from = (bytes, offset, size) ->
-    return (bytes[offset] | (bytes[offset+1]<<8)) unless size is 4
-    return (bytes[offset] | (bytes[offset+1]<<8) | (bytes[offset+2]<<16) | (bytes[offset+3] << 24))
+    return (bytes[offset+1] | (bytes[offset]<<8)) unless size is 4
+    return (bytes[offset+3] | (bytes[offset+2]<<8) | (bytes[offset+1]<<16) | (bytes[offset] << 24))
 
 Msg.OK = 0
 Msg.ERROR = 1
