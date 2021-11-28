@@ -1,0 +1,15 @@
+{
+    "pkgname": "AntunnelPlugins",
+    "name":"Antunnel Plugins",
+    "description":"Additional plugins for the Antunnel library",
+    "info":{
+        "author": "Dany LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version":"0.1.0-a",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":["Antunnel@0.2.0-b"],
+    "locale": {}
+}

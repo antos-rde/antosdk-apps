@@ -89,11 +89,21 @@ class TSJob extends AntOSDKBaseJob {
                     useCaseSensitiveFileNames: () => true,
                     writeFile: (path, data) => js_code = `${js_code}\n${data}`
                 };
-                const program = ts.createProgram(files, {
+                const compile_options = {
                     "target": "es6",
                     "skipLibCheck": true,
                     "downlevelIteration": true
-                }, host);
+                };
+                // Allow user override compile options
+                if(this.job.data.options)
+                {
+                    for(let k in this.job.data.options)
+                    {
+                        compile_options[k] = this.job.data.options[k];
+                    }
+                }
+                console.log("TS compile options", compile_options);
+                const program = ts.createProgram(files,compile_options , host);
                 const result = program.emit();
                 const diagnostics = result.diagnostics.concat((ts.getPreEmitDiagnostics(program)));
                 const errors = [];

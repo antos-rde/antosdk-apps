@@ -2,6 +2,7 @@
 AntOSDK: development API for AntOS based applications/projects
 
 ## Change logs
+- 0.0.12: TS worker now allows user specific compile options (defined un build file)
 - 0.0.11: Update AntOS API v1.2.1
 - 0.0.10: fix binary readfile bug
 - 0.0.9: Fix locale gen bug

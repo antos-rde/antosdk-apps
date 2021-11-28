@@ -60,6 +60,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/build/release/Antunnel.zip"
 	},
 	{
+		"pkgname": "AntunnelPlugins",
+		"name": "Antunnel Plugins",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/README.md",
+		"category": "Library",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": ["Antunnel@0.2.0-b"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
+	},
+	{
 		"pkgname": "Archive",
 		"name": "Archive",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/README.md",
@@ -195,7 +205,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.11-a",
+		"version": "0.0.12-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/build/release/libantosdk.zip"
 	},
