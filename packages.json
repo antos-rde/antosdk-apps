@@ -65,7 +65,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/README.md",
 		"category": "Library",
 		"author": "Dany LE",
-		"version": "0.1.1-a",
+		"version": "0.1.2-a",
 		"dependencies": ["Antunnel@0.2.0-b"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
 	},

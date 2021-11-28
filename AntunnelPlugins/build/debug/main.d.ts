@@ -446,7 +446,9 @@ declare namespace Antunnel {
          * @type {{[prop: number]: BroadcastGroup}}
          * @memberof BroadcastManager
          */
-        private groups;
+        groups: {
+            [prop: number]: BroadcastGroup;
+        };
         /**
          * temporary list of group handles that wait for
          * an connection confirmation from the backend
@@ -546,5 +548,21 @@ declare namespace Antunnel {
          * @memberof BroadcastManager
          */
         send(gid: number, data: Uint8Array): void;
+        /**
+         * Get all the registered group
+         *
+         * @return {Uint8Array}
+         * @memberof BroadcastManager
+         */
+        get_groups(): {
+            [prop: number]: BroadcastGroup;
+        };
+        /**
+         * Get group by name
+         *
+         * @return {Uint8Array}
+         * @memberof BroadcastManager
+         */
+        get_group(name: string): BroadcastGroup;
     }
 }

@@ -265,7 +265,7 @@ namespace Antunnel {
          * @type {{[prop: number]: BroadcastGroup}}
          * @memberof BroadcastManager
          */
-        private groups: { [prop: number]: BroadcastGroup };
+         groups: { [prop: number]: BroadcastGroup };
 
         /**
          * temporary list of group handles that wait for
@@ -603,6 +603,35 @@ namespace Antunnel {
             arr.set(Antunnel.Msg.bytes_of(gid, 4), 0);
             arr.set(data, 4);
             this.sub.send(Antunnel.Msg.DATA, arr);
+        }
+
+        /**
+         * Get all the registered group
+         *
+         * @return {Uint8Array}
+         * @memberof BroadcastManager
+         */
+        get_groups(): { [prop: number]: BroadcastGroup }
+        {
+            return this.groups;
+        }
+
+        /**
+         * Get group by name
+         *
+         * @return {Uint8Array}
+         * @memberof BroadcastManager
+         */
+        get_group(name: string): BroadcastGroup
+        {
+            for(let k in this.groups)
+            {
+                if(this.groups[k].groupname === name)
+                {
+                    return this.groups[k];
+                }
+            }
+            return undefined;
         }
     }
 }
