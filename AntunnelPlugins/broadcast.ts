@@ -12,7 +12,8 @@ namespace Antunnel {
     export enum BroadcastCTRLType {
         SUBSCRIBE = 0x0A,
         UNSUBSCRIBE = 0xB,
-        QUERY = 0xC
+        QUERY_USER = 0xC,
+        QUERY_GROUP = 0xD,
     }
 
     /**
@@ -275,6 +276,26 @@ namespace Antunnel {
          * @memberof BroadcastManager
          */
         private pendings: GenericObject<BroadcastGroup>;
+        
+        /**
+         * callback handle when a group is added to the
+         * manager
+         *
+         * @private
+         * @type (group: BroadcastGroup)=> void
+         * @memberof BroadcastManager
+         */
+        ongroupadd: (group: BroadcastGroup)=> void;
+
+        /**
+         * callback handle when a group is removed from the
+         * manager
+         *
+         * @private
+         * @type (group: BroadcastGroup)=> void
+         * @memberof BroadcastManager
+         */
+        ongroupdel: (group: BroadcastGroup)=> void;
 
         /**
          * Creates an instance of BroadcastManager.
@@ -287,6 +308,8 @@ namespace Antunnel {
             this.tunnel = undefined;
             this.groups = {};
             this.pendings = {};
+            this.ongroupadd = undefined;
+            this.ongroupdel = undefined;
         }
 
         /**
@@ -344,19 +367,39 @@ namespace Antunnel {
                             let g_handle = this.pendings[msg.group];
                             if (g_handle && g_handle.user === msg.user) {
                                 g_handle.id = msg.id;
-                                g_handle.onready();
                                 this.pendings[msg.group] = undefined;
                                 delete this.pendings[msg.group];
                                 this.groups[msg.id] = g_handle;
                                 g_handle.state = BroadcastGroupState.SUBSCRIBED;
+                                if(this.ongroupadd)
+                                {
+                                    this.ongroupadd(g_handle);
+                                }
+                                g_handle.onready();
                             }
                             g_handle = this.groups[msg.id];
                             if (!g_handle) {
-                                return;
+                                // create the group handle
+                                g_handle = new BroadcastGroup(msg.group);
+                                g_handle.id = msg.id;
+                                g_handle.state = BroadcastGroupState.SUBSCRIBED;
+                                g_handle.mgr = this;
+                                this.groups[msg.id] = g_handle;
+                                if(this.ongroupadd)
+                                {
+                                    this.ongroupadd(g_handle);
+                                }
+                                if(g_handle.onready)
+                                {
+                                    g_handle.onready();
+                                }
                             }
-                            g_handle.users.add(msg.user);
-                            if (g_handle.onuseradd)
-                                g_handle.onuseradd(msg.user);
+                            if(!g_handle.users.has(msg.user))
+                            {
+                                g_handle.users.add(msg.user);
+                                if (g_handle.onuseradd)
+                                    g_handle.onuseradd(msg.user);
+                            }
                         }
                         else {
                             let g_handle = this.groups[msg.id];
@@ -370,6 +413,10 @@ namespace Antunnel {
                                 g_handle.state = BroadcastGroupState.UNSUBSCRIBED;
                                 if (g_handle.onclose)
                                     g_handle.onclose();
+                                if(this.ongroupdel)
+                                {
+                                    this.ongroupdel(g_handle);
+                                }
                             }
                             else {
                                 g_handle.users.delete(msg.user);
@@ -378,7 +425,7 @@ namespace Antunnel {
                             }
                         }
                         break;
-                    case BroadcastCTRLType.QUERY:
+                    case BroadcastCTRLType.QUERY_USER:
                         msg.id = Antunnel.Msg.int_from(d.data, 1, 4);
                         msg.user = new TextDecoder("utf-8").decode(d.data.slice(5));
                         let g_handle = this.groups[msg.id];
@@ -388,6 +435,24 @@ namespace Antunnel {
                             g_handle.users.add(msg.user);
                             if (g_handle.onuseradd)
                                 g_handle.onuseradd(msg.user);
+                        }
+                        break;
+                    case BroadcastCTRLType.QUERY_GROUP:
+                        msg.id = Antunnel.Msg.int_from(d.data, 1, 4);
+                        msg.group = new TextDecoder("utf-8").decode(d.data.slice(5));
+                        if (this.groups[msg.id])
+                            return;
+                        this.groups[msg.id] = new BroadcastGroup(msg.group);
+                        this.groups[msg.id].id = msg.id;
+                        this.groups[msg.id].state = BroadcastGroupState.SUBSCRIBED;
+                        this.groups[msg.id].mgr = this;
+                        if(this.ongroupadd)
+                        {
+                            this.ongroupadd(this.groups[msg.id]);
+                        }
+                        if(this.groups[msg.id].onready)
+                        {
+                            this.groups[msg.id].onready();
                         }
                         break;
                     default:
@@ -407,11 +472,10 @@ namespace Antunnel {
          * - Connect to the tunnel if the global tunnel does not exists
          * - Subscribe to th e broadcast channel if not done
          *
-         * @private
          * @return {*}  {Promise<any>}
          * @memberof BroadcastManager
          */
-        private setup(): Promise<any> {
+        setup(): Promise<any> {
             return new Promise(async (resolve, reject) => {
                 try {
                     if (!Antunnel) {
@@ -444,7 +508,6 @@ namespace Antunnel {
             });
         }
 
-
         /**
          * Remove a group handle from the manager
          *
@@ -467,31 +530,36 @@ namespace Antunnel {
          */
         query(gid: number): void {
             let arr = new Uint8Array(5);
-            arr[0] = BroadcastCTRLType.QUERY;
+            arr[0] = BroadcastCTRLType.QUERY_USER;
             arr.set(Antunnel.Msg.bytes_of(gid, 4), 1);
             this.sub.send(Antunnel.Msg.CTRL, arr);
         }
 
-
+        /**
+         * Query all groups of the current user
+         * 
+         * @memberof BroadcastManager
+         */
+        refresh(): void
+        {
+            let arr = new Uint8Array(1);
+            arr[0] = BroadcastCTRLType.QUERY_GROUP;
+            this.sub.send(Antunnel.Msg.CTRL, arr);
+        }
         /**
          * Register a group to the manager
          *
-         * @param {BroadcastGroup} group
+         * @param {string} group
          * @memberof BroadcastManager
          */
-        subscribe(group: BroadcastGroup): void {
-            this.setup()
-                .then((_) => {
-                    let arr = new Uint8Array(group.groupname.length + 1);
-                    arr[0] = BroadcastCTRLType.SUBSCRIBE;
-                    arr.set(new TextEncoder().encode(group.groupname), 1);
-                    this.sub.send(Antunnel.Msg.CTRL, arr);
-                    group.mgr = this;
-                    this.pendings[group.groupname] = group;
-                })
-                .catch((e) => {
-                    OS.announcer.oserror(__("Unable to subscribe to group {0}: {1}", group.groupname, e.toString()), e);
-                })
+        subscribe(group: string): void {
+            let arr = new Uint8Array(group.length + 1);
+            arr[0] = BroadcastCTRLType.SUBSCRIBE;
+            arr.set(new TextEncoder().encode(group), 1);
+            this.sub.send(Antunnel.Msg.CTRL, arr);
+            let handle = new BroadcastGroup(group);
+            handle.mgr = this;
+            this.pendings[group] = handle;
         }
 
 
@@ -508,6 +576,20 @@ namespace Antunnel {
             this.pendings = {};
         }
 
+        /**
+         * return the current subscriber ID
+         *
+         * @memberof BroadcastManager
+         * @return {number}
+         */
+        id(): number
+        {
+            if(this.sub)
+            {
+                return this.sub.id;
+            }
+            return 0;
+        }
 
         /**
          * Send a message to a specific group

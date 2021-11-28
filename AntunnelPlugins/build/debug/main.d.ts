@@ -249,7 +249,8 @@ declare namespace Antunnel {
     enum BroadcastCTRLType {
         SUBSCRIBE = 10,
         UNSUBSCRIBE = 11,
-        QUERY = 12
+        QUERY_USER = 12,
+        QUERY_GROUP = 13
     }
     /**
      * Group state
@@ -456,6 +457,24 @@ declare namespace Antunnel {
          */
         private pendings;
         /**
+         * callback handle when a group is added to the
+         * manager
+         *
+         * @private
+         * @type (group: BroadcastGroup)=> void
+         * @memberof BroadcastManager
+         */
+        ongroupadd: (group: BroadcastGroup) => void;
+        /**
+         * callback handle when a group is removed from the
+         * manager
+         *
+         * @private
+         * @type (group: BroadcastGroup)=> void
+         * @memberof BroadcastManager
+         */
+        ongroupdel: (group: BroadcastGroup) => void;
+        /**
          * Creates an instance of BroadcastManager.
          * @param {string} channel
          * @memberof BroadcastManager
@@ -475,11 +494,10 @@ declare namespace Antunnel {
          * - Connect to the tunnel if the global tunnel does not exists
          * - Subscribe to th e broadcast channel if not done
          *
-         * @private
          * @return {*}  {Promise<any>}
          * @memberof BroadcastManager
          */
-        private setup;
+        setup(): Promise<any>;
         /**
          * Remove a group handle from the manager
          *
@@ -495,18 +513,31 @@ declare namespace Antunnel {
          */
         query(gid: number): void;
         /**
-         * Register a group to the manager
+         * Query all groups of the current user
          *
-         * @param {BroadcastGroup} group
          * @memberof BroadcastManager
          */
-        subscribe(group: BroadcastGroup): void;
+        refresh(): void;
+        /**
+         * Register a group to the manager
+         *
+         * @param {string} group
+         * @memberof BroadcastManager
+         */
+        subscribe(group: string): void;
         /**
          *CLeanup the manager
          *
          * @memberof BroadcastManager
          */
         teardown(): void;
+        /**
+         * return the current subscriber ID
+         *
+         * @memberof BroadcastManager
+         * @return {number}
+         */
+        id(): number;
         /**
          * Send a message to a specific group
          *

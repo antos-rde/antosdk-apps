@@ -6,7 +6,7 @@
         "author": "Dany LE",
         "email": "mrsang@iohub.dev"
     },
-    "version":"0.1.0-a",
+    "version":"0.1.1-a",
     "category":"Library",
     "iconclass":"fa fa-cog",
     "mimes":["none"],
