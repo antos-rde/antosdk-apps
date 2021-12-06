@@ -1465,7 +1465,18 @@ namespace OS {
              * @memberof Logger
              */
             print(s: string | FormattedString): void {
-                this.log("info", s, false);
+                if(s.match(/warn/i))
+                {
+                    this.log("warn", s, false);
+                }
+                else if(s.match(/error/i))
+                {
+                    this.log("error", s, false);
+                }
+                else
+                {
+                    this.log("info", s, false);
+                }
             }
 
             /**
