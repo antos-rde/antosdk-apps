@@ -11,9 +11,9 @@
         "email": ""
     },
     "dependencies": [
-        "Antunnel@0.2.0-b"
+        "Antunnel@0.2.1-b"
     ],
-    "version":"0.1.10-a",
+    "version":"0.1.11-a",
     "category":"System",
     "iconclass":"fa fa-tachometer",
     "mimes":["none"],

@@ -355,8 +355,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/README.md",
 		"category": "System",
 		"author": "",
-		"version": "0.1.2-b",
-		"dependencies": ["Antunnel@0.2.0-b"],
+		"version": "0.1.3-b",
+		"dependencies": ["Antunnel@0.2.1-b"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/build/release/ServerLogClient.zip"
 	},
 	{
@@ -395,8 +395,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/README.md",
 		"category": "System",
 		"author": "",
-		"version": "0.1.10-a",
-		"dependencies": ["Antunnel@0.2.0-b"],"version":"0.1.10-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
+		"version": "0.1.11-a",
+		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.11-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/build/release/SystemControl.zip"
 	},
 	{
@@ -435,8 +435,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.1.16-a",
-		"dependencies": ["Antunnel@0.2.0-b","xTerm@4.8.1-r"],
+		"version": "0.1.17-a",
+		"dependencies": ["Antunnel@0.2.1-b","xTerm@4.8.1-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
 	},
 	{
