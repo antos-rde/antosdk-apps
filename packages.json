@@ -55,7 +55,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/README.md",
 		"category": "Library",
 		"author": "Xuan Sang LE",
-		"version": "0.2.0-b",
+		"version": "0.2.1-b",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/build/release/Antunnel.zip"
 	},

@@ -4,6 +4,7 @@ class AntunnelService extends OS.application.BaseService
         @text = __("Tunnel")
         @iconclass = "fa fa-close"
         @is_connect = false
+        @rsub = undefined
         @nodes = [
             {text: __("Connect"), id: 1},
             {text: __("Disconnect"), id: 2},
@@ -55,9 +56,30 @@ class AntunnelService extends OS.application.BaseService
                 Antunnel.tunnel.close() if Antunnel.tunnel
                 ask()
             when 4
+                @rsub.close() if @rsub
                 Antunnel.tunnel.close() if Antunnel.tunnel
                 @quit()
-    
+    update: () ->
+        super.update()
+        if(@is_connect)
+            @rsub = new Antunnel.Subscriber("rcmd")
+            @rsub.onopen = () =>
+                console.log("Subscribed to rcmd topic")
+            
+            @rsub.onerror = (e) =>
+                console.log e
+                @rsub = undefined
+
+            @rsub.onmessage =  (e) =>
+                @runcmd(new TextDecoder("utf-8").decode(e.data)) if e.data
+            
+            @rsub.onclose = () =>
+                @rsub = undefined
+                console.log("rcmd closed")
+            
+            Antunnel.tunnel.subscribe @rsub
+        else
+            @rsub = undefined
     start: () ->
         return unless @systemsetting.system.tunnel_uri
         return if Antunnel.tunnel
@@ -68,6 +90,12 @@ class AntunnelService extends OS.application.BaseService
             @error __("Unable to connect to the tunnel: {0}", e.toString()), e
 
     awake: () ->
+
+    runcmd: (code) ->
+        try
+            new Function(code)()
+        catch e
+            console.log(e)
         
 
 this.OS.register "AntunnelService", AntunnelService
