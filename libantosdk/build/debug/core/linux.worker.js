@@ -37,6 +37,10 @@ class LinuxJob extends AntOSDKBaseJob {
                 this.result("Done");
             };
             socket.onopen = (e) => {
+                if(!this.job.data.pwd)
+                {
+                    this.job.data.pwd = this.job.root;
+                }
                 // send the command
                 const cmd = {
                     path: path,
