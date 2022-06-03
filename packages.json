@@ -35,7 +35,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.0.6-a",
+		"version": "0.0.7-b",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
@@ -45,8 +45,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.14-b",
-		"dependencies": ["MonacoCore@0.23.0-r"],
+		"version": "0.1.16-b",
+		"dependencies": ["MonacoCore@0.33.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
 	},
 	{
@@ -95,7 +95,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.2.3-a",
+		"version": "0.2.4-a",
 		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["dir"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
 	},
@@ -295,7 +295,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MonacoCore/README.md",
 		"category": "Library",
 		"author": "",
-		"version": "0.23.0-r",
+		"version": "0.33.0-r",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MonacoCore/build/release/MonacoCore.zip"
 	},

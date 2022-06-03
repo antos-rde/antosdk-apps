@@ -63,7 +63,8 @@ class ActivityMonitor extends this.OS.application.BaseApplication
             $.each d , (j, a) =>
                 if @gdata.processes[a.pid] #update it
                     @gdata.processes[a.pid][3].text = now - a.birth
-                    @gdata.processes[a.pid][3].domel.update()
+                    # @gdata.processes[a.pid][3].domel.update()
+                    @grid.update()
                 else #add it
                     @gdata.processes[a.pid] = [
                         { text: a.pid },

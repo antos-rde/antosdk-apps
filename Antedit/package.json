@@ -7,7 +7,7 @@
         "author": "Xuan Sang LE",
         "email": "mrsang@iohub.dev"
     },
-    "version": "0.1.14-b",
+    "version": "0.1.16-b",
     "category": "Development",
     "iconclass": "bi bi-journal-code",
     "mimes": [
@@ -18,7 +18,7 @@
         "dir"
     ],
     "dependencies": [
-        "MonacoCore@0.23.0-r"
+        "MonacoCore@0.33.0-r"
     ],
     "locale": {
         "en_GB": {

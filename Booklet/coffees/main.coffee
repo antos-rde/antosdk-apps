@@ -95,7 +95,7 @@ class Booklet extends this.OS.application.BaseApplication
     
     dndhandle: (e) ->
         return unless e and e.data
-        from = e.data.from.data
+        from = e.data.from[0].data
         to = e.data.to.data
         return unless from and to
         return if from.type is "Book" or from.type is "Chapter"

@@ -1,4 +1,5 @@
 {
+    "pkgname":"Booklet",
     "app":"Booklet",
     "name":"Booklet",
     "description":"",
@@ -6,7 +7,7 @@
         "author": "Xuan Sang LE",
         "email": "mrsang@lxsang.me"
     },
-    "version":"0.2.3-a",
+    "version":"0.2.4-a",
     "category":"Office",
     "iconclass":"bi bi-journals",
     "dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],

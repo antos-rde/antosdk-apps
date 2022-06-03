@@ -239,7 +239,7 @@ namespace OS {
              */
             getEditorStatus(): GenericObject<any> {
                 const pos = this.editor.getPosition();
-                const mode = MonacoEditorModel.modes[this.editor.getModel().getModeId()];
+                const mode = MonacoEditorModel.modes[this.editor.getModel().getLanguageId()];
                 return {
                     row: pos.lineNumber,
                     column: pos.column,
