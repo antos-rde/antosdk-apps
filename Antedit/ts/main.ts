@@ -1327,7 +1327,7 @@ namespace OS {
                                 binding = binding | monaco.KeyMod.WinCtrl;
                                 break;
                             default:
-                                const k = `KEY_${key}`;
+                                const k = `Key${key}`;
                                 if(monaco.KeyCode[k])
                                 {
                                     binding = binding | monaco.KeyCode[k];

@@ -6,6 +6,7 @@ The editor functionality can be extended by its extension mechanism.
 Extension can be developed/released/isntalled by the editor itself.
 
 ### Change logs
+- 0.1.17-b: Fix extension keybinding bug with the new monaco editor
 - 0.1.16-b: use the new version of monaco editor
 - 0.1.14-b: improve output log display
 - 0.1.13-b: Allow file upload in file view, add menu context in tabbar

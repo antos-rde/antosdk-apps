@@ -45,7 +45,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.16-b",
+		"version": "0.1.17-b",
 		"dependencies": ["MonacoCore@0.33.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
 	},
