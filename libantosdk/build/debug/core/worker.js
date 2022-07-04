@@ -446,13 +446,12 @@ class VFSJob  extends AntOSDKBaseJob {
                 case 'rm':
                     this.delete(this.job.data)
                         .then(d => this.result(d))
-                        .catch((e) => {
-                            if(this.job.ignore_error)
-                            {
-                                return this.result(false);
-                            }
-                            this.error(e);
-                        });
+                        .catch((e) =>this.error(e));
+                    break;
+                case 'rm-no-error':
+                    this.delete(this.job.data)
+                        .then(d => this.result(d))
+                        .catch((e) =>this.result(false));
                     break;
                 case 'mkdir':
                     this.mkdir(this.job.data)
@@ -479,6 +478,7 @@ API.jobhandle["sdk-import"] = LoadScritpJob;
 API.jobhandle["sdk-setup"] = SDKSetup;
 API.jobhandle["vfs-cat"] = VFSJob;
 API.jobhandle["vfs-rm"] = VFSJob;
+API.jobhandle["vfs-rm-no-error"] = VFSJob;
 API.jobhandle["vfs-mkdir"] = VFSJob;
 API.jobhandle["vfs-cp"] = VFSJob;
 
