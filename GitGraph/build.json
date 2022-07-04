@@ -4,9 +4,8 @@
         "clean": {
             "jobs": [
                 {
-                    "name": "vfs-rm",
-                    "data": ["build/debug","build/release"],
-                    "ignore_error": true
+                    "name": "vfs-rm_no_error",
+                    "data": ["build/debug","build/release"]
                 }
             ]
         },
