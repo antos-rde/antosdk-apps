@@ -27,13 +27,13 @@ namespace OS {
                 });
                 graph.on_open_diff = (files) => {
                     console.log(files);
-                    (OS.PM.processes.Antedit[0] as any).openDiff(files)
-                    /*
+                    //(OS.PM.processes.Antedit[0] as any).openDiff(files)
+                    
                     this._gui.launch("Antedit", [])
                         .then((p) =>{
-                            p.observable.one("rendered",() =>(p as any).openDiff(files));
+                            p.observable.one("launched",() =>(p as any).openDiff(files));
                         });
-                    */
+                    
                 }
                 graph.base_dir = "home://workspace/antos/".asFileHandle();
             }

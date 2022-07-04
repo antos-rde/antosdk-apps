@@ -457,6 +457,7 @@ namespace OS {
                     {
                         items.push( { text: "__(Select for compare)", id: "diff-org" });
                         items.push( { text: "__(Compare with selected)", id: "diff-mod" });
+                        items.push( { text: "__(Open to right)", id: "open-right" });
                     }
                     m.items = items;
                     m.onmenuselect = (e) => {
@@ -986,6 +987,14 @@ namespace OS {
                         if(!this.diff_buffer[0]) return;
                         this.diff_buffer[1] = file.path.asFileHandle() as EditorFileHandle;
                         this.openDiff(this.diff_buffer);
+                        break;
+                    case "open-right":
+                        if(!file || file.type === "dir") return;
+                        if(this.split_mode == false)
+                        {
+                            this.toggleSplitMode();
+                        }
+                        this.eum.editors[1].openFile(file.path.asFileHandle() as EditorFileHandle);
                         break;
                     default:
                 }

@@ -45,7 +45,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.2.0-b",
+		"version": "0.2.1-b",
 		"dependencies": ["MonacoCore@0.33.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
 	},
@@ -68,6 +68,16 @@
 		"version": "0.1.2-a",
 		"dependencies": ["Antunnel@0.2.0-b"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
+	},
+	{
+		"pkgname": "AntunnelTestClient",
+		"name": "AntunnelTestClient",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/README.md",
+		"category": "Development",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": ["Antunnel@0.2.1-b"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/build/release/AntunnelTestClient.zip"
 	},
 	{
 		"pkgname": "Archive",

@@ -378,7 +378,7 @@ namespace OS {
             }
             
             getEditor(): any {
-                return this.editor;
+                return this._code_editor;
             }
         }
     }
