@@ -158,6 +158,7 @@ namespace OS {
                     return  this.error(API.throwe("Target element is undefined"));
                 }
                 $(this.options.target)
+                    .addClass("git_grapth_container")
                     .css("overflow-y", "auto")
                     .css("overflow-x", "hidden")
                     .css("display", "block")

@@ -1,4 +1,4 @@
-afx-app-window[data-id="GitGraph"] div[data-id="git-graph"]
+div.git_grapth_container
 {
     overflow-y: auto;
     background-color: bisque;
