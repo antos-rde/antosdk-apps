@@ -1,0 +1,16 @@
+{
+    "pkgname": "GitGraph",
+    "app":"GitGraph",
+    "name":"GIT Visualization",
+    "description":"Git Grapth",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-adn",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}

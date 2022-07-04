@@ -1,0 +1,99 @@
+{
+    "name": "GitGraph",
+    "targets":{
+        "clean": {
+            "jobs": [
+                {
+                    "name": "vfs-rm",
+                    "data": ["build/debug","build/release"]
+                }
+            ]
+        },
+        "build": {
+            "require": ["ts"],
+            "jobs":[
+                {
+                    "name": "vfs-mkdir",
+                    "data": ["build","build/debug","build/release"]
+                },
+                {
+                    "name": "ts-import",
+                    "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": ["main.ts"],
+                        "dest": "build/debug/main.js"
+                    }
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": ["LibGitGraph.ts"],
+                        "dest": "build/debug/libgitgraph.js"
+                        
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": ["terser"],
+            "jobs": [
+                {
+                    "name":"terser-uglify",
+                    "data": ["build/debug/main.js"]
+                },
+                {
+                    "name":"terser-uglify",
+                    "data": ["build/debug/libgitgraph.js"]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "scheme.html",
+                            "package.json",
+                            "README.md",
+                            "api",
+                            "main.css"
+                        ],
+                        "dest":"build/debug"
+                    }
+                }
+            ]
+        },
+        "debug" : {
+            "depend": ["clean","build", "copy"],
+            "jobs": [
+                {
+                    "name": "vfs-cat",
+                    "data": {
+                        "src": [
+                            "build/debug/main.js",
+                            "build/debug/libgitgraph.js"
+                        ],
+                        "dest":"build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "depend": ["clean","build","uglify", "copy"],
+            "require": ["zip"],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src":"build/debug",
+                        "dest":"build/release/GitGraph.zip"
+                    }
+                }
+            ]
+        }
+    }
+}
