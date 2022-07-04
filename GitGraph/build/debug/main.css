@@ -1,7 +1,7 @@
 div.git_grapth_container
 {
     overflow-y: auto;
-    background-color: bisque;
+    background-color: #1e1e1e;
 }
 
 afx-app-window[data-id="GitGraph"] afx-label[data-id="txt-repo"] i.label-text
