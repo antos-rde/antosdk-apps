@@ -85,14 +85,22 @@ namespace OS {
                 {
                     this.options[k] = option[k];
                 }
-                this.current_y_offset = this.options.y_offset;
-                this.init_graph();
+                if(this.options.target)
+                {
+                    $(this.options.target)
+                        .addClass("git_grapth_container")
+                        .css("overflow-y", "auto")
+                        .css("overflow-x", "hidden")
+                        .css("display", "block")
+                        .css("position", "relative");
+                }
             }
             set base_dir(v: VFS.BaseFileHandle)
             {
                 this._base_dir = v;
                 if(v)
                 {
+                    this.init_graph();
                     this.render_next();
                 }
 
@@ -157,12 +165,17 @@ namespace OS {
                 {
                     return  this.error(API.throwe("Target element is undefined"));
                 }
-                $(this.options.target)
-                    .addClass("git_grapth_container")
-                    .css("overflow-y", "auto")
-                    .css("overflow-x", "hidden")
-                    .css("display", "block")
-                    .css("position", "relative");
+                this.current_y_offset = this.options.y_offset;
+                this.lines_data = [];
+                this.commits = {};
+                this.oldest_commit_date = undefined;
+                this.svg_element = undefined;
+                this.commits_list_element = undefined;
+                this.load_more_el = undefined;
+                this.commit_detail_el = undefined;
+                this.current_head = undefined;
+
+                $(this.options.target).empty();
                 this.svg_element = this.make_svg_el("svg",{
                     width:  this.options.x_offset,
                     height: this.options.y_offset
@@ -173,7 +186,6 @@ namespace OS {
                     .css("left", "0")
                     //s.css("z-index", 10)
                     .css("top", "0");
-                $(this.options.target).empty();
                 this.options.target.appendChild(this.svg_element);
                 const div = $("<div />")
                         .css("position", "absolute")

@@ -14,5 +14,6 @@ graph.base_dir = "home://workspace/repo-git";
 ```
 
 ## Change logs:
-- v0.1.2-b: add class to container element
+- v0.1.2-b: fix init bug
+- v0.1.1-b: add class to container element
 - v0.1.0-b: Initial version

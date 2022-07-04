@@ -165,7 +165,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/README.md",
 		"category": "Development",
 		"author": "Dany LE",
-		"version": "0.1.1-a",
+		"version": "0.1.2-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/build/release/GitGraph.zip"
 	},
