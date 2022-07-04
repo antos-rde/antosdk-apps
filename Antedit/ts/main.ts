@@ -234,6 +234,15 @@ namespace OS {
              * @memberof Antedit
              */
             private split_mode: boolean;
+            
+            /**
+             * Buffer for open diff
+             *
+             * @private
+             * @type {EditorFileHandle[]}
+             * @memberof Antedit
+             */
+            private diff_buffer: EditorFileHandle[];
 
             /**
              * Reference to the editor logger
@@ -270,6 +279,7 @@ namespace OS {
             constructor(args: AppArgumentsType[]) {
                 super("Antedit", args);
                 this.currdir = undefined;
+                this.diff_buffer = [undefined, undefined];
             }
 
             /**
@@ -374,7 +384,6 @@ namespace OS {
                         break;
                     case "close-all":
                         model.closeAll();
-                        model.openFile("Untitled".asFileHandle() as EditorFileHandle)
                         break;
                     case "mv-side":
                         if(!tab)
@@ -435,13 +444,21 @@ namespace OS {
                 this.on("focus", () => this.eum.active.focus());
 
                 this.fileview.contextmenuHandle = (e, m) => {
-                    m.items = [
+                    let file: API.VFS.BaseFileHandle | API.FileInfoType = this
+                        .fileview.selectedFile;
+                    const items = [
                         { text: "__(New file)", id: "new" },
                         { text: "__(New folder)", id: "newdir" },
                         { text: "__(Rename)", id: "rename" },
                         { text: "__(Delete)", id: "delete" },
                         { text: "__(Upload)", id: "upload" },
                     ];
+                    if(file && file.type === "file")
+                    {
+                        items.push( { text: "__(Select for compare)", id: "diff-org" });
+                        items.push( { text: "__(Compare with selected)", id: "diff-mod" });
+                    }
+                    m.items = items;
                     m.onmenuselect = (e) => {
                         return this.ctxFileMenuHandle(e);
                     };
@@ -512,6 +529,7 @@ namespace OS {
                 this.eum.addAction(extension, action, async (e) =>
                 {
                     try{
+                        
                         const data = await this.openDialog("SelectionDialog", {
                             "title": __("Select language"),
                             data: this.eum.active.getModes()
@@ -519,7 +537,7 @@ namespace OS {
                         this.eum.active.setMode(data);
                     }catch(e)
                     {
-
+                        console.log(e);
                     }
                 });
                 $(this.find("txt_ext_search")).keyup((e) => this.extension_search(e));
@@ -685,6 +703,12 @@ namespace OS {
                 if (toggle)
                     this.showBottomBar(true);
                 this.bottombar.selectedIndex = 0;
+            }
+            
+            openDiff(files: EditorFileHandle[])
+            {
+                const diff_file = new API.VFS.DiffEditorFileHandle(files);
+                this.eum.active.openFile(diff_file as EditorFileHandle);
             }
 
             /**
@@ -952,6 +976,16 @@ namespace OS {
                             return this.fileview.update(dir.path);
                         })
                         .catch((e) => this.error(__("Unable to upload file: {e}", e.toString()), __e(e)));
+                        break;
+                    case "diff-org":
+                        if(!file) return;
+                        this.diff_buffer[0] = file.path.asFileHandle() as EditorFileHandle;
+                        break;
+                    case "diff-mod":
+                        if(!file) return;
+                        if(!this.diff_buffer[0]) return;
+                        this.diff_buffer[1] = file.path.asFileHandle() as EditorFileHandle;
+                        this.openDiff(this.diff_buffer);
                         break;
                     default:
                 }

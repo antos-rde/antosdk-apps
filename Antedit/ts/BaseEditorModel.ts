@@ -1,12 +1,90 @@
 namespace OS {
-    //declare var $:any;
+    
+    export namespace API
+    {
+        export namespace VFS
+        {
+            export class DiffEditorFileHandle extends OS.API.VFS.BaseFileHandle
+            {
+                text: string;
+                textModel:any;
+                selected: boolean;
+                
+                constructor(files: OS.API.VFS.BaseFileHandle[]) {
+                    super("");
+                    this.path =  `${files[0].path} -> ${files[1].path}`;
+                    this.cache = files;
+                    this.basename = `${files[0].basename} -> ${files[1].basename}`;
+                    this.info = {
+                        type: "file",
+                        mime: undefined,
+                        size: 0,
+                        name: this.basename,
+                        path: this.path
+                    };
+                    this.ready = true;
+                }
+                
+                meta(): Promise<any> {
+                    return new Promise(async (resolve, reject) =>
+                    {
+                        try
+                        {
+                            await Promise.all([this.cache[0].meta(), this.cache[1].meta]);
+                            resolve({
+                                result: this.info,
+                                error: false,
+                            });
+                        }
+                        catch(e)
+                        {
+                            reject(e);
+                        }
+                        
+                    });
+                }
+                
+                protected _rd(_t: string): Promise<any> {
+                    return new Promise(async (resolve, reject) => {
+                        try
+                        {
+                            this.cache[0].cache = await this.cache[0].read();
+                            this.cache[1].cache = await this.cache[1].read();
+                            resolve(this.cache);
+                        }
+                        catch(e)
+                        {
+                            reject(e);
+                        }
+                    });
+                }
+                
+                protected _wr(t: string, d: any): Promise<any> {
+                    this.cache = d;
+                    return new Promise((resolve, reject) =>
+                    {
+                        resolve({
+                            result: true,
+                            error: false,
+                        })
+                    });
+                }
+                
+                setPath(s: string)
+                {
+                    // do nothing
+                }
+            }
+        }
+    }
+    
     export namespace application {
         
         /**
          * Extends the [[RemoteFileHandle]] interface with some useful
          * properties used by [[BaseEditorModel]]
          */
-        export type EditorFileHandle = API.VFS.RemoteFileHandle & {
+        export type EditorFileHandle = OS.API.VFS.BaseFileHandle & {
             /**
              * The text will be displayed on the tab bar when opened
              *
@@ -81,7 +159,7 @@ namespace OS {
              * @type {boolean}
              * @memberof BaseEditorModel
              */
-            private editormux: boolean;
+            //private editormux: boolean;
 
 
             /**
@@ -98,7 +176,7 @@ namespace OS {
                 this.tabbar = tabbar;
                 this.editorSetup(editorarea);
                 this.app = app;
-                this.editormux = false;
+                // this.editormux = false;
                 this.onstatuschange = undefined;
 
                 this.on("focus", () => {
@@ -106,11 +184,14 @@ namespace OS {
                         this.onstatuschange(this.getEditorStatus());
                 });
                 this.on("input", () => {
-                    if (this.editormux) {
+                    // console.log(this.editormux, this.currfile.dirty);
+                    /*if (this.editormux) {
                         this.editormux = false;
+                        console.log("set editor mux to false");
                         return false;
-                    }
+                    }*/
                     if (!this.currfile.dirty) {
+                        console.log("dirty", this.currfile.path);
                         this.currfile.dirty = true;
                         this.currfile.text += "*";
                         return this.tabbar.update(undefined);
@@ -232,10 +313,8 @@ namespace OS {
                     this.currfile = file;
                 }
 
-                this.editormux = true;
+                // this.editormux = true;
                 this.setTextModel(file.textModel);
-                if (this.onstatuschange)
-                    this.onstatuschange(this.getEditorStatus());
                 this.focus();
             }
 
@@ -274,7 +353,6 @@ namespace OS {
                     this.newTab(file);
                     return;
                 }
-
                 file.read()
                     .then((d) => {
                         file.cache = d || "";
@@ -295,16 +373,16 @@ namespace OS {
              * @param {EditorFileHandle} file
              * @memberof BaseEditorModel
              */
-            private write(file: EditorFileHandle): void {
+            private write(): void {
                 this.currfile.cache = this.getValue();
-                file.write("text/plain")
+                this.currfile.write("text/plain")
                     .then((d) => {
-                        file.dirty = false;
-                        file.text = file.basename;
+                        this.currfile.dirty = false;
+                        this.currfile.text = this.currfile.basename;
                         this.tabbar.update(undefined);
                     })
                     .catch((e) =>
-                        this.app.error(__("Unable to save file: {0}", file.path), e)
+                        this.app.error(__("Unable to save file: {0}", this.currfile.path), e)
                     );
             }
 
@@ -318,7 +396,7 @@ namespace OS {
             save(): void {
                 this.currfile.cache = this.getValue();
                 if (this.currfile.basename) {
-                    return this.write(this.currfile);
+                    return this.write();
                 }
                 return this.saveAs();
             }
@@ -339,7 +417,7 @@ namespace OS {
                         d = d.parent();
                     }
                     this.currfile.setPath(`${d.path}/${f.name}`);
-                    this.write(this.currfile);
+                    this.write();
                 });
             }
 
@@ -376,6 +454,7 @@ namespace OS {
              */
             closeAll(): void {
                 this.tabbar.items = [];
+                this.openFile("Untitled".asFileHandle() as EditorFileHandle);
                 this.resetEditor();
             }
 

@@ -30,8 +30,6 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             protected resetEditor(): void {
-                this.setValue("");
-                // TODO create new textmodel
             }
 
 
@@ -76,20 +74,32 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             protected newTextModelFrom(file: EditorFileHandle): any {
-                if(file.path.toString() === "Untitled") {
+                if(Array.isArray(file.cache))
+                {
                     return {
-                        model: monaco.editor.createModel(file.cache, "textplain")
+                        model: {
+                            original: this.newTextModelFrom(file.cache[0]).model,
+                            modified: this.newTextModelFrom(file.cache[1]).model
+                        }
                     }
                 }
-                const uri = monaco.Uri.parse(file.protocol + "://antedit/file/" + file.genealogy.join("/"));
-                const model = monaco.editor.getModel(uri);
-                if(model)
+                else
                 {
-                    model.setValue(file.cache);
-                    return { model: model };
-                }
-                return {
-                    model: monaco.editor.createModel(file.cache, undefined, uri)
+                    if(file.path.toString() === "Untitled") {
+                        return {
+                            model: monaco.editor.createModel(file.cache, "textplain")
+                        }
+                    }
+                    const uri = monaco.Uri.parse(file.protocol + "://antedit/file/" + file.genealogy.join("/"));
+                    const model = monaco.editor.getModel(uri);
+                    if(model)
+                    {
+                        model.setValue(file.cache);
+                        return { model: model };
+                    }
+                    return {
+                        model: monaco.editor.createModel(file.cache, undefined, uri)
+                    }
                 }
             }
 
@@ -103,7 +113,11 @@ namespace OS {
                 //const list = [];
                 //return list;
                 return monaco.languages.getLanguages().map(e=>{
-                    (e as GenericObject<any>).text = e.aliases[0];
+                    const item = (e as GenericObject<any>);
+                    if(e.aliases)
+                        item.text = e.aliases[0];
+                    else
+                        item.text = e.id;
                     return e;
                 });
             }
@@ -134,12 +148,24 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             setMode(m: GenericObject<any>): void {
-                monaco.editor.setModelLanguage(this.editor.getModel(), m.id);
+                if(this.editor == this._code_editor)
+                {
+                    monaco.editor.setModelLanguage(this.editor.getModel(), m.id);
+                }
+                else
+                {
+                    for(const model of this.editor.getModel())
+                    {
+                        monaco.editor.setModelLanguage(model, m.id);
+                    }
+                }
                 if(this.onstatuschange)
                     this.onstatuschange(this.getEditorStatus());
             }
 
-
+            
+            private code_container: JQuery<HTMLElement>;
+            private diff_container: JQuery<HTMLElement>;
 
             /**
              * Reference to the editor instance
@@ -148,7 +174,30 @@ namespace OS {
              * @type {GenericObject<any>}
              * @memberof MonacoEditorModel
              */
-            private editor: GenericObject<any>;
+            private _code_editor: GenericObject<any>;
+            /**
+             * Reference to the diff editor instance
+             *
+             * @private
+             * @type {GenericObject<any>}
+             * @memberof MonacoEditorModel
+             */
+            private _diff_editor: GenericObject<any>;
+            /**
+             * Getter get current editor instance based on current file
+             *
+             * @private
+             * @type {GenericObject<any>}
+             * @memberof MonacoEditorModel
+             */
+            private get editor(): GenericObject<any>
+            {
+                if(Array.isArray(this.currfile.cache))
+                {
+                    return this._diff_editor;
+                }
+                return this._code_editor;
+            }
 
 
             /**
@@ -159,10 +208,24 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             protected editorSetup(el: HTMLElement): void {
-                this.editor = monaco.editor.create(el, {
+                // create two editor instancs for code mode and diff mode
+                this.code_container = $("<div />")
+                    .css("width", "100%")
+                    .css("height", "100%");
+                this.diff_container = $("<div />")
+                    .css("width", "100%")
+                    .css("height", "100%")
+                    .css("display", "none");
+                $(el).append(this.code_container);
+                $(el).append(this.diff_container);
+                this._code_editor = monaco.editor.create(this.code_container[0], {
                     value: "",
                     language: 'textplain'
                 });
+                this._diff_editor = monaco.editor.createDiffEditor(this.diff_container[0],{
+                    readOnly: true
+                });
+                
                 if(!MonacoEditorModel.modes)
                 {
                     MonacoEditorModel.modes = {};
@@ -183,13 +246,17 @@ namespace OS {
             on(evt_str: string, callback: () => void): void {
                 switch (evt_str) {
                     case "input":
-                        this.editor.onDidChangeModelContent(callback);
+                        this._code_editor.onDidChangeModelContent(callback);
                         break;
                     case "focus":
-                        this.editor.onDidFocusEditorText(callback);
+                        this._code_editor.onDidFocusEditorText(callback);
+                        this._diff_editor.getOriginalEditor().onDidFocusEditorText(callback);
+                        this._diff_editor.getModifiedEditor().onDidFocusEditorText(callback);
                         break;
                     case "changeCursor":
-                        this.editor.onDidChangeCursorPosition(callback);
+                        this._code_editor.onDidChangeCursorPosition(callback);
+                        this._diff_editor.getOriginalEditor().onDidChangeCursorPosition(callback);
+                        this._diff_editor.getModifiedEditor().onDidChangeCursorPosition(callback);
                         break;
                     default:
                         break;
@@ -214,8 +281,21 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             focus(): void {
+                if(Array.isArray(this.currfile.cache))
+                {
+                    this.code_container.hide();
+                    this.diff_container.show();
+                }
+                else
+                {
+                    this.code_container.show();
+                    this.diff_container.hide();
+                }
                 if(this.editor)
+                {
+                    this.editor.layout();
                     this.editor.focus();
+                }
             }
 
 
@@ -238,14 +318,34 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             getEditorStatus(): GenericObject<any> {
-                const pos = this.editor.getPosition();
-                const mode = MonacoEditorModel.modes[this.editor.getModel().getLanguageId()];
+                
+                let ed = undefined;
+                if(this.editor == this._code_editor)
+                {
+                    ed = this.editor;
+                }
+                else
+                {
+                    ed = this.editor.getOriginalEditor();
+                    if(this.editor.getModifiedEditor().hasTextFocus())
+                    {
+                        ed = this.editor.getModifiedEditor();
+                    }
+                }
+                
+                const pos = ed.getPosition();
+                let mode = undefined;
+                const model = ed.getModel();
+                if(model)
+                {
+                     mode = MonacoEditorModel.modes[model.getLanguageId()];
+                }
                 return {
                     row: pos.lineNumber,
                     column: pos.column,
-                    line: this.editor.getModel().getLineCount(),
+                    line: model?model.getLineCount(): 0,
                     langmode: { 
-                        text: mode.aliases[0],
+                        text: mode?mode.aliases[0]: "",
                         mode: mode
                     },
                     file: this.currfile.path
@@ -260,7 +360,9 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             getValue(): string {
-                return this.editor.getValue();
+                if(this.editor == this._code_editor)
+                    return this.editor.getValue();
+                return this.currfile.cache;
             }
 
 
@@ -271,7 +373,8 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             setValue(value: string): void {
-                this.editor.setValue(value);
+                if(this.editor == this._code_editor)
+                    this.editor.setValue(value);
             }
             
             getEditor(): any {
