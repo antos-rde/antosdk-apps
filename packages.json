@@ -160,6 +160,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Dockman/build/release/Dockman.zip"
 	},
 	{
+		"pkgname": "GitGraph",
+		"name": "GIT Visualization",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/README.md",
+		"category": "Development",
+		"author": "Dany LE",
+		"version": "0.0.1-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/build/release/GitGraph.zip"
+	},
+	{
 		"pkgname": "GPClient",
 		"name": "Generic Purpose client",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/README.md",

@@ -5,7 +5,8 @@
             "jobs": [
                 {
                     "name": "vfs-rm",
-                    "data": ["build/debug","build/release"]
+                    "data": ["build/debug","build/release"],
+                    "ignore_error": true
                 }
             ]
         },
