@@ -1,0 +1,16 @@
+{
+    "pkgname": "GitGraph",
+    "app":"GitGraph",
+    "name":"GIT Visualization",
+    "description":"Git Grapth",
+    "info":{
+        "author": "Dany LE",
+        "email": "contact@iohub.dev"
+    },
+    "version":"0.0.1-a",
+    "category":"Development",
+    "iconclass":"bi bi-git",
+    "mimes":["dir"],
+    "dependencies":[],
+    "locale": {}
+}
