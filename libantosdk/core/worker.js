@@ -446,7 +446,13 @@ class VFSJob  extends AntOSDKBaseJob {
                 case 'rm':
                     this.delete(this.job.data)
                         .then(d => this.result(d))
-                        .catch(e => this.error(e));
+                        .catch((e) => {
+                            if(this.job.ignore_error)
+                            {
+                                return this.result(false);
+                            }
+                            this.error(e);
+                        });
                     break;
                 case 'mkdir':
                     this.mkdir(this.job.data)

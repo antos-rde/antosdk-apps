@@ -4,6 +4,13 @@ afx-app-window[data-id="GitGraph"] div[data-id="git-graph"]
     background-color: bisque;
 }
 
+afx-app-window[data-id="GitGraph"] afx-label[data-id="txt-repo"] i.label-text
+{
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
 p.git_graph_commit_message:hover
 {
     background-color:rgba(39, 39, 39,0.5);

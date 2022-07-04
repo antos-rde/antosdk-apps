@@ -91,7 +91,10 @@ namespace OS {
             set base_dir(v: VFS.BaseFileHandle)
             {
                 this._base_dir = v;
-                this.render_next();
+                if(v)
+                {
+                    this.render_next();
+                }
 
             }
             private gen_color(x:number): string
@@ -206,6 +209,10 @@ namespace OS {
             }
             private render_next()
             {
+                if(this._base_dir == undefined)
+                {
+                    return;
+                }
                 this.load(this.oldest_commit_date)
                     .then((data: CommitData[]) =>
                     {
