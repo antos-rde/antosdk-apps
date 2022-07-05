@@ -107,7 +107,7 @@ namespace OS {
             }
             private gen_color(x:number): string
             {
-                let n = x + 11;
+                let n = x + 10;
                 const rgb = [0, 0, 0];
                 for (let i = 0; i < 24; i++) {
                     rgb[i%3] <<= 1;

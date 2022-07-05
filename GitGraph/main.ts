@@ -18,14 +18,22 @@ namespace OS {
          * @extends {BaseApplication}
          */
         export class GitGraph extends BaseApplication {
+            private graph: API.LibGitGraph;
+            private curr_repo: API.VFS.BaseFileHandle;
             constructor(args: AppArgumentsType[]) {
                 super("GitGraph", args);
+                if(args && args[0])
+                {
+                    this.curr_repo = args[0].path.asFileHandle();
+                    if(args[0].type === "file")
+                        this.curr_repo = this.curr_repo.parent();
+                }
             }
             main(): void {
-                const graph = new API.LibGitGraph({
+                this.graph = new API.LibGitGraph({
                     target: this.find("git-graph")
                 });
-                graph.on_open_diff = (files) => {                    
+                this.graph.on_open_diff = (files) => {                    
                     this._gui.launch("Antedit", [])
                         .then((p) =>{
                             p.observable.one("launched",() =>(p as any).openDiff(files));
@@ -39,11 +47,18 @@ namespace OS {
                         type: "dir",
 
                     }).then((d) => {
-                        (this.find("txt-repo") as GUI.tag.LabelTag).text = d.file.path;
-                        graph.base_dir = d.file;
+                        this.setRepo(d.file);
                     });
                 };
-                
+                this.setRepo(this.curr_repo);
+            }
+
+            private setRepo(d:API.VFS.BaseFileHandle): void
+            {
+                if(!d) return;
+                (this.find("txt-repo") as GUI.tag.LabelTag).text = d.path;
+                this.curr_repo = d;
+                this.graph.base_dir = d;
             }
         }
 
