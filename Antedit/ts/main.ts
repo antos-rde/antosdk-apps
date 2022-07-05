@@ -471,7 +471,18 @@ namespace OS {
                 this.bindKey("ALT-F", () => this.menuAction("opendir"));
                 this.bindKey("CTRL-S", () => this.menuAction("save"));
                 this.bindKey("ALT-W", () => this.menuAction("saveas"));
-
+                
+                const list_container = $(".list-container", this.find("editor-main-container"));
+                list_container.each((i,el) => {
+                    $(el).on("wheel", (evt)=>{
+                        el.scrollLeft += (evt.originalEvent as WheelEvent).deltaY;
+                    });
+                });
+                this.on("tab-opened", (el) => {
+                    const container = $(el).closest(".list-container");
+                    if(container && container[0])
+                        container[0].scrollLeft = container[0].scrollWidth;
+                });
                 this.fileview.ondragndrop = (e) => {
                     if(!e.data.from || !e.data.to)
                     {
