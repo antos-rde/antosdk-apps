@@ -449,14 +449,15 @@ namespace OS {
                                 .on("click",e => {
                                     if(this._on_open_diff)
                                     {
+                                        const parent_comit = commit.hashes.parents.split(" ")[0];
                                         Promise.all([
-                                            this.get_file(arr[1], `${commit.hashes.commit}^`),
+                                            this.get_file(arr[1], `${parent_comit}`),
                                             this.get_file(arr[1], commit.hashes.commit)
                                             ])
                                             .then((values) => {
                                                 // create the file
                                                 const files = values.map((content, index) =>{
-                                                    const file = `mem://${commit.hashes.commit.slice(0,8)}${index==0?"^":""}/${arr[1]}`.asFileHandle();
+                                                    const file = `mem://${(index == 0 ?parent_comit:commit.hashes.commit).slice(0,8)}/${arr[1]}`.asFileHandle();
                                                     file.cache = content;
                                                     file.info.mime = "text/plain";
                                                     return file;
