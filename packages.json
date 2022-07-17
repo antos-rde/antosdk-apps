@@ -45,7 +45,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.2.1-b",
+		"version": "0.2.2-b",
 		"dependencies": ["MonacoCore@0.33.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
 	},
@@ -68,16 +68,6 @@
 		"version": "0.1.2-a",
 		"dependencies": ["Antunnel@0.2.0-b"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
-	},
-	{
-		"pkgname": "AntunnelTestClient",
-		"name": "AntunnelTestClient",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/README.md",
-		"category": "Development",
-		"author": "Dany LE",
-		"version": "0.1.0-a",
-		"dependencies": ["Antunnel@0.2.1-b"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/build/release/AntunnelTestClient.zip"
 	},
 	{
 		"pkgname": "Archive",
@@ -170,6 +160,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Dockman/build/release/Dockman.zip"
 	},
 	{
+		"pkgname": "GitGraph",
+		"name": "GIT Visualization",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/README.md",
+		"category": "Development",
+		"author": "Dany LE",
+		"version": "0.1.4-b",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/build/release/GitGraph.zip"
+	},
+	{
 		"pkgname": "GPClient",
 		"name": "Generic Purpose client",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/README.md",
@@ -215,7 +215,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.13-a",
+		"version": "0.0.14-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/build/release/libantosdk.zip"
 	},

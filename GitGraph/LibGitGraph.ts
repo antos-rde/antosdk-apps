@@ -85,18 +85,29 @@ namespace OS {
                 {
                     this.options[k] = option[k];
                 }
-                this.current_y_offset = this.options.y_offset;
-                this.init_graph();
+                if(this.options.target)
+                {
+                    $(this.options.target)
+                        .addClass("git_grapth_container")
+                        .css("overflow-y", "auto")
+                        .css("overflow-x", "hidden")
+                        .css("display", "block")
+                        .css("position", "relative");
+                }
             }
             set base_dir(v: VFS.BaseFileHandle)
             {
                 this._base_dir = v;
-                this.render_next();
+                if(v)
+                {
+                    this.init_graph();
+                    this.render_next();
+                }
 
             }
             private gen_color(x:number): string
             {
-                let n = x + 11;
+                let n = x + 10;
                 const rgb = [0, 0, 0];
                 for (let i = 0; i < 24; i++) {
                     rgb[i%3] <<= 1;
@@ -154,11 +165,17 @@ namespace OS {
                 {
                     return  this.error(API.throwe("Target element is undefined"));
                 }
-                $(this.options.target)
-                    .css("overflow-y", "auto")
-                    .css("overflow-x", "hidden")
-                    .css("display", "block")
-                    .css("position", "relative");
+                this.current_y_offset = this.options.y_offset;
+                this.lines_data = [];
+                this.commits = {};
+                this.oldest_commit_date = undefined;
+                this.svg_element = undefined;
+                this.commits_list_element = undefined;
+                this.load_more_el = undefined;
+                this.commit_detail_el = undefined;
+                this.current_head = undefined;
+
+                $(this.options.target).empty();
                 this.svg_element = this.make_svg_el("svg",{
                     width:  this.options.x_offset,
                     height: this.options.y_offset
@@ -169,7 +186,6 @@ namespace OS {
                     .css("left", "0")
                     //s.css("z-index", 10)
                     .css("top", "0");
-                $(this.options.target).empty();
                 this.options.target.appendChild(this.svg_element);
                 const div = $("<div />")
                         .css("position", "absolute")
@@ -206,6 +222,10 @@ namespace OS {
             }
             private render_next()
             {
+                if(this._base_dir == undefined)
+                {
+                    return;
+                }
                 this.load(this.oldest_commit_date)
                     .then((data: CommitData[]) =>
                     {
@@ -429,14 +449,15 @@ namespace OS {
                                 .on("click",e => {
                                     if(this._on_open_diff)
                                     {
+                                        const parent_comit = commit.hashes.parents.split(" ")[0];
                                         Promise.all([
-                                            this.get_file(arr[1], `${commit.hashes.commit}^`),
+                                            this.get_file(arr[1], `${parent_comit}`),
                                             this.get_file(arr[1], commit.hashes.commit)
                                             ])
                                             .then((values) => {
                                                 // create the file
                                                 const files = values.map((content, index) =>{
-                                                    const file = `mem://${commit.hashes.commit.slice(0,8)}${index==0?"^":""}/${arr[1]}`.asFileHandle();
+                                                    const file = `mem://${(index == 0 ?parent_comit:commit.hashes.commit).slice(0,8)}/${arr[1]}`.asFileHandle();
                                                     file.cache = content;
                                                     file.info.mime = "text/plain";
                                                     return file;

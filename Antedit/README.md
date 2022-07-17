@@ -6,6 +6,7 @@ The editor functionality can be extended by its extension mechanism.
 Extension can be developed/released/isntalled by the editor itself.
 
 ### Change logs
+- 0.2.2-b: Support horizotal scrolling on horizotal tabbars
 - 0.2.1-b: Add open file to right, editor actions are only attached to code editor
 - 0.2.0-b: Support diff mode in editor + fix new Monaco version compatible bug
 - 0.1.17-b: Fix extension keybinding bug with the new monaco editor

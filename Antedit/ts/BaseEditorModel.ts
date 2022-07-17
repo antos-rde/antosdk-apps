@@ -191,7 +191,6 @@ namespace OS {
                         return false;
                     }*/
                     if (!this.currfile.dirty) {
-                        console.log("dirty", this.currfile.path);
                         this.currfile.dirty = true;
                         this.currfile.text += "*";
                         return this.tabbar.update(undefined);
@@ -268,7 +267,8 @@ namespace OS {
                 this.currfile.selected = false;
                 file.selected = true;
                 //console.log cnt
-                this.tabbar.push(file);
+                const el = this.tabbar.push(file);
+                this.app.trigger("tab-opened", el);
             }
 
             /**
