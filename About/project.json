@@ -1,8 +1,0 @@
-{
-    "name": "About",
-    "css": ["css/main.css"],
-    "javascripts": [],
-    "ts": [],
-    "coffees": ["coffees/main.coffee"],
-    "copies": ["assets/scheme.html", "package.json", "README.md"]
-}

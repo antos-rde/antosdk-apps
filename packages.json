@@ -5,7 +5,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/About/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.0.7-a",
+		"version": "0.1.0-b",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/About/build/release/About.zip"
 	},
@@ -68,6 +68,16 @@
 		"version": "0.1.2-a",
 		"dependencies": ["Antunnel@0.2.0-b"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
+	},
+	{
+		"pkgname": "AntunnelTestClient",
+		"name": "AntunnelTestClient",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/README.md",
+		"category": "Development",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": ["Antunnel@0.2.1-b"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/build/release/AntunnelTestClient.zip"
 	},
 	{
 		"pkgname": "Archive",
