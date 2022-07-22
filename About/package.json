@@ -1,12 +1,13 @@
 {
     "app":"About",
+    "pkgname":"About",
     "name":"About AntOS",
     "description":"AntOS about",
     "info":{
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.0-b",
+    "version":"0.1.1-b",
     "category":"Utility",
     "iconclass":"fa fa-question-circle",
     "mimes":["none"],

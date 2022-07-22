@@ -50,7 +50,8 @@
                         "src": [
                             "assets/scheme.html",
                             "package.json",
-                            "README.md"
+                            "README.md",
+                            "css/main.css"
                         ],
                         "dest": "build/debug"
                     }
