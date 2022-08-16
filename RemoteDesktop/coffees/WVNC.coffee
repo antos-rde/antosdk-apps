@@ -9,7 +9,8 @@ class WVNC
         @canvas = args.element
         @canvas = document.getElementById @canvas if typeof @canvas is 'string'
         @decoder = new Worker worker
-        @enableEvent = true
+        @enableEvent = false
+        @pingto = false
         me = @
         @mouseMask = 0
         @decoder.onmessage = (e) ->
@@ -20,6 +21,8 @@ class WVNC
             return e('Canvas is not set') if not me.canvas
             # fix keyboard event problem
             $(me.canvas).attr 'tabindex', '1'
+            $(me.canvas).on "focus", () => 
+                me.resetModifierKeys()
             me.initInputEvent()
             r()
 
@@ -64,7 +67,7 @@ class WVNC
             #console.log e
             switch keycode
                 when 8  then code = 0xFF08 #back space
-                when 9  then code = 0xff89 #0xFF09 # tab ?
+                when 9  then code =  0xFF09 # tab ? 0xff89
                 when 13 then code = 0xFF0D # return
                 when 27 then code = 0xFF1B # esc
                 when 46 then code = 0xFFFF # delete to verify
@@ -180,12 +183,15 @@ class WVNC
             me.socket = null
             me.canvas.style.cursor = "auto"
             me.canvas.getContext('2d').clearRect 0,0, me.resolution.w, me.resolution.h if me.canvas and me.resolution
+            clearTimeout(me.pingto) if me.pingto
+            me.pingto = undefined
             console.log "socket closed"
 
     disconnect: (close_worker) ->
         @socket.close() if @socket
         @socket = undefined
         @decoder.terminate() if close_worker
+        @enableEvent = false
 
     initConnection: (vncserver, params) ->
         #vncserver = "192.168.1.20:5901"
@@ -198,8 +204,18 @@ class WVNC
         data.set (new TextEncoder()).encode(vncserver), 1
         @socket.send(@buildCommand 0x01, data)
 
+    resetModifierKeys: () ->
+        return unless @socket
+        return unless @enableEvent
+        @sendKeyEvent 0xFFE7, 0 # meta left
+        @sendKeyEvent 0xFFE8, 0 # meta right
+        @sendKeyEvent 0xFFE1, 0 # shift left
+        @sendKeyEvent 0xFFE3, 0 # ctrl left
+        @sendKeyEvent 0xFFE9, 0 # alt left
+
     sendPointEvent: (x, y, mask) ->
         return unless @socket
+        return unless @enableEvent
         data = new Uint8Array 5
         data[0] = x & 0xFF
         data[1] = x >> 8
@@ -209,14 +225,18 @@ class WVNC
         @socket.send( @buildCommand 0x05, data )
 
     sendKeyEvent: (code, v) ->
-        #console.log code, v
+        # console.log code, v
         return unless @socket
         return unless @enableEvent
         data = new Uint8Array 3
         data[0] = code & 0xFF
-        data[1] = code >> 8
+        data[1] = (code >> 8) & 0xFF
         data[2] = v
         @socket.send( @buildCommand 0x06, data )
+    
+    sendPing: () ->
+        return unless @socket
+        @socket.send( @buildCommand 0x08, 'PING WVNC' )
 
     buildCommand: (hex, o) ->
         data = undefined
@@ -289,7 +309,14 @@ class WVNC
                 @initCanvas w, h, depth
                 # status command for ack
                 @socket.send(@buildCommand 0x04, 1)
+                @enableEvent = true
+                # @resetModifierKeys()
                 @onresize()
+                return if @pingto
+                fn = () =>
+                    @sendPing()
+                    @pingto = setTimeout(fn, 5000)
+                @pingto = setTimeout(fn, 5000)
             when 0x84
                 # send data to web assembly for decoding
                 @decoder.postMessage data.buffer, [data.buffer]
