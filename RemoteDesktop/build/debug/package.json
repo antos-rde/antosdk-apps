@@ -1,13 +1,14 @@
 {
+    "pkgname":"RemoteDesktop",
     "app":"RemoteDesktop",
     "name":"WVNC remote desktop",
     "description":"",
     "info":{
-        "author": "",
-        "email": ""
+        "author": "Dany LE",
+        "email": "contact@iohub.dev"
     },
-    "version":"0.1.6-a",
-    "dependencies": ["libwvnc@0.1.2-a"],
+    "version":"0.1.7-b",
+    "dependencies": [],
     "category":"Internet",
     "icon": "icon.png",
     "mimes":["none"]

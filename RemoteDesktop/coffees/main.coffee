@@ -5,22 +5,12 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
     
     main: () ->
         super.main()
-        @find("bbp").data = [
-            { text: "16 bits", value: 16, selected: true },
-            { text: "32 bits", value: 32 }
-        ]
-        @find("compression").data = [
-            {text: "No compression", value:0}, 
-            {text: "JPEG", value:1, selected: true}
-        ]
         @find("jq").value = 40
         @find("bt-ok").onbtclick = (e) =>
             return unless @handle
             data =
                 wvnc: (@find "txtWVNC").value
                 server: (@find "txtServer").value
-                bbp: (@find "bbp").selectedItem.data.value,
-                flag: (@find "compression").selectedItem.data.value,
                 quality:(@find "jq").value
             @handle data
             @quit()
@@ -29,20 +19,14 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
             @quit()
 
 ConnectionDialog.scheme = """
-<afx-app-window width='350' height='270'>
+<afx-app-window width='350' height='220'>
     <afx-hbox>
         <div data-width="5"></div>
         <afx-vbox>
             <afx-label text="__(WVNC Websocket)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtWVNC" value="wss://localhost/wvnc"></input>
+            <input data-height="25" data-id="txtWVNC" value="wss://app.iohub.dev/wbs/wvnc"></input>
             <afx-label text="__(VNC Server)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtServer" value="192.168.1.27:5901"></input>
-            <div data-height="5"></div>
-            <afx-label text="__(Bits per pixel)" data-height="25" class="header" ></afx-label>
-            <afx-list-view dropdown = "true" data-id ="bbp" data-height="25" ></afx-list-view>
-            <div data-height="5"></div>
-            <afx-label text="__(Compression)" data-height="25" class="header" ></afx-label>
-            <afx-list-view dropdown = "true" data-id ="compression" data-height="25" ></afx-list-view>
+            <input data-height="25" data-id="txtServer" value="192.168.1.27:5900"></input>
             <div data-height="5"></div>
             <afx-label text="__(JPEG quality)" data-height="25" class="header" ></afx-label>
             <afx-slider data-id ="jq" data-height="25" ></afx-slider>
@@ -92,7 +76,6 @@ CredentialDialog.scheme = """
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>
-
 """
 
 class RemoteDesktop extends this.OS.application.BaseApplication
@@ -103,8 +86,7 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @canvas = @find "screen"
         @container = @find "container"
         @client = new WVNC { 
-            element: @canvas,
-            libjpeg: "pkg://libjpeg/jpg.js".asFileHandle().getlink()
+            element: @canvas
         }
         @client.onerror = (m) =>
             @error m
@@ -167,7 +149,4 @@ class RemoteDesktop extends this.OS.application.BaseApplication
     cleanup: () ->
         @client.disconnect(true) if @client
 
-RemoteDesktop.dependencies = [
-    "pkg://libwvnc/main.js"
-]
 this.OS.register "RemoteDesktop", RemoteDesktop

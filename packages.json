@@ -364,9 +364,9 @@
 		"name": "WVNC remote desktop",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
 		"category": "Internet",
-		"author": "",
-		"version": "0.1.6-a",
-		"dependencies": ["libwvnc@0.1.2-a"],"category":"Internet","icon":"icon.png","mimes":["none"],
+		"author": "Dany LE",
+		"version": "0.1.7-b",
+		"dependencies": [],"category":"Internet","icon":"icon.png","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
 	},
 	{
