@@ -5,12 +5,17 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
     
     main: () ->
         super.main()
+        @find("bbp").data = [
+            { text: "16 bits", value: 16, selected: true },
+            { text: "32 bits", value: 32 }
+        ]
         @find("jq").value = 40
         @find("bt-ok").onbtclick = (e) =>
             return unless @handle
             data =
                 wvnc: (@find "txtWVNC").value
                 server: (@find "txtServer").value
+                bbp: (@find "bbp").selectedItem.data.value,
                 quality:(@find "jq").value
             @handle data
             @quit()
@@ -19,7 +24,7 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
             @quit()
 
 ConnectionDialog.scheme = """
-<afx-app-window width='350' height='220'>
+<afx-app-window width='350' height='270'>
     <afx-hbox>
         <div data-width="5"></div>
         <afx-vbox>
@@ -27,6 +32,9 @@ ConnectionDialog.scheme = """
             <input data-height="25" data-id="txtWVNC" value="wss://app.iohub.dev/wbs/wvnc"></input>
             <afx-label text="__(VNC Server)" data-height="25" class="header" ></afx-label>
             <input data-height="25" data-id="txtServer" value="192.168.1.27:5900"></input>
+            <div data-height="5"></div>
+            <afx-label text="__(Bits per pixel)" data-height="25" class="header" ></afx-label>
+            <afx-list-view dropdown = "true" data-id ="bbp" data-height="25" ></afx-list-view>
             <div data-height="5"></div>
             <afx-label text="__(JPEG quality)" data-height="25" class="header" ></afx-label>
             <afx-slider data-id ="jq" data-height="25" ></afx-slider>
