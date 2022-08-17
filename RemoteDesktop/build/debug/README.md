@@ -7,6 +7,7 @@ Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blo
 
 
 ## Change logs
+* v0.1.10 - Allow to sync clipboard between local and remote machine, CTRL+SHIF+V to paste text from local to remote machine
 * v0.1.9 - improve stability
 * v0.1.7-8 - remove package dependencies, use web assembly for jpeg decoding, improve rendering performance and connection stability
 * v0.1.6 - Change category

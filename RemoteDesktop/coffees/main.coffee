@@ -88,6 +88,8 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @client = new WVNC { 
             element: @canvas
         }
+        @bindKey "CTRL-SHIFT-V", (e) =>
+            @pasteText()
         @client.onerror = (m) =>
             @error m
             @showConnectionDialog()
@@ -103,7 +105,9 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                 }
                 .then (d) ->
                     r(d) 
-        
+        @client.oncopy = (text) =>
+            @_api.setClipboard text
+
         @client.oncredential = () =>
             return new Promise (r,e) =>
                 @openDialog new CredentialDialog, { title: __("User credential") }
@@ -114,6 +118,23 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @client.init().then () => 
             @showConnectionDialog()
     
+    pasteText: () ->
+        return unless @client
+        cb = (text) =>
+            return unless text and text isnt ""
+            @client.sendTextAsClipboard  text
+            
+        @_api.getClipboard()
+            .then (text) =>
+                cb(text)
+            .catch (e) =>
+                @error __("Unable to paste"), e
+                #ask for user to enter the text manually
+                @openDialog("TextDialog", { title: "Paste text"})
+                    .then (text) =>
+                        cb(text)
+                    .catch (err) => @error err.toString(), err
+
     setScale: () ->
         return unless @client and @client.resolution
         w = $(@container).width()

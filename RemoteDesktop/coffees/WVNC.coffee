@@ -262,8 +262,13 @@ class WVNC
 
     sendTextAsClipboard: (text) ->
         return unless @socket
-        console.log "send ", text
         @socket.send (@buildCommand 0x07, text)
+        # send ctrl-v to paste
+        charcode = 'v'.charCodeAt 0
+        @sendKeyEvent 0xFFE3, 1 # CTRL down
+        @sendKeyEvent charcode, 1 # v down
+        @sendKeyEvent charcode, 0 # v up
+        @sendKeyEvent 0xFFE3, 0 # CTRL up
 
     oncredential: () ->
         return new Promise (resolve, reject) ->
