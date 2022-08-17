@@ -153,8 +153,6 @@ class WVNC
         if not @socket
             return
         data = new Uint8Array msg.pixels
-        #w = @buffer.width * @scale
-        #h = @buffer.height * @scale
         ctx = @canvas.getContext "2d", { alpha: false }
         imgData = ctx.createImageData  msg.w, msg.h
         imgData.data.set data
