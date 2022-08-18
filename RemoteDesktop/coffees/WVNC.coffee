@@ -175,12 +175,16 @@ class WVNC
 
         @socket.onmessage =  (e) ->
             me.consume e
+        @socket.onerror = (e) =>
+            me.onerror("Websocket error")
+            
         @socket.onclose = () ->
             me.socket = null
             me.canvas.style.cursor = "auto"
             me.canvas.getContext('2d').clearRect 0,0, me.resolution.w, me.resolution.h if me.canvas and me.resolution
             clearTimeout(me.pingto) if me.pingto
             me.pingto = undefined
+            me.ondisconnect()
             console.log "socket closed"
 
     disconnect: (close_worker) ->
@@ -279,6 +283,9 @@ class WVNC
 
     onresize: () ->
         console.log "resize"
+    
+    ondisconnect: () ->
+        console.log "disconnect"
         
     consume: (e) ->
         data = new Uint8Array e.data

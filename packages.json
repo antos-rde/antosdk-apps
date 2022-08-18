@@ -70,16 +70,6 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
 	},
 	{
-		"pkgname": "AntunnelTestClient",
-		"name": "AntunnelTestClient",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/README.md",
-		"category": "Development",
-		"author": "Dany LE",
-		"version": "0.1.0-a",
-		"dependencies": ["Antunnel@0.2.1-b"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/build/release/AntunnelTestClient.zip"
-	},
-	{
 		"pkgname": "Archive",
 		"name": "Archive",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/README.md",
@@ -365,7 +355,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
 		"category": "Internet",
 		"author": "Dany LE",
-		"version": "0.1.11-b",
+		"version": "0.1.12-b",
 		"dependencies": [],"category":"Internet","icon":"icon.png","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
 	},

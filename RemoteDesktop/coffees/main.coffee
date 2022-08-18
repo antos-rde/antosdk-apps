@@ -98,8 +98,10 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         }
         @bindKey "CTRL-SHIFT-V", (e) =>
             @pasteText()
-        @client.onerror = (m) =>
-            @error m
+        #@client.onerror = (m) =>
+        #    @error m.toString()
+        #    @showConnectionDialog()
+        @client.ondisconnect = () =>
             @showConnectionDialog()
         @client.onresize = ()=>
             @setScale()
@@ -160,16 +162,13 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                     { text: "__(New Connection)", dataid: "#{@name}-new", },
                     { text: "__(Disconnect)", dataid: "#{@name}-close" }
                 ],
-                onchildselect: (e) => @actionConnection()
+                onchildselect: (e) =>
+                    @client.disconnect(false) if @client
             }
         ]
     
-    actionConnection: (e) ->
-        @client.disconnect(false) if @client
-        @showConnectionDialog()
-    
     showConnectionDialog: () ->
-        
+        return unless @client
         @openDialog new ConnectionDialog, { title: __("Connection")}
         .then (d) =>
             @client.ws = d.wvnc
@@ -177,5 +176,6 @@ class RemoteDesktop extends this.OS.application.BaseApplication
     
     cleanup: () ->
         @client.disconnect(true) if @client
+        @client = undefined
 
 this.OS.register "RemoteDesktop", RemoteDesktop
