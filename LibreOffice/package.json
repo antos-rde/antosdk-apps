@@ -1,0 +1,26 @@
+{
+    "pkgname": "LibreOffice",
+    "app":"LibreOffice",
+    "name":"Libre Office Online",
+    "description":"Wrapper for Libre Office Online service",
+    "info":{
+        "author": "Dany LE",
+        "email": "contact@iohub.dev"
+    },
+    "version":"0.1.0-a",
+    "category":"Office",
+    "iconclass":"bi bi-person-workspace",
+    "mimes":[
+        "application/vnd.oasis.opendocument.text",
+        "application/vnd.oasis.opendocument.spreadsheet",
+        "application/vnd.oasis.opendocument.presentation",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ],
+    "dependencies":[],
+    "locale": {}
+}
