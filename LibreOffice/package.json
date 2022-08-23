@@ -9,7 +9,7 @@
     },
     "version":"0.1.0-a",
     "category":"Office",
-    "iconclass":"bi bi-person-workspace",
+    "icon":"icon.png",
     "mimes":[
         "application/vnd.oasis.opendocument.text",
         "application/vnd.oasis.opendocument.spreadsheet",

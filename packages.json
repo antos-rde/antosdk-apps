@@ -260,6 +260,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libplotly/build/release/libplotly.zip"
 	},
 	{
+		"pkgname": "LibreOffice",
+		"name": "Libre Office Online",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/README.md",
+		"category": "Office",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/build/release/LibreOffice.zip"
+	},
+	{
 		"pkgname": "libthreejs",
 		"name": "libthreejs",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libthreejs/README.md",
