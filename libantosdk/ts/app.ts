@@ -114,17 +114,17 @@ namespace OS {
         }
         /**
          *
-         * @class libantosdk
+         * @class SDKBuilder
          * @extends {BaseApplication}
          */
-        export class libantosdk extends BaseApplication {
+        export class SDKBuilder extends BaseApplication {
             private sdk: API.AntOSDKBuilder;
             private logger: Logger;
             private filehandle: OS.API.VFS.BaseFileHandle;
             private options: GenericObject<any>;
             private targets: OS.GUI.tag.ListViewTag;
             constructor(args: AppArgumentsType[]) {
-                super("libantosdk", args);
+                super("SDKBuilder", args);
             }
             main(): void {
                 this.logger = new Logger(this.find("container"));

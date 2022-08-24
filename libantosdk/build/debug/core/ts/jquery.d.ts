@@ -1,4 +1,7 @@
+export as namespace Sizzle;
+
 declare const Sizzle: SizzleStatic;
+export = Sizzle;
 
 interface SizzleStatic {
     selectors: Sizzle.Selectors;
@@ -81,7 +84,6 @@ declare namespace Sizzle {
         }
     }
 }
-
 // tslint:disable:jsdoc-format
 // tslint:disable:max-line-length
 // tslint:disable:no-irregular-whitespace

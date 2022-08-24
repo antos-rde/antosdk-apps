@@ -1,13 +1,13 @@
 {
     "pkgname": "libantosdk",
     "name": "AntOS SDK builder",
-    "app": "libantosdk",
+    "app": "SDKBuilder",
     "description": "AntOS Software Development Kit",
     "info": {
         "author": "Xuan Sang LE",
         "email": "mrsang@iohub.dev"
     },
-    "version": "0.0.14-a",
+    "version": "0.0.15-a",
     "category": "Development",
     "iconclass": "fa fa-cog",
     "mimes": [
