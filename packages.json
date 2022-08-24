@@ -275,7 +275,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/README.md",
 		"category": "Office",
 		"author": "Dany LE",
-		"version": "0.1.0-a",
+		"version": "0.1.1-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/build/release/LibreOffice.zip"
 	},
