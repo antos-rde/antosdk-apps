@@ -9,4 +9,9 @@ It support a wide range of documents.
 ![https://github.com/lxsang/antosdk-apps/blob/master/LibreOffice/libreoffice.png?raw=true](https://github.com/lxsang/antosdk-apps/blob/master/LibreOffice/libreoffice.png?raw=true)
 
 ## Change log
+- v 0.1.1-a:
+    * improve UI handling
+    * add Save as option
+    * add traditional AntOS application File menu
+    * fetch supported mimes from discovery URL
 - v 0.1.0-a: Initial version

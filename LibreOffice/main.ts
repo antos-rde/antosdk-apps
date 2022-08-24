@@ -16,8 +16,10 @@ namespace OS {
             private placeholder: HTMLDivElement;
             private eid: string;
             private iframe: HTMLIFrameElement;
-            private editor_meta: GenericObject<any>;
+            private editor_meta: GenericObject<GenericObject<string>>;
             private post_msg_handle: (e:any) => void;
+            private mimes: string[];
+            private current_mode: string;
 
             static discovery_uri: string;
             constructor(args: AppArgumentsType[]) {
@@ -26,6 +28,8 @@ namespace OS {
                 this.curr_file = undefined;
                 this.eid = `id${Math.random().toString(36).replace(".","")}`;
                 this.iframe = undefined;
+                this.mimes = this.meta().mimes.map(e=>e);
+                this.current_mode = undefined;
                 this.post_msg_handle = (e) =>
                 {
                     this.process_iframe_msg(e);
@@ -44,8 +48,6 @@ namespace OS {
                 {
                     this.openFile();
                 }
-                
-            
                 (this.find("btn-new-doc") as GUI.tag.ButtonTag).onbtclick = (e) =>
                 {
                     this.create("word");
@@ -73,6 +75,46 @@ namespace OS {
                         this.quit(true);
                     });
             }
+            menu(): OS.GUI.BasicItemType[]{
+                const nodes = [
+                    { text: "__(New)", dataid :"new" },
+                    { text: "__(Open)", dataid :"open" }
+                ]
+                if(this.current_mode == "edit")
+                {
+                    nodes.push({ text: "__(Save)", dataid :"save"});
+                    nodes.push({ text: "__(Save As)", dataid :"saveas"});
+                }
+                return [ 
+                    {
+                        text: "__(File)",
+                        nodes: nodes,
+                        onchildselect: (e) =>
+                        {
+                            switch(e.data.item.data.dataid)
+                            {
+                                case "new":
+                                    this.check_dirty().then((_)=>this.new_document());
+                                    break;
+                                case "open":
+                                    this.check_dirty().then((_)=>this.openFile());
+                                    break;
+                                case "save":
+                                    this.post_message("Action_Save", {
+                                        DontTerminateEdit: true,
+                                        DontSaveIfUnmodified: true,
+                                        Notify: true
+                                    });
+                                    break;
+                                case "saveas":
+                                    this.check_dirty().then((_)=>this.save_as());
+                                    break;
+                                default:
+                            }
+                        }
+                    }
+                ]
+            }
             private update_title()
             {
                 let title = this.curr_file.path;
@@ -84,7 +126,6 @@ namespace OS {
             }
             private post_message(id:string, values?: GenericObject<any>)
             {
-                console.log("sending",id);
                 let msg:GenericObject<any> = {MessageId: id,SendTime: Date.now()};
                 if(values)
                     msg.Values = values;
@@ -109,7 +150,9 @@ namespace OS {
                         {
                             this.post_message("Host_PostmessageReady");
                             this.trigger("document_file_loaded");
-                            this.post_message("Insert_Button",
+                            if(this.current_mode == "edit")
+                            {
+                                this.post_message("Insert_Button",
                                 {
                                     id:'lool_new_file',
                                     imgurl:BUTTON_ICONS.newdoc,
@@ -117,16 +160,17 @@ namespace OS {
                                     hint: __("Create new document").__(),
                                     insertBefore: 'save'
                                 }
-                            );
-                            this.post_message("Insert_Button",
-                                {
-                                    id:'lool_open_file',
-                                    imgurl:BUTTON_ICONS.opendoc,
-                                    label: __("Open file").__(),
-                                    hint: __("Open document").__(),
-                                    insertBefore: 'lool_new_file'
-                                }
-                            );
+                                );
+                                this.post_message("Insert_Button",
+                                    {
+                                        id:'lool_open_file',
+                                        imgurl:BUTTON_ICONS.opendoc,
+                                        label: __("Open file").__(),
+                                        hint: __("Open document").__(),
+                                        insertBefore: 'lool_new_file'
+                                    }
+                                );
+                            }
                         }
                         if(data.Values.Status == "Frame_Ready")
                         {
@@ -149,11 +193,43 @@ namespace OS {
                             default:
                         }
                         break;
+                    case "UI_SaveAs":
+                        this.check_dirty().then((_)=>this.save_as());
+                        break;
                     default:
                         console.log(data);
                 }          
                 //console.log(this.eid, e);
 
+            }
+            private save_as()
+            {
+                this.openDialog("FileDialog",  {
+                    title: __("Save file as"),
+                    type: "dir",
+                    file: this.curr_file.asFileHandle()
+                })
+                .then(async (d) => {
+                    const file = `${d.file.path}/${d.name}`.asFileHandle();
+                    try
+                    {
+                        
+                        const r = await this.exec({
+                            action: 'duplicate',
+                            args:{src: this.curr_file.path, dest: file.path}
+                        });
+                        if(r.error)
+                        {
+                            throw r.error;
+                        }
+                        this.curr_file = file;
+                        this.open();
+                    }
+                    catch(e)
+                    {
+                        this.error(__("Unable to save file as {0}: {1}", file.path, e.toString()),e);
+                    }
+                });
             }
             private new_document()
             {
@@ -194,16 +270,29 @@ namespace OS {
                         if(apps)
                         {
                             for(let app of apps){
+                                let name = app.getAttribute("name")
+                                if(name.match(/^[^\/]*\/[^\/]*$/g))
+                                {
+                                    if(!(this.mimes as any).includes(name))
+                                    {
+                                        this.mimes.push(name);
+                                    }
+                                }
                                 let actions = app.getElementsByTagName("action");
                                 if(actions)
                                 {
                                     for(let action of actions)
                                     {
                                         let ext = action.getAttribute("ext");
+                                        let mode = action.getAttribute("name");
                                         let urlsrc = action.getAttribute("urlsrc");
                                         if(ext && ext != "" && urlsrc)
                                         {
-                                            meta[ext] = urlsrc;
+                                            meta[ext] = 
+                                            {
+                                                url: urlsrc,
+                                                mode: mode
+                                            }
                                         }
                                     }
                                 }
@@ -222,7 +311,7 @@ namespace OS {
                 this.openDialog("FileDialog", {
                     title: __("Open file"),
                     type: "file",
-                    mimes: this.meta().mimes
+                    mimes: this.mimes
                 })
                 .then((d) =>
                 {
@@ -292,14 +381,17 @@ namespace OS {
                         return;
                     }
                     this.access_token = r.result.sid;
-                    let url = this.editor_meta[this.curr_file.ext];
-                    if(!url)
+                    let mt = this.editor_meta[this.curr_file.ext];
+                    if(!mt || !mt.url)
                     {
                         return this.error(__("Unknown editor for extension {0}", this.curr_file.ext));
                     }
+                    this.current_mode = mt.mode;
+                    // refresh the file menu
+                    this.appmenu.items = this.baseMenu() || [];
                     $(this.placeholder).empty();
                     let el = $('<iframe>', {
-                        src: `${url}?WOPISrc=${this.uapi()}`,
+                        src: `${mt.url}?WOPISrc=${this.uapi()}`,
                         frameborder: 0
                     });
                     this.iframe = el[0] as HTMLIFrameElement;
@@ -353,7 +445,6 @@ namespace OS {
                             .then((d) =>
                             {
                                 if(!d) return;
-                                this.curr_file.dirty = false;
                                 ok(true);
                             });
                     }
@@ -368,7 +459,11 @@ namespace OS {
                 if(this.curr_file && this.curr_file.dirty)
                 {  
                     e.preventDefault();
-                    this.check_dirty().then((_)=>this.quit(true));
+                    this.check_dirty().then((_)=>{
+                        this.curr_file.dirty = false;
+                        this.quit(true);
+                    }
+                    );
                     return;
                 }
                 $(window).off("message",this.post_msg_handle);

@@ -1,11 +1,14 @@
 local args=...
+
+--LOG_ROOT = ulib.getenv("HOME")
+
 if not args then
     args = REQUEST
 end
 local vfs = require("vfs")
 local DLCMD="wget --no-check-certificate -O"
 local handle = {}
-
+--local logger =  Logger:new{ levels = {INFO = true, ERROR = true, DEBUG = false}}
 local result = function(data)
     return { error = false, result = data }
 end
@@ -23,6 +26,21 @@ handle.token = function(data)
     }
     return result(ret)
 end
+
+handle.duplicate = function(data)
+    if not data.src or not data.dest then
+        return error("Unknow source or destination file")
+    end
+    local real_src = vfs.ospath(data.src)
+    local real_dest = vfs.ospath(data.dest)
+    if not ulib.exists(real_src) then
+        return error("Source file doesnt exist")
+    end
+    if not ulib.send_file(real_src, real_dest) then
+        return error("Unable to duplicate file")
+    end
+    return result(true)
+end 
 
 handle.discover = function(data)
     local tmpfile = "/tmp/libreoffice_discover.xml"
@@ -67,13 +85,16 @@ handle.file = function(data)
             Size =  math.floor(stat.size),
             UserCanWrite = vfs.checkperm(data.file,"write"),
             mime = stat.mime,
-            PostMessageOrigin = "*"
+            PostMessageOrigin = "*",
+            UserCanNotWriteRelative = false
         }
     else
         return error("Unknown request")
     end
 
 end
+
+--logger:info(JSON.encode(REQUEST))
 
 if args.action and handle[args.action] then
     return handle[args.action](args.args)
