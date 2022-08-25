@@ -367,6 +367,7 @@ namespace OS {
             {
                 return [
                     { text: "__(Close)", id: "close" },
+                    { text: "__(Reload)", id: "reload", shortcut: "A-R"},
                     { text: "__(Close All)", id: "close-all" },
                     { text: "__(Move to other side)", id: "mv-side" },
                 ];
@@ -384,6 +385,9 @@ namespace OS {
                         break;
                     case "close-all":
                         model.closeAll();
+                        break;
+                    case "reload":
+                        this.eum.active.reload();
                         break;
                     case "mv-side":
                         if(!tab)
@@ -471,6 +475,7 @@ namespace OS {
                 this.bindKey("ALT-F", () => this.menuAction("opendir"));
                 this.bindKey("CTRL-S", () => this.menuAction("save"));
                 this.bindKey("ALT-W", () => this.menuAction("saveas"));
+                this.bindKey("ALT-R", () =>  this.eum.active.reload());
                 
                 const list_container = $(".list-container", this.find("editor-main-container"));
                 list_container.each((i,el) => {

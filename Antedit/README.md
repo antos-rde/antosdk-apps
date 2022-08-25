@@ -4,8 +4,8 @@ the editor that powers VS Code.
 
 The editor functionality can be extended by its extension mechanism.
 Extension can be developed/released/isntalled by the editor itself.
-
 ### Change logs
+- 0.2.3-b: Allow reload current file via context menu in case of external changes
 - 0.2.2-b: Support horizotal scrolling on horizotal tabbars
 - 0.2.1-b: Add open file to right, editor actions are only attached to code editor
 - 0.2.0-b: Support diff mode in editor + fix new Monaco version compatible bug

@@ -62,6 +62,10 @@ namespace OS {
                     this.editor.setPosition(model.position);
                     this.editor.revealLineInCenter(model.position.lineNumber);
                 }
+                if(this.editor == this._code_editor)
+                {
+                    this.editor.updateOptions({readOnly: false, domReadOnly: false});
+                }
             }
 
 
@@ -208,7 +212,7 @@ namespace OS {
              * @memberof MonacoEditorModel
              */
             protected editorSetup(el: HTMLElement): void {
-                // create two editor instancs for code mode and diff mode
+                // create two editor instances for code mode and diff mode
                 this.code_container = $("<div />")
                     .css("width", "100%")
                     .css("height", "100%");
@@ -220,7 +224,9 @@ namespace OS {
                 $(el).append(this.diff_container);
                 this._code_editor = monaco.editor.create(this.code_container[0], {
                     value: "",
-                    language: 'textplain'
+                    language: 'textplain',
+                    readOnly: false,
+                    domReadOnly: false
                 });
                 this._diff_editor = monaco.editor.createDiffEditor(this.diff_container[0],{
                     readOnly: true

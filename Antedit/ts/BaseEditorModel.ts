@@ -159,7 +159,7 @@ namespace OS {
              * @type {boolean}
              * @memberof BaseEditorModel
              */
-            //private editormux: boolean;
+            private editormux: boolean;
 
 
             /**
@@ -176,7 +176,7 @@ namespace OS {
                 this.tabbar = tabbar;
                 this.editorSetup(editorarea);
                 this.app = app;
-                // this.editormux = false;
+                this.editormux = false;
                 this.onstatuschange = undefined;
 
                 this.on("focus", () => {
@@ -184,12 +184,10 @@ namespace OS {
                         this.onstatuschange(this.getEditorStatus());
                 });
                 this.on("input", () => {
-                    // console.log(this.editormux, this.currfile.dirty);
-                    /*if (this.editormux) {
+                    if (this.editormux) {
                         this.editormux = false;
-                        console.log("set editor mux to false");
                         return false;
-                    }*/
+                    }
                     if (!this.currfile.dirty) {
                         this.currfile.dirty = true;
                         this.currfile.text += "*";
@@ -399,6 +397,47 @@ namespace OS {
                     return this.write();
                 }
                 return this.saveAs();
+            }
+
+            /**
+             * Reload the current openned file
+             *
+             * @return {*}  {Promise<any>}
+             * @memberof BaseEditorModel
+             */
+            reload(): Promise<any> {
+                return new Promise(async (ok,r) =>{
+                    try {
+                        if (this.currfile.path.toString() === "Untitled") {
+                            return ok(true);
+                        }
+                        if(this.currfile.dirty)
+                        {
+                            const ret = await this.app.openDialog("YesNoDialog", {
+                                title: __("File modified"),
+                                text: __("Continue without saving ?"),
+                            });
+                            if(!ret)
+                            {
+                                return ok(true);
+                            }
+                        }
+                        const d = await this.currfile.read();
+                        this.currfile.cache = d || "";
+                        this.currfile.dirty = false;
+                        this.currfile.text = this.currfile.basename ? this.currfile.basename : this.currfile.path;
+                        this.editormux = true;
+                        this.setValue(this.currfile.cache);
+                        this.tabbar.update(undefined);
+                    }
+                    catch(e){
+                        this.app.error(
+                            __("Unable to open: {0}", this.currfile.path),
+                            e
+                        );
+                        r(e);
+                    };
+                })
             }
 
             /**
