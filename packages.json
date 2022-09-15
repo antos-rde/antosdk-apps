@@ -70,6 +70,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
 	},
 	{
+		"pkgname": "AntunnelTestClient",
+		"name": "AntunnelTestClient",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/README.md",
+		"category": "Development",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": ["Antunnel@0.2.1-b"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/build/release/AntunnelTestClient.zip"
+	},
+	{
 		"pkgname": "Archive",
 		"name": "Archive",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/README.md",
@@ -265,7 +275,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/README.md",
 		"category": "Office",
 		"author": "Dany LE",
-		"version": "0.1.1-a",
+		"version": "0.1.2-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/build/release/LibreOffice.zip"
 	},

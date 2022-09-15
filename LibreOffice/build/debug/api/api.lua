@@ -72,8 +72,8 @@ handle.file = function(data)
             std.sendFile(path)
             return nil
         elseif REQUEST.method == "POST" then
-            local clen = tonumber(HEADER['Content-Length'])
-            local barr = bytes.unew(REQUEST["octet-stream"],clen)
+            --local clen = tonumber(HEADER['Content-Length'])
+            local barr = REQUEST["application/octet-stream"]
             bytes.write(barr, path)
             return result(true)
         else
