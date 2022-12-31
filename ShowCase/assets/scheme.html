@@ -1,12 +1,11 @@
 <afx-app-window data-id="example-show-case" apptitle="AntOS GUI widgets" width="650" height="500">
     <afx-vbox>
-        <afx-menu data-height="30" data-id="menu" ></afx-menu>
-        <afx-tab-container data-id="tabctn" dir = "column" tabbarheight= "30">
+        <afx-tab-container data-id="tabctn" dir = "column" tabbarwidth= "100" tabbarheight = "40">
 
             <afx-hbox tabname="Widgets">
                 <afx-vbox data-width="150">
                     <afx-tree-view data-id="tree" dragndrop="true" ></afx-tree-view>
-                    <afx-slider data-id="slider" data-height="30" value="50"></afx-slider>
+                    <afx-slider data-id="slider" data-height="30" value="50" precision="true"></afx-slider>
                 </afx-vbox>
                 <afx-resizer data-width="5" ></afx-resizer>
                 <afx-vbox data-width="grow">
@@ -20,7 +19,7 @@
                     </afx-hbox>
                     <afx-resizer data-height="5" ></afx-resizer>
                     <afx-hbox>
-                        <afx-list-view data-id="list" dropdown="false" multiselect="true" ></afx-list-view>
+                        <afx-list-view data-id="list" dropdown="false" multiselect="true" dir="horizontal" ></afx-list-view>
                     </afx-hbox>
                     <afx-hbox data-height="150">
                         <afx-grid-view data-id="grid" multiselect="false" ></afx-grid-view>
@@ -44,7 +43,10 @@
                     <afx-button data-id = "btrundia" text="Run dialog" data-height="30"></afx-button>
                 </afx-vbox>
             </afx-hbox>
-
+            <afx-hbox tabname="Stackmenues">
+                <afx-stack-menu data-id="menu" ></afx-stack-menu>
+            </afx-hbox>
+            
         </afx-tab-container>
     </afx-vbox>
 </afx-app-window>
