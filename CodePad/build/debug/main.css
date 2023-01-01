@@ -1,34 +1,7 @@
 afx-app-window[data-id = "codepad"] .ace_editor {
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
 }
-afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container
-{
-    /*border-top: 1px solid #272822;*/
-    overflow: hidden;
-    overflow-x: auto;
-    font-size: 12px;
-    scrollbar-width: none;
-    /*scrollbar-color: #656565 transparent;*/
-}
 
-afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container::-webkit-scrollbar {
-    height: 0;
-}
-afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container::-webkit-scrollbar-thumb {
-    background-color: #656565;
-    border: 0;
-  }
-
-afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container > ul
-{
-    width: intrinsic;
-    width: -moz-max-content;
-    width: -webkit-max-content;
-    width: max-content;
-}
 
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li.selected,
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-container > ul > afx-list-item > li.selected{
@@ -40,14 +13,12 @@ afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view > div.list-contai
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view afx-list-view i.closable:before {
     color:afafaf;
 }
-afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view ul afx-list-item:nth-child(even) li,
+afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view ul .afx-list-item:nth-child(even) li,
 afx-app-window[data-id = "codepad"] afx-tab-bar> afx-list-view  > div.list-container > ul  li{
     background-color:#333333;
     color:#afafaf;
     border-radius: 0;
     border: 0;
-    padding-top: 5px;
-    padding-bottom: 5px;
     padding-right: 20px;
     border-right: 1px solid #272822;
 }
@@ -94,48 +65,6 @@ afx-app-window[data-id = "codepad"] .afx-window-wrapper div[data-id="statctn"] a
     padding-left: 10px;
 }
 
-afx-app-window[data-id = "cmd-win"] .afx-window-wrapper{
-    border-radius: 0px;
-    border: 0;
-    /*border: 1px solid #37373d;*/
-    background-color: transparent;
-    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.65);
-}
-afx-app-window[data-id = "cmd-win"] .afx-window-wrapper afx-list-view ul afx-list-item:nth-child(even) li
-{
-    background-color: transparent;
-}
-afx-app-window[data-id = "cmd-win"] .afx-window-wrapper afx-list-view afx-list-item li{
-    background-color: transparent;
-    color:#afafaf;
-} 
-afx-app-window[data-id = "cmd-win"] .afx-window-wrapper div.list-container > ul li:hover{
-    background-color: #37373d;
-}
-
-afx-app-window[data-id = "cmd-win"] .afx-window-wrapper afx-list-view ul afx-list-item:nth-child(even) li.selected,
-afx-app-window[data-id = "cmd-win"] .afx-window-wrappe dafx-list-viewafx-list-view ul  li.selected
-{
-    background-color: #116cd6;
-    color:white;
-}
-afx-app-window[data-id = "cmd-win"] .afx-window-top{
-    height: 0;
-    border:0;
-}
-afx-app-window[data-id = "cmd-win"] input{
-    border: 1px solid #007acc;
-    border-radius: 0;
-    font-size: 12px;
-    color:#afafaf;
-    background-color:#272822;
-    padding-left: 5px;
-    margin: 3px;
-}
-
-afx-app-window[data-id = "cmd-win"] .afx-window-content{
-    background-color:#272822;
-}
 
 afx-app-window[data-id = "codepad"] div[data-id="output-tab"] {
     overflow-y: auto;

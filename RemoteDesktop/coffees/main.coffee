@@ -24,30 +24,23 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
             @quit()
 
 ConnectionDialog.scheme = """
-<afx-app-window width='350' height='270'>
-    <afx-hbox>
-        <div data-width="5"></div>
-        <afx-vbox>
-            <afx-label text="__(WVNC Websocket)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtWVNC" value="wss://app.iohub.dev/wbs/wvnc"></input>
-            <afx-label text="__(VNC Server)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtServer" value="192.168.1.27:5900"></input>
-            <div data-height="5"></div>
-            <afx-label text="__(Bits per pixel)" data-height="25" class="header" ></afx-label>
-            <afx-list-view dropdown = "true" data-id ="bbp" data-height="25" ></afx-list-view>
-            <div data-height="5"></div>
-            <afx-label text="__(JPEG quality)" data-height="25" class="header" ></afx-label>
-            <afx-slider data-id ="jq" data-height="25" ></afx-slider>
-            <afx-hbox data-height = '30'>
-                <div  style=' text-align:right;'>
-                    <afx-button data-id = "bt-ok" text = "__(Connect)"></afx-button>
-                    <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
-                </div>
-                <div data-width="5"></div>
-            </afx-hbox>
-        </afx-vbox>
-        <div data-width="5"></div>
-    </afx-hbox>
+<afx-app-window width='350' height='320'>
+    <afx-vbox padding="5">
+        <afx-input label="__(WVNC Websocket)" data-height="50" data-id="txtWVNC" value="wss://app.iohub.dev/wbs/wvnc"></afx-input>
+        <afx-input label="__(VNC Server)" data-height="50" data-id="txtServer" value="192.168.1.27:5900"></afx-input>
+        <div data-height="5"></div>
+        <afx-label text="__(Bits per pixel)" data-height="30" class="header" ></afx-label>
+        <afx-list-view dropdown = "true" data-id ="bbp" data-height="35" ></afx-list-view>
+        <div data-height="5"></div>
+        <afx-label text="__(JPEG quality)" data-height="30" class="header" ></afx-label>
+        <afx-slider data-id ="jq" data-height="30" ></afx-slider>
+        <afx-hbox data-height = '35'>
+            <div  style=' text-align:right;'>
+                <afx-button data-id = "bt-ok" text = "__(Connect)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+        </afx-hbox>
+    </afx-vbox>
 </afx-app-window>
 
 """
@@ -69,18 +62,15 @@ class CredentialDialog extends this.OS.GUI.BasicDialog
             @quit()
 
 CredentialDialog.scheme = """
-<afx-app-window width='350' height='150'>
-    <afx-vbox>
-        <afx-label text="__(Username)" data-height="25" class="header" ></afx-label>
-        <input data-height="30" data-id="txtUser"></input>
-        <afx-label text="__(Password)" data-height="25" class="header" ></afx-label>
-        <input type="password" data-height="30" data-id="txtPass"></input>
-        <afx-hbox data-height = '30'>
+<afx-app-window width='350' height='170'>
+    <afx-vbox padding="5">
+        <afx-input label="__(Username)" data-height="55" data-id="txtUser"></afx-input>
+        <afx-input label="__(Password)" data-height="55" type="password" data-id="txtPass"></afx-input>
+        <afx-hbox data-height = '35'>
             <div  style=' text-align:right;'>
                 <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
                 <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
             </div>
-            <div data-width="5"></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>

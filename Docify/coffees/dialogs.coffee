@@ -185,11 +185,11 @@ DocDialog.scheme = """
 <afx-app-window width='600' height='400'>
     <afx-hbox>
         <afx-vbox data-width="350">
-            <afx-hbox data-height="22">
+            <afx-hbox data-height="30">
                 <afx-label text = "__(title)" data-width="50"></afx-label>
                 <input type="text" data-id="title"></input>
             </afx-hbox>
-            <afx-hbox data-height="22">
+            <afx-hbox data-height="30">
                 <afx-label text = "__(Day)" data-width="50"></afx-label>
                 <afx-list-view dropdown="true" data-id="dlist"></afx-list-view>
                 <afx-label text = "__(Month)"data-width="50" ></afx-label>
@@ -201,7 +201,7 @@ DocDialog.scheme = """
             <afx-list-view data-id="file-list"></afx-list-view>
             <afx-label text = "__(Note)" data-height="22"></afx-label>
             <textarea data-id="note"></textarea>
-            <afx-hbox data-height = "27">
+            <afx-hbox data-height = "30">
                 <afx-label text = "__(Owner)" data-width="50"></afx-label>
                 <afx-list-view dropdown="true" data-id="olist"></afx-list-view>
                 <afx-label text = "__(Tags)" data-width="50"></afx-label>
@@ -212,7 +212,7 @@ DocDialog.scheme = """
             <div data-id = "preview-container">
                 <canvas data-id="preview-canvas"></canvas>
             </div>
-            <div style="text-align: right;" data-height="30" >
+            <div style="text-align: right;" data-height="35" >
                 <afx-button text="__(Save)" data-id="btsave" ></afx-button>
             </div>
         </afx-vbox>
@@ -259,14 +259,14 @@ FilePreviewDialog.scheme = """
 <afx-app-window width='400' height='400' apptitle = "__(Document preview)">
     <afx-hbox>
         <afx-vbox data-width="150">
-            <afx-label text = "__(Files)" data-height="22"></afx-label>
+            <afx-label text = "__(Files)" data-height="25"></afx-label>
             <afx-list-view data-id="file-list"></afx-list-view>
         </afx-vbox>
         <afx-vbox>
             <div data-id = "preview-container">
                 <canvas data-id="preview-canvas"></canvas>
             </div>
-            <div style="text-align: right;" data-height="30" >
+            <div style="text-align: right;" data-height="35" >
                 <afx-button text="__(Ok)" data-id="btok" ></afx-button>
             </div>
             
@@ -295,7 +295,7 @@ class PrintDialog extends this.OS.GUI.BasicDialog
 PrintDialog.scheme = """
 <afx-app-window width='300' height='300' data-id="DocifyPrintDialog" apptitle = "__(Print)">
     <afx-vbox>
-        <afx-label text = "__(Printer name)" data-height="22"></afx-label>
+        <afx-label text = "__(Printer name)" data-height="25"></afx-label>
         <input  type="text" data-id="printerName" data-height="25"></input>
         <afx-label text = "__(Range)" data-height="22"></afx-label>
         <div>
@@ -305,7 +305,7 @@ PrintDialog.scheme = """
             <label for="1">Pages: </label>
             <input  type="text" data-id="txtPageRange" ></input>
         </div>
-        <afx-label text = "__(Orientation)" data-height="22"></afx-label>
+        <afx-label text = "__(Orientation)" data-height="25"></afx-label>
         <div>
             <input type="radio"  name="orientation" value="0" checked  ></input>
             <label for="0">Portrait</label><br>
@@ -321,7 +321,7 @@ PrintDialog.scheme = """
             <input type="radio"  name="side" value="2"   ></input>
             <label for="2">Double side short edge</label>
         </div>
-        <div data-height="30" style="text-align:right;">
+        <div data-height="35" style="text-align:right;">
             <afx-button text="__(Print)" style="margin-right:5px;" data-id="btnprint"></afx-button>
         </div>
     </afx-vbox>

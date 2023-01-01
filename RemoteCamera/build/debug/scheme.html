@@ -1,6 +1,9 @@
 <afx-app-window apptitle="RemoteCamera" width="650" height="550" data-id="RemoteCamera">
     <afx-vbox >
-        <afx-hbox data-height="30">
+        <div data-id="container">
+            <canvas data-id="player"></canvas>
+        </div>
+        <afx-hbox data-height="35">
             <div data-width="10"></div>
             <afx-label text="__(Resolution)" data-width="80"></afx-label>
             <afx-list-view dropdown=true data-id="resoctl"></afx-list-view>
@@ -12,10 +15,5 @@
             <afx-list-view dropdown=true data-id="fpsctl"></afx-list-view>
             <div data-width="10"></div>
         </afx-hbox>
-        
-        <div data-id="container">
-            <canvas data-id="player"></canvas>
-        </div>
-        
     </afx-vbox>
 </afx-app-window>

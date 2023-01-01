@@ -388,7 +388,7 @@ namespace OS {
                     }
                     this.current_mode = mt.mode;
                     // refresh the file menu
-                    this.appmenu.items = this.baseMenu() || [];
+                    //this.appmenu.nodes = this.baseMenu() || [];
                     $(this.placeholder).empty();
                     let el = $('<iframe>', {
                         src: `${mt.url}?WOPISrc=${this.uapi()}`,

@@ -1,14 +1,14 @@
 <afx-app-window apptitle="Lua Playground" width="500" height="400" data-id="Lua Playground">
-    <afx-hbox >
-        <div data-id="editorea" data-width="250"></div>
-        <afx-resizer data-width="3"></afx-resizer>
+    <afx-vbox >
+        <div data-id="editorea"></div>
+        <afx-resizer data-height="4"></afx-resizer>
         <afx-vbox>
-            <afx-hbox data-height="20" data-id="bottom-vbox">
-                <afx-button data-id = "log-clear" data-width="25" iconclass="fa fa-trash"></afx-button>
-                <afx-button data-id = "code-run" data-width="25" iconclass="fa fa-play"></afx-button>
-                <afx-button data-id = "code-stop" data-width="25" iconclass="fa fa-stop"></afx-button>
-            </afx-hbox>
+            <div data-height="35" data-id="bottom-vbox">
+                <afx-button data-id = "log-clear"  iconclass="fa fa-trash"></afx-button>
+                <afx-button data-id = "code-run"  iconclass="fa fa-play"></afx-button>
+                <afx-button data-id = "code-stop"  iconclass="fa fa-stop"></afx-button>
+            </div>
         <div data-id="output"></div>
         </afx-vbox>
-    </afx-hbox>
+    </afx-vbox>
 </afx-app-window>

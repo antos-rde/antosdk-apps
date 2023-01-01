@@ -57,17 +57,16 @@ class BloggerCategoryDialog extends this.OS.GUI.BasicDialog
             
 BloggerCategoryDialog.scheme = """
 <afx-app-window width='300' height='400'>
-    <afx-vbox>
+    <afx-vbox padding="5">
         <afx-label text="__(Pick a parent)" data-height="25" class="lbl-header" ></afx-label>
         <afx-tree-view data-id="tree" ></afx-tree-view>
         <afx-label text="__(Category name)" data-height="25" class="lbl-header" ></afx-label>
         <input type="text" data-height="25" data-id = "txtinput"/ >
-        <afx-hbox data-height = '30'>
+        <afx-hbox data-height = '35'>
             <div  style=' text-align:right;'>
                 <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
                 <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
             </div>
-            <div data-width="5"></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>

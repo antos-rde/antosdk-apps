@@ -55,7 +55,7 @@ class vTerm extends this.OS.application.BaseApplication
         # make desktop menu if not exist
         @systemsetting.desktop.menu[@name] = { text: "__(Open terminal)", app: "vTerm" } unless @systemsetting.desktop.menu[@name]
         
-        @on "hboxchange", (e) =>
+        @on "resize", (e) =>
             @resizeContent()
         
         

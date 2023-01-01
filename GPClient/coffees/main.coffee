@@ -23,23 +23,19 @@ class ClientDialog extends this.OS.GUI.BasicDialog
             @quit()
 
 ClientDialog.scheme = """
-<afx-app-window width='300' height='160'>
-    <afx-hbox>
-        <div data-width="5"></div>
-        <afx-vbox>
-            <div data-height="5"></div>
-            <afx-label data-height="25" text = "__(Client name)"></afx-label>
-            <input type="text" name="text" data-height="25" ></input>
-            <div data-height="5"></div>
-            <afx-label data-height="25" text = "__(URL)"></afx-label>
-            <input type="text" name="url" data-height="25" ></input>
-            <div data-height="30" style="text-align: right;">
-                <afx-button data-id="btnok" text="__(Ok)"></afx-button>
-                <afx-button data-id="btncancel" text="__(Cancel)"></afx-button>
-            </div>
-        </afx-vbox>
-        <div data-width="5"></div>
-    </afx-hbox>
+<afx-app-window width='400' height='300'>
+    <afx-vbox padding="5">
+        <afx-label data-height="25" text = "__(Client name)"></afx-label>
+        <input type="text" name="text" data-height="30" ></input>
+        <div data-height="5"></div>
+        <afx-label data-height="25" text = "__(URL)"></afx-label>
+        <input type="text" name="url" data-height="30" ></input>
+        <div></div>
+        <div data-height="35" style="text-align: right;">
+            <afx-button data-id="btnok" text="__(Ok)"></afx-button>
+            <afx-button data-id="btncancel" text="__(Cancel)"></afx-button>
+        </div>
+    </afx-vbox>
 </afx-app-window>
 """
 # 
@@ -107,10 +103,10 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
         @clist.data = @parent.setting.clients
 
 ClientListDialog.scheme = """
-<afx-app-window width='200' height='200'>
-    <afx-vbox>
+<afx-app-window width='400' height='300'>
+    <afx-vbox padding="5">
         <afx-list-view data-id="client-list"></afx-list-view>
-        <div data-height="30" style="text-align: right;">
+        <div data-height="35" style="text-align: right;">
             <afx-button text="__(Switch client)" data-id="btnswitch"></afx-button>
         <div>
     </afx-vbox>

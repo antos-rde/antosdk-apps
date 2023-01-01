@@ -320,7 +320,8 @@ namespace OS {
                 this.bindKey("CTRL-ALT-B", () => this.build());
 
                 this.fileview.ondragndrop = (e) => {
-                    const src = e.data.from.data.path.asFileHandle();
+                    //const src = e.data.from.data.path.asFileHandle();
+                    const src = e.data.from[0].data.path.asFileHandle();
                     const des = e.data.to.data.path;
                     return src
                         .move(`${des}/${src.basename}`)
@@ -330,12 +331,12 @@ namespace OS {
                             if (p1.length < p2.length) {
                                 e.data.to.update(p1);
                                 (e.data
-                                    .from as GUI.tag.TreeViewTag).parent.update(
+                                    .from[0] as GUI.tag.TreeViewTag).parent.update(
                                         p2
                                     );
                             } else {
                                 (e.data
-                                    .from as GUI.tag.TreeViewTag).parent.update(
+                                    .from[0] as GUI.tag.TreeViewTag).parent.update(
                                         p2
                                     );
                                 e.data.to.update(p1);

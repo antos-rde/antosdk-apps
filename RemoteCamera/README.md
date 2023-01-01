@@ -8,5 +8,6 @@ This application reauires the **tunel plugin** and the **ant-tunnel v4l2 publish
 on the server-side
 
 ## Change log
+* v0.1.5-a: support AntOS 2.0.x
 * v0.1.4-a: change app category
 * v0.1.2-a: user worker for jpeg decoding

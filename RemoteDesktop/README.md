@@ -7,6 +7,7 @@ Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blo
 
 
 ## Change logs
+* v0.1.13 - support AntOS v2.0.x
 * v0.1.12 - improve UI handling
 * v0.1.11 - Support 16 bits per pixel
 * v0.1.10 - Allow to sync clipboard between local and remote machine, CTRL+SHIF+V to paste text from local to remote machine

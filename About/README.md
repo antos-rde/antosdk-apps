@@ -5,6 +5,8 @@ It is used to show the change logs of the current AntOS version
 
 ## Change logs
 ### v0.1.1-b
+* Increase default window size
+### v0.1.1-b
 * add missing css file
 
 ### v0.1.0-b

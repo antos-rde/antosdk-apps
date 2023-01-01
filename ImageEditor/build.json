@@ -1,0 +1,97 @@
+{
+    "name": "ImageEditor",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+        "coffee": {
+            "require": [
+                "coffee"
+            ],
+            "jobs": [
+                {
+                    "name": "coffee-compile",
+                    "data": {
+                        "src": [
+                            "coffees/main.coffee"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "cat": {
+            "jobs": [
+                {
+                    "name": "vfs-cat",
+                    "data": {
+                        "src": [
+                            "css/main.css",
+                            "css/tui-image-ed-bundle.min.css"
+                        ],
+                        "dest": "build/debug/main.css"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/main.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "javascripts/tui-image-ed-bundle.min.js",
+                            "assets/scheme.html",
+                            "package.json",
+                            "README.md"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "coffee",
+                "cat",
+                "uglify",
+                "copy"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/ImageEditor.zip"
+                    }
+                }
+            ]
+        }
+    }
+}
