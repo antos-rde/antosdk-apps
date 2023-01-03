@@ -315,8 +315,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MarkOn/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.0.8-a",
-		"dependencies": ["SimpleMDE@1.11.2-r"],"mimes":["text/.*"],
+		"version": "0.1.0-a",
+		"dependencies": ["SimpleMDE@2.18.0-r"],"mimes":["text/.*"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MarkOn/build/release/MarkOn.zip"
 	},
 	{
@@ -401,11 +401,11 @@
 	},
 	{
 		"pkgname": "SimpleMDE",
-		"name": "SimpleMDE library",
+		"name": "EasyMDE library, a fork of SimpleMDE",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SimpleMDE/README.md",
 		"category": "Library",
 		"author": "",
-		"version": "1.11.2-r",
+		"version": "2.18.0-r",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SimpleMDE/build/release/SimpleMDE.zip"
 	},

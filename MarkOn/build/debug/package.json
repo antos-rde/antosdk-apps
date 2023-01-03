@@ -6,9 +6,9 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.0.8-a",
+    "version":"0.1.0-a",
     "category":"Office",
     "iconclass":"fa fa-leanpub",
-    "dependencies": ["SimpleMDE@1.11.2-r"],
+    "dependencies": ["SimpleMDE@2.18.0-r"],
     "mimes":["text/.*"]
 }

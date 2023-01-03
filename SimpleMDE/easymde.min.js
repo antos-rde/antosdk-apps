@@ -1,4 +1,3 @@
-
 /**
  * easymde v2.18.0
  * Copyright Jeroen Akkerman

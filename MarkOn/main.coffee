@@ -29,7 +29,7 @@ class MarkOn extends this.OS.application.BaseApplication
         else
             @currfile = "Untitled".asFileHandle()
         @editormux = false
-        @editor = new SimpleMDE
+        @editor = new EasyMDE
             element: markarea
             autoDownloadFontAwesome: false
             autofocus: true
@@ -44,7 +44,7 @@ class MarkOn extends this.OS.application.BaseApplication
                     className: "fa fa-eye no-disable",
                     action: (e) =>
                         @previewOn = !@previewOn
-                        SimpleMDE.togglePreview e
+                        EasyMDE.togglePreview e
                         #if(self.previewOn) toggle the highlight
                         #{
                         #    var container = self._scheme.find(self,"Text")
