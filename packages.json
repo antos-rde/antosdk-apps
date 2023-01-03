@@ -401,7 +401,7 @@
 	},
 	{
 		"pkgname": "SimpleMDE",
-		"name": "EasyMDE library, a fork of SimpleMDE",
+		"name": "EasyMDE",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SimpleMDE/README.md",
 		"category": "Library",
 		"author": "",
