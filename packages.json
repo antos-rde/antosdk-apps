@@ -315,7 +315,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MarkOn/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.1.0-a",
+		"version": "0.1.1-a",
 		"dependencies": ["SimpleMDE@2.18.0-r"],"mimes":["text/.*"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MarkOn/build/release/MarkOn.zip"
 	},

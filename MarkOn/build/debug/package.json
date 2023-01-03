@@ -6,7 +6,7 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.0-a",
+    "version":"0.1.1-a",
     "category":"Office",
     "iconclass":"fa fa-leanpub",
     "dependencies": ["SimpleMDE@2.18.0-r"],
