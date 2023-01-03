@@ -1,7 +1,7 @@
 {
     "pkgname": "SimpleMDE",
-    "name":"EasyMDE library, a fork of SimpleMDE",
-    "description":"SimpleMDE",
+    "name":"EasyMDE",
+    "description":"EasyMDE library, a fork of SimpleMDE",
     "info":{
         "author": "",
         "email": ""
