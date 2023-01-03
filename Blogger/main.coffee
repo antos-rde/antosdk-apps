@@ -187,7 +187,7 @@ class Blogger extends this.OS.application.BaseApplication
                     .catch (e) => @error __("Cannot delete the section: {0}", e.toString()), e
             return false
             
-        @editor = new SimpleMDE
+        @editor = new EasyMDE
             element: @find "markarea"
             autoDownloadFontAwesome: false
             autofocus: true
@@ -237,7 +237,7 @@ class Blogger extends this.OS.application.BaseApplication
                     className: "fa fa-eye no-disable",
                     action: (e) =>
                         @previewOn = !@previewOn
-                        SimpleMDE.togglePreview e
+                        EasyMDE.togglePreview e
                         #/console.log @select ".editor-preview editor-preview-active"
                         renderMathInElement @find "editor-container"
                 },
@@ -294,7 +294,7 @@ class Blogger extends this.OS.application.BaseApplication
             sel = @tabcontainer.selectedTab
             return unless sel and sel.container.aid is "blog-container"
             @saveBlog()
-        @on "vboxchange", () =>
+        @on "resize", () =>
             @resizeContent()
         
         @resizeContent()
@@ -489,12 +489,12 @@ class Blogger extends this.OS.application.BaseApplication
             
     resizeContent: () ->
         container = @find "editor-container"
-        children = ($ container).children()
+        children = ($ ".EasyMDEContainer", container).children()
         titlebar = (($ @scheme).find ".afx-window-top")[0]
-        toolbar = children[1]
-        statusbar = children[4]
+        toolbar = children[0]
+        statusbar = children[3]
         cheight = ($ @scheme).height() - ($ titlebar).height() - ($ toolbar).height() - ($ statusbar).height() - 90
-        ($ children[2]).css("height", cheight + "px")
+        ($ children[1]).css("height", cheight + "px")
         
 Blogger.singleton = true
 Blogger.dependencies = [

@@ -81,7 +81,7 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BasicDialog
 
     main: () ->
         super.main()
-        @editor = new SimpleMDE
+        @editor = new EasyMDE
             autoDownloadFontAwesome: false
             element: @find "contentarea"
             status: false
@@ -107,14 +107,14 @@ class BloggerCVSectionDiaglog extends this.OS.GUI.BasicDialog
             @handle data if @handle
             @quit()
             
-        @on "vboxchange", () => @resizeContent()
+        @on "resize", () => @resizeContent()
         @resizeContent()
     
     resizeContent: () ->
         container = @find "editor-container"
-        children = ($ container).children()
+        children = ($ ".EasyMDEContainer", container).children()
         cheight = ($ container).height() - 30
-        ($ children[1]).css("height", cheight + "px")
+        ($ children[0]).css("height", cheight + "px")
     
 
 # this dialog is for send mail

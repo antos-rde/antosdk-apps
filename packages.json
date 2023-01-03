@@ -95,8 +95,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.2.8-a",
-		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["none"],
+		"version": "0.2.9-a",
+		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/build/release/Blogger.zip"
 	},
 	{
@@ -105,8 +105,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Booklet/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.2.4-a",
-		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["dir"],
+		"version": "0.2.5-a",
+		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r"],"mimes":["dir"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Booklet/build/release/Booklet.zip"
 	},
 	{

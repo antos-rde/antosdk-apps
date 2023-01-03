@@ -7,9 +7,9 @@
         "author": "Xuan Sang LE",
         "email": "mrsang@lxsang.me"
     },
-    "version":"0.2.4-a",
+    "version":"0.2.5-a",
     "category":"Office",
     "iconclass":"bi bi-journals",
-    "dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],
+    "dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r"],
     "mimes":["dir"]
 }
