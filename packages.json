@@ -345,7 +345,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Preview/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
-		"version": "0.1.2-a",
+		"version": "0.1.3-a",
 		"dependencies": ["libpdfjs@2.6.347-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Preview/build/release/Preview.zip"
 	},
