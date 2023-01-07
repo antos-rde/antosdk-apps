@@ -7,6 +7,7 @@ Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blo
 
 
 ## Change logs
+* v0.1.14 - Add toolbar for canvas size control
 * v0.1.13 - support AntOS v2.0.x
 * v0.1.12 - improve UI handling
 * v0.1.11 - Support 16 bits per pixel

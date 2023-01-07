@@ -1,7 +1,17 @@
 <afx-app-window apptitle="VNC Remote Desktop" width="720" height="576" data-id="RemoteDesktop">
-    <afx-hbox >
+    <afx-vbox >
         <div data-id="container">
             <canvas data-id="screen"></canvas>
         </div>
-    </afx-hbox>
+        <afx-hbox data-height="35">
+            <afx-button  iconclass="fa fa-arrows-alt" data-id="btreset" data-width="content"></afx-button>
+            <div data-width = "5" ></div>
+            <afx-slider data-id="zoom" ></afx-slider>
+            <div data-width = "5" ></div>
+            <afx-button  iconclass="bi bi-box-arrow-down" data-id="scroll_down" data-width="content"></afx-button>
+            <afx-button  iconclass="bi bi-box-arrow-up" data-id="scroll_up" data-width="content"></afx-button>
+            <afx-button  iconclass="bi bi-box-arrow-left" data-id="scroll_left" data-width="content"></afx-button>
+            <afx-button  iconclass="bi bi-box-arrow-right" data-id="scroll_right" data-width="content"></afx-button>
+        </afx-hbox>
+    </afx-vbox>
 </afx-app-window>
