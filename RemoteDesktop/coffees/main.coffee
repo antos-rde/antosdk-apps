@@ -34,6 +34,7 @@ ConnectionDialog.scheme = """
         <div data-height="5"></div>
         <afx-label text="__(JPEG quality)" data-height="30" class="header" ></afx-label>
         <afx-slider data-id ="jq" data-height="30" ></afx-slider>
+        <div></div>
         <afx-hbox data-height = '35'>
             <div  style=' text-align:right;'>
                 <afx-button data-id = "bt-ok" text = "__(Connect)"></afx-button>
@@ -65,6 +66,7 @@ CredentialDialog.scheme = """
     <afx-vbox padding="5">
         <afx-input label="__(Username)" data-height="55" data-id="txtUser"></afx-input>
         <afx-input label="__(Password)" data-height="55" type="password" data-id="txtPass"></afx-input>
+        <div></div>
         <afx-hbox data-height = '35'>
             <div  style=' text-align:right;'>
                 <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
@@ -87,14 +89,9 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @zoom.max = 200
         @zoom.value = 100
         @zoom.onvaluechange = (e) => @setScale()
-        @find("scroll_down").onbtclick = (e) =>
-            @container.scrollTop  += 20
-        @find("scroll_up").onbtclick = (e) =>
-            @container.scrollTop  -= 20
-        @find("scroll_left").onbtclick = (e) =>
-            @container.scrollLeft  -= 20
-        @find("scroll_right").onbtclick = (e) =>
-            @container.scrollLeft  += 20
+        @switch = @find "capture_mouse"
+        @switch.onswchange = (e) =>
+            @client.mouseCapture = @switch.swon
         @btreset.onbtclick = (e) =>
             w = $(@container).width()
             h = $(@container).height()

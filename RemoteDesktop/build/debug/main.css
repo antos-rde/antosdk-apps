@@ -1,7 +1,7 @@
 afx-app-window[data-id="RemoteDesktop"] div[data-id="container"]
 {
     background-color: #272822;
-    overflow: hidden;
+    overflow: auto;
 }
 afx-app-window[data-id="RemoteDesktop"] canvas[data-id="screen"]
 {

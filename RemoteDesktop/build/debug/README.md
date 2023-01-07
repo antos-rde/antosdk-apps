@@ -7,6 +7,7 @@ Further information on **wvnc**: [https://blog.lxsang.me/post/id/23](https://blo
 
 
 ## Change logs
+* v0.1.16 - Allow to enable/disable mouse capture in remote desktop, remove some unused toolbar buttons
 * v0.1.15 - Only send ACK command when finish rendering the received frame, this allows to vastly improve performance and bandwidth
 * v0.1.14 - Add toolbar for canvas size control
 * v0.1.13 - support AntOS v2.0.x

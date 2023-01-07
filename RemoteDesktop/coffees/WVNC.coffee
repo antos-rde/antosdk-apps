@@ -10,6 +10,7 @@ class WVNC
         @canvas = document.getElementById @canvas if typeof @canvas is 'string'
         @decoder = new Worker worker
         @enableEvent = false
+        @mouseCapture = true
         @pingto = false
         me = @
         @mouseMask = 0
@@ -47,15 +48,18 @@ class WVNC
             return false
 
         me.canvas.onmousemove = (e) ->
+            return unless me.mouseCapture
             sendMouseLocation e
 
         me.canvas.onmousedown = (e) ->
+            return unless me.mouseCapture
             state = 1 << e.button
             me.mouseMask = me.mouseMask | state
             sendMouseLocation e
             #e.preventDefault()
 
         me.canvas.onmouseup = (e) ->
+            return unless me.mouseCapture
             state = 1 << e.button
             me.mouseMask = me.mouseMask & (~state)
             sendMouseLocation e
@@ -109,6 +113,7 @@ class WVNC
         # mouse wheel event
         @canvas.addEventListener 'wheel', (e) ->
             return unless me.enableEvent
+            return unless me.mouseCapture
             #if (e.deltaY < 0) # up
             p = getMousePos e
             e.preventDefault()
