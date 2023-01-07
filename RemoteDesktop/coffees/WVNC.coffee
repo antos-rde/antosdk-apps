@@ -149,12 +149,15 @@ class WVNC
 
     process: (msg) ->
         if not @socket
+            @socket.send(@buildCommand 0x04, 1)
             return
         data = new Uint8Array msg.pixels
         ctx = @canvas.getContext "2d", { alpha: false }
         imgData = ctx.createImageData  msg.w, msg.h
         imgData.data.set data
         ctx.putImageData imgData,msg.x, msg.y
+        # tell the server that we are ready
+        @socket.send(@buildCommand 0x04, 1)
         
 
     setScale: (n) ->
@@ -329,7 +332,6 @@ class WVNC
             when 0x84
                 # send data to web assembly for decoding
                 @decoder.postMessage data.buffer, [data.buffer]
-                @socket.send(@buildCommand 0x04, 1)
             when 0x85
                 # clipboard data from server
                 data = data.subarray 1
