@@ -57,7 +57,6 @@ class CredentialDialog extends this.OS.GUI.BasicDialog
                 password: (@find "txtPass").value
             @handle data
             @quit()
-        
         @find("bt-cancel").onbtclick = () =>
             @quit()
 
@@ -83,6 +82,29 @@ class RemoteDesktop extends this.OS.application.BaseApplication
     main: () ->
         @canvas = @find "screen"
         @container = @find "container"
+        @zoom = @find "zoom"
+        @btreset = @find "btreset"
+        @zoom.max = 200
+        @zoom.value = 100
+        @zoom.onvaluechange = (e) => @setScale()
+        @find("scroll_down").onbtclick = (e) =>
+            @container.scrollTop  += 20
+        @find("scroll_up").onbtclick = (e) =>
+            @container.scrollTop  -= 20
+        @find("scroll_left").onbtclick = (e) =>
+            @container.scrollLeft  -= 20
+        @find("scroll_right").onbtclick = (e) =>
+            @container.scrollLeft  += 20
+        @btreset.onbtclick = (e) =>
+            w = $(@container).width()
+            h = $(@container).height()
+            sx = w / @client.resolution.w
+            sy = h / @client.resolution.h
+            if sx > sy
+                @zoom.value = sy*100
+            else
+                @zoom.value = sx*100
+            @setScale()
         @client = new WVNC { 
             element: @canvas
         }
@@ -113,7 +135,7 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                 @openDialog new CredentialDialog, { title: __("User credential") }
                 .then (d) ->
                     r(d.username, d.password)
-        @on "resize", (e)=> @setScale()
+        # @on "resize", (e)=> @setScale()
         @on "focus", (e) => $(@canvas).focus()
         @client.init().then () => 
             @showConnectionDialog()
@@ -136,12 +158,11 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                     .catch (err) => @error err.toString(), err
 
     setScale: () ->
+        console.log "scale changed"
         return unless @client and @client.resolution
-        w = $(@container).width()
-        h = $(@container).height()
-        sx = w / @client.resolution.w
-        sy = h / @client.resolution.h
-        if sx > sy then @client.setScale sy else @client.setScale sx
+        @client.setScale @zoom.value / 100.0
+        @container.scrollLeft = 0
+        @container.scrollTop = 0
     
     menu: () ->
         
