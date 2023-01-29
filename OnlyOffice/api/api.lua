@@ -1,7 +1,6 @@
 local args=...
 local vfs = require("vfs")
 
-local DLCMD="wget --no-check-certificate -O"
 if not args then
     args = REQUEST
 end
@@ -20,6 +19,25 @@ local error = function(data)
     }
 end
 
+local download_file = function(src, dest)
+    local https = require('ssl.https')
+    local ltn12 = require("ltn12")
+    local file = io.open(dest, "w")
+    if not file then
+        LOG_ERROR("Unable to open file %s to write", dest)
+        return false
+    end
+    local body, code, headers = https.request{
+        url = src,
+        sink = ltn12.sink.file(file)
+    }
+    if code~=200 then 
+        LOG_ERROR("Error: ".. (code or '') ) 
+        return false
+    end
+    return true
+end
+
 local handle = {}
 
 handle.token = function(data)
@@ -27,17 +45,17 @@ handle.token = function(data)
     local stat = ulib.file_stat(file)
     local ret = {
         sid = "sessionid="..SESSION.sessionid,
-        key = std.sha1(file..":"..stat.mtime)
+        key = enc.sha1(file..":"..stat.mtime)
     }
     return result(ret)
 end
 
 handle.history = function(data)
     local file = vfs.ospath(data.file)
-    local history_file = vfs.ospath("home://.office/"..std.sha1(file).."/history.json")
+    local history_file = vfs.ospath("home://.office/"..enc.sha1(file).."/history.json")
     if(ulib.exists(history_file)) then
         local obj = JSON.decodeFile(history_file)
-        obj.hash = std.sha1(file)
+        obj.hash = enc.sha1(file)
         return result(obj)
     else
         return error("No history found")
@@ -64,7 +82,7 @@ end
 handle.restore = function(data)
     local version = data.version
     local file = vfs.ospath(data.file)
-    local basepath = vfs.ospath("home://.office/"..std.sha1(file))
+    local basepath = vfs.ospath("home://.office/"..enc.sha1(file))
     if ulib.exists(basepath.."/history.json") then
         local history = JSON.decodeFile(basepath.."/history.json")
         local obj = handle.clean_up_version(basepath, history,version)
@@ -95,22 +113,14 @@ handle.restore = function(data)
 end
 handle.duplicate = function(data)
     local file = vfs.ospath(data.as)
-    local tmpfile = "/tmp/"..std.sha1(file)
-    local cmd = DLCMD.." "..tmpfile..' "'..data.remote..'"'
-    os.execute(cmd)
-    -- move file to correct position
-    if ulib.exists(tmpfile) then
-        cmd = "mv "..tmpfile.." "..file
-        os.execute(cmd)
-        print("File "..file.." is duplicated with remote")
-    else
+    download_file(data.remote, file)
+    if not ulib.exists(file) then
         return error("Unable to duplicate file")
     end
     return result("File duplicated")
 end
 
 handle.save = function()
-    --print(JSON.encode(REQUEST))
     if not REQUEST.json then
         return error("Invalid request")
     end
@@ -123,31 +133,31 @@ handle.save = function()
     end
     local file = vfs.ospath(REQUEST.file)
     if data.status == 2 then
-        local tmpfile = "/tmp/"..std.sha1(file)
-        local cmd = DLCMD.." "..tmpfile..' "'..data.url..'"'
-        os.execute(cmd)
+        local tmpfile = "/tmp/"..enc.sha1(file)
+        download_file(data.url, tmpfile)
         -- move file to correct position
         if ulib.exists(tmpfile) then
+            LOG_INFO("Remote file saved to %s", tmpfile)
             -- back up the file version
             local history_dir = "home://.office"
             vfs.mkdir(history_dir)
-            history_dir = history_dir.."/"..std.sha1(file)
+            history_dir = history_dir.."/"..enc.sha1(file)
             vfs.mkdir(history_dir)
             history_dir = vfs.ospath(history_dir)
             -- backup old version
-            cmd = 'cp "'..file..'" "'..history_dir.."/"..data.key..'"'
-            os.execute(cmd)
+            ulib.send_file(file,history_dir.."/"..data.key)
+            LOG_INFO("Backup file saved to %s", history_dir.."/"..data.key)
             -- create new version
             local old_stat = ulib.file_stat(file)
-            cmd = 'mv "'..tmpfile..'" "'..file..'"'
-            os.execute(cmd)
+            if not ulib.move(tmpfile, file) then
+                ulib.send_file(tmpfile, file)
+            end
             -- get the new key
             local stat = ulib.file_stat(file)
-            local new_key = std.sha1(file..":"..stat.mtime)
+            local new_key = enc.sha1(file..":"..stat.mtime)
             -- save changes
             if(data.changesurl) then
-                cmd = DLCMD.." "..history_dir.."/"..new_key..'.zip "'..data.changesurl..'"'
-                os.execute(cmd)
+                download_file(data.changesurl, history_dir.."/"..new_key..'.zip')
             end
             -- now save version object
             local history_file = history_dir.."/history.json"
@@ -177,7 +187,7 @@ handle.save = function()
             else
                 return error("Cannot save history")
             end
-            print("File "..file.." sync with remote")
+            LOG_INFO("File "..file.." sync with remote")
         else
             return error("Unable to download")
         end

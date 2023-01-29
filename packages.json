@@ -275,7 +275,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LibreOffice/README.md",
 		"category": "Office",
 		"author": "Dany LE",
-		"version": "0.1.3-a",
+		"version": "0.1.4-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LibreOffice/build/release/LibreOffice.zip"
 	},
@@ -335,7 +335,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/OnlyOffice/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.1.7-a",
+		"version": "0.1.8-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/OnlyOffice/build/release/OnlyOffice.zip"
 	},

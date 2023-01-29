@@ -10,6 +10,7 @@ way to work with multiple documents at the same time.
 ![https://github.com/lxsang/antosdk-apps/blob/master/OnlyOffice/screenshot.png?raw=true](https://github.com/lxsang/antosdk-apps/blob/master/OnlyOffice/screenshot.png?raw=true)
 
 ## Change log
+- v 0.1.8a: Use new backend API + luasec + luasocket to manipulate remote file
 - v 0.1.7a: Allow setting blur overlay on window
 - v 0.1.6a: Update backend api
 - v 0.1.5a: Add document versionning support
