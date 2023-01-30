@@ -1,0 +1,16 @@
+{
+    "pkgname": "SQLiteDB",
+    "app":"SQLiteDB",
+    "name":"SQLiteDB",
+    "description":"SQLiteDB",
+    "info":{
+        "author": "",
+        "email": ""
+    },
+    "version":"0.0.1-a",
+    "category":"Other",
+    "iconclass":"fa fa-adn",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}
