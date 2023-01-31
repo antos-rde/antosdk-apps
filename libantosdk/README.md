@@ -2,6 +2,7 @@
 AntOSDK: development API for AntOS based applications/projects
 
 ## Change logs
+- 0.0.17: Use lastest AntOS d.ts file
 - 0.0.16: Fix jquery encoding error
 - 0.0.15: App name differ from libname, update AntOS API
 - 0.0.14: vfs-rm can be configured to be silent when the target does not exist
