@@ -3,210 +3,6 @@ var OS;
 (function (OS) {
     let API;
     (function (API) {
-        /**
-         * Generate SQL expression from input object
-         *
-         * Example of input object
-         * ```ts
-         * {
-         *  where: {
-         *      id$gte: 10,
-         *      user: "dany'",
-         *      $or: {
-         *          'user.email': "test@mail.com",
-         *          age$lte: 30,
-         *          $and: {
-         *              'user.birth$ne': 1986,
-         *              age$not_between: [20,30],
-         *              name$not_like: "%LE"
-         *          }
-         *      }
-         *  },
-         *  fields: ['name as n', 'id', 'email'],
-         *  order: ['user.name$asc', "id$desc"],
-         *  joins: {
-         *      cid: 'Category.id',
-         *      did: 'Country.id'
-         *  }
-         *}
-         * ```
-         * This will generate the followings expressions:
-         * - `( self.name as n,self.id,self.email )` for fields
-         * - condition:
-         * ```
-         * (
-         *      ( self.id >= 10 ) AND
-         *      ( self.user = 'dany''' ) AND
-         *      (
-         *          ( user.email = 'test@mail.com' ) OR
-         *          ( self.age <= 30 ) OR
-         *          (
-         *              ( user.birth != 1986 ) AND
-         *              ( self.age NOT BETWEEN 20 AND 30 ) AND
-         *              ( self.name NOT LIKE '%LE' )
-         *          )
-         *      )
-         *  )
-         * ```
-         *  - order: `user.name ASC,self.id DESC`
-         *  - joining:
-         * ```
-         *  INNER JOIN Category ON self.cid = Category.id
-         *  INNER JOIN Country ON self.did = Country.id
-         * ```
-         *
-         */
-        class SQLiteQueryGenerator {
-            constructor(obj) {
-                this._where = undefined;
-                this._fields = undefined;
-                this._order = undefined;
-                this._joins = undefined;
-                this._is_joining = false;
-                if (obj.joins) {
-                    this._is_joining = true;
-                    this._joins = this.joins(obj.joins);
-                }
-                if (obj.where) {
-                    this._where = this.where("$and", obj.where);
-                }
-                if (obj.fields) {
-                    this._fields = `( ${obj.fields.map(v => this.infer_field(v)).join(",")} )`;
-                }
-                if (obj.order) {
-                    this._order = this.order_by(obj.order);
-                }
-            }
-            infer_field(k) {
-                if (!this._is_joining || k.indexOf(".") > 0)
-                    return k;
-                return `self.${k}`;
-            }
-            joins(data) {
-                let joins_arr = [];
-                for (let k in data) {
-                    let v = data[k];
-                    let arr = v.split('.');
-                    if (arr.length != 2) {
-                        throw new Error(__("Other table name parsing error: {0}", v).__());
-                    }
-                    joins_arr.push(`INNER JOIN ${arr[0]} ON ${this.infer_field(k)} = ${v}`);
-                }
-                return joins_arr.join(" ");
-            }
-            print() {
-                console.log(this._fields);
-                console.log(this._where);
-                console.log(this._order);
-                console.log(this._joins);
-            }
-            order_by(order) {
-                if (!Array.isArray(order)) {
-                    throw new Error(__("Invalid type: expect array get {0}", typeof (order)).__());
-                }
-                return order.map((v, _) => {
-                    const arr = v.split('$');
-                    if (arr.length != 2) {
-                        throw new Error(__("Invalid field order format {0}", v).__());
-                    }
-                    switch (arr[1]) {
-                        case 'asc': return `${this.infer_field(arr[0])} ASC`;
-                        case 'desc': return `${this.infer_field(arr[0])} DESC`;
-                        default: throw new Error(__("Invalid field order type {0}", v).__());
-                    }
-                }).join(",");
-            }
-            escape_string(s) {
-                let regex = /[']/g;
-                var chunkIndex = regex.lastIndex = 0;
-                var escapedVal = '';
-                var match;
-                while ((match = regex.exec(s))) {
-                    escapedVal += s.slice(chunkIndex, match.index) + { '\'': '\'\'' }[match[0]];
-                    chunkIndex = regex.lastIndex;
-                }
-                if (chunkIndex === 0) {
-                    // Nothing was escaped
-                    return "'" + s + "'";
-                }
-                if (chunkIndex < s.length) {
-                    return "'" + escapedVal + s.slice(chunkIndex) + "'";
-                }
-                return "'" + escapedVal + "'";
-            }
-            parse_value(v, t) {
-                if (!t.includes(typeof (v))) {
-                    throw new Error(__("Invalid type: expect [{0}] get {1}", t.join(","), typeof (v)).__());
-                }
-                switch (typeof (v)) {
-                    case 'number': return JSON.stringify(v);
-                    case 'string': return this.escape_string(v);
-                    default: throw new Error(__("Un supported value {0} of type {1}", v, typeof (v)).__());
-                }
-            }
-            binary(k, v) {
-                const arr = k.split("$");
-                if (arr.length > 2) {
-                    throw new Error(__("Invalid left hand side format: {0}", k).__());
-                }
-                if (arr.length == 2) {
-                    switch (arr[1]) {
-                        case "gt":
-                            return `( ${this.infer_field(arr[0])} > ${this.parse_value(v, ['number'])} )`;
-                        case "gte":
-                            return `( ${this.infer_field(arr[0])} >= ${this.parse_value(v, ['number'])} )`;
-                        case "lt":
-                            return `( ${this.infer_field(arr[0])} < ${this.parse_value(v, ['number'])} )`;
-                        case "lte":
-                            return `( ${this.infer_field(arr[0])} <= ${this.parse_value(v, ['number'])} )`;
-                        case "ne":
-                            return `( ${this.infer_field(arr[0])} != ${this.parse_value(v, ['number', 'string'])} )`;
-                        case "between":
-                            return `( ${this.infer_field(arr[0])} BETWEEN ${this.parse_value(v[0], ['number'])} AND ${this.parse_value(v[1], ['number'])} )`;
-                        case "not_between":
-                            return `( ${this.infer_field(arr[0])} NOT BETWEEN ${this.parse_value(v[0], ['number'])} AND ${this.parse_value(v[1], ['number'])} )`;
-                        case "in":
-                            return `( ${this.infer_field(arr[0])} IN [${this.parse_value(v[0], ['number'])}, ${this.parse_value(v[1], ['number'])}] )`;
-                        case "not_in":
-                            return `( ${this.infer_field(arr[0])} NOT IN [${this.parse_value(v[0], ['number'])}, ${this.parse_value(v[1], ['number'])}] )`;
-                        case "like":
-                            return `( ${this.infer_field(arr[0])} LIKE ${this.parse_value(v, ['string'])} )`;
-                        case "not_like":
-                            return `( ${this.infer_field(arr[0])} NOT LIKE ${this.parse_value(v, ['string'])} )`;
-                        default: throw new Error(__("Unsupported operator `{0}`", arr[1]).__());
-                    }
-                }
-                else {
-                    return `( ${this.infer_field(arr[0])} = ${this.parse_value(v, ['number', 'string'])} )`;
-                }
-            }
-            where(op, obj) {
-                let join_op = undefined;
-                switch (op) {
-                    case "$and":
-                        join_op = " AND ";
-                        break;
-                    case "$or":
-                        join_op = " OR ";
-                        break;
-                    default:
-                        throw new Error(__("Invalid operator {0}", op).__());
-                }
-                if (typeof obj !== "object") {
-                    throw new Error(__("Invalid input data for operator {0}", op).__());
-                }
-                let arr = [];
-                for (let k in obj) {
-                    if (k == "$and" || k == "$or") {
-                        arr.push(this.where(k, obj[k]));
-                    }
-                    else {
-                        arr.push(this.binary(k, obj[k]));
-                    }
-                }
-                return `( ${arr.join(join_op)} )`;
-            }
-        }
         class SQLiteDBCore {
             constructor(path) {
                 if (!SQLiteDBCore.REGISTY) {
@@ -376,10 +172,9 @@ var OS;
              *      - other operations are not supported
              * * `sqlite://remote/path/to/file.db@table_name` refers to the table `table_name` in the database
              *      - meta operation will return fileinfo with table scheme information
-             *      - read operation will read all records by filter defined by the filter operation
+             *      - read operation will read all records by filter defined by the filter as parameters
              *      - write operations will insert a new record
-             *      - rm operation will delete records by filter defined by the filter operation
-             *      - filter operation sets the filter for the table
+             *      - rm operation will delete records by filter as parameters
              *      - other operations are not supported
              * - `sqlite://remote/path/to/file.db@table_name@id` refers to a records in `table_name` with ID `id`
              *      - read operation will read the current record
@@ -387,12 +182,57 @@ var OS;
              *      - rm operation will delete current record
              *      - other operations are not supported
              *
-             * Some example of filters:
+             * Example of filter:
              * ```ts
-             *  handle.filter = (filter) => {
-             *      filter.fields()
-             *  }
-             * ```
+            * {
+            * table_name:'contacts';
+            *  where: {
+            *      id$gte: 10,
+            *      user: "dany'",
+            *      $or: {
+            *          'user.email': "test@mail.com",
+            *          age$lte: 30,
+            *          $and: {
+            *              'user.birth$ne': 1986,
+            *              age$not_between: [20,30],
+            *              name$not_like: "%LE"
+            *          }
+            *      }
+            *  },
+            *  fields: ['name as n', 'id', 'email'],
+            *  order: ['user.name$asc', "id$desc"],
+            *  joins: {
+            *      cid: 'Category.id',
+            *      did: 'Country.id',
+            *      uid: "User.id"
+            *  }
+            *}
+            * ```
+            * This will generate the followings expressions:
+            * - `( self.name as n,self.id,self.email )` for fields
+            * - condition:
+            * ```
+            * (
+            *      ( contacts.id >= 10 ) AND
+            *      ( contacts.user = 'dany''' ) AND
+            *      (
+            *          ( user.email = 'test@mail.com' ) OR
+            *          ( contacts.age <= 30 ) OR
+            *          (
+            *              ( user.birth != 1986 ) AND
+            *              ( contacts.age NOT BETWEEN 20 AND 30 ) AND
+            *              ( contacts.name NOT LIKE '%LE' )
+            *          )
+            *      )
+            *  )
+            * ```
+            *  - order: `user.name ASC,contacts.id DESC`
+            *  - joining:
+            * ```
+            *  INNER JOIN Category ON contacts.cid = Category.id
+            *  INNER JOIN Country ON contacts.did = Country.id
+            *  INNER JOIN Country ON contacts.did = Country.id
+            * ```
              *
              * @class SqliteFileHandle
              * @extends {BaseFileHandle}

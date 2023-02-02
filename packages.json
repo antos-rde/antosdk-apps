@@ -225,7 +225,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libantosdk/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.17-a",
+		"version": "0.0.18-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libantosdk/build/release/libantosdk.zip"
 	},

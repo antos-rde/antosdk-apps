@@ -475,6 +475,7 @@ declare namespace OS {
          * @extends {BaseDialog}
          */
         class BasicDialog extends BaseDialog {
+            ['constructor']: typeof BasicDialog;
             /**
              * Placeholder for the UI scheme to be rendered. This can
              * be either the string definition of the scheme or
@@ -4422,6 +4423,14 @@ declare namespace OS {
                  */
                 private _selectedItems;
                 /**
+                 * The anchor element that the list view positioned on
+                 * This is helpful when rendering dropdown list
+                 * @private
+                 * @type{HTMLElement}
+                 * @memberof ListViewTag
+                 */
+                private _anchor;
+                /**
                  * Data placeholder of the list
                  *
                  * @private
@@ -5540,6 +5549,18 @@ declare namespace OS {
                  */
                 set iconclass(v: string);
                 /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof LabelTag
+                 */
+                set iconclass_end(v: string);
+                /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof LabelTag
+                 */
+                set iconclass$(v: string);
+                /**
                  * Setter: Set the text of the label
                  *
                  * Getter: Get the text displayed on the label
@@ -6296,12 +6317,24 @@ declare namespace OS {
                  */
                 delete(row: GridRowTag): void;
                 /**
+                 * Scroll the grid view to bottom
+                 *
+                 * @memberof GridViewTag
+                 */
+                scroll_to_bottom(): void;
+                /**
+                 * Scroll the grid view to top
+                 *
+                 * @memberof GridViewTag
+                 */
+                scroll_to_top(): void;
+                /**
                  * Push a row to the grid
                  *
                  * @param {GenericObject<any>[]} row list of cell data
                  * @param {boolean} flag indicates where the row is add to beginning or end
                  * of the row
-                 * @memberof GridViewTags
+                 * @memberof GridViewTag
                  */
                 push(row: GenericObject<any>[], flag: boolean): void;
                 /**
@@ -6622,6 +6655,19 @@ declare namespace OS {
                  * @memberof ButtonTag
                  */
                 set iconclass(v: string);
+                /**
+                 * Set the icon class on the right side of the button, this property
+                 * allows to style the button icon using CSS
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass$(v: string);
+                /**
+                 * Set the CSS class of the label icon on the right side
+                 *
+                 * @memberof ButtonTag
+                 */
+                set iconclass_end(v: string);
                 /**
                  * Setter: Set the text of the button
                  *

@@ -1,5 +1,5 @@
 <afx-app-window apptitle="SQLite browser" width="600" height="500" data-id="SQLiteDB">
-    <afx-vbox>
+    <afx-vbox padding="5">
         <afx-hbox data-height="35">
             <afx-button data-id = "bt-add-table" iconclass = "bi bi-plus-lg" data-width="content"></afx-button>
             <afx-list-view dropdown = "true" data-id="tbl-list"></afx-list-view>
@@ -7,12 +7,22 @@
 
         <afx-tab-container data-id = "container" dir = "column" tabbarheight= "40">
             <afx-hbox tabname="__(Struture)" iconclass = "bi bi-layout-wtf" >
-                <afx-grid-view></afx-grid-view>
+                <afx-grid-view data-id="sch-browser"></afx-grid-view>
             </afx-hbox>
             
             <afx-hbox tabname = "__(Browse data)" iconclass = "bi bi-table">
-                <afx-grid-view></afx-grid-view>
+                <afx-vbox>
+                    <afx-grid-view data-id="tb-browser"></afx-grid-view>
+                    <afx-hbox data-height="35">
+                        <afx-button iconclass_end="bi bi-chevron-double-right" data-id="bt-load-next" data-width="content"></afx-button>
+                        <div></div>
+                        <afx-button iconclass="bi bi-plus-lg" data-width="content"></afx-button>
+                        <afx-button iconclass="bi bi-pencil-square" data-width="content"></afx-button>
+                        <afx-button iconclass="bi bi-trash-fill" data-width="content"></afx-button>
+                    </afx-hbox>
+                </afx-vbox>
             </afx-hbox>
+
         </afx-tab-container>
 
     </afx-vbox>
