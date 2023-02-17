@@ -1,12 +1,29 @@
+/**
+ * Define missing API in Array interface
+ *
+ * @interface Array
+ * @template T
+ */
+interface Array<T> {
+    /**
+     * Check if the array includes an element
+     *
+     * @param {T} element to check
+     * @returns {boolean}
+     * @memberof Array
+     */
+    includes(el: T):boolean;
+}
+
 namespace OS {
     export namespace application {
 
         /**
          *
-         * @class SQLiteDB
+         * @class SQLiteDBBrowser
          * @extends {BaseApplication}
          */
-        export class SQLiteDB extends BaseApplication {
+        export class SQLiteDBBrowser extends BaseApplication {
 
             private filehandle: API.VFS.BaseFileHandle;
             private tbl_list: GUI.tag.ListViewTag;
@@ -17,7 +34,7 @@ namespace OS {
             private n_records: number;
             private btn_loadmore: GUI.tag.ButtonTag;
             constructor(args: AppArgumentsType[]) {
-                super("SQLiteDB", args);
+                super("SQLiteDBBrowser", args);
             }
 
             menu() {
@@ -26,12 +43,12 @@ namespace OS {
                         text: "__(File)",
                         nodes: [
                             {
-                            text: "__(New)",
+                            text: "__(New database)",
                             dataid: "new",
                             shortcut: 'A-N'
                             },
                             {
-                            text: "__(Open)",
+                            text: "__(Open database)",
                             dataid: "open",
                             shortcut: 'A-O'
                             },
@@ -63,7 +80,7 @@ namespace OS {
                         this.tbl_list.data = list;
                         if(list.length > 0)
                         {
-                            this.tbl_list.selected = 0;
+                            this.tbl_list.selected = list.length - 1;
                         }
                     })
             }
@@ -128,32 +145,75 @@ namespace OS {
                     {
                         if(!this.tbl_list.selectedItem)
                             return;
-                        const scheme = this.tbl_list.selectedItem.data.handle.info.scheme;
-                        if(!scheme)
+                        const schema = this.tbl_list.selectedItem.data.handle.info.schema;
+                        if(!schema)
                             return;
                         const data = [];
-                        for(let k in scheme)
+                        for(let k in schema.types)
                         {
                             data.push([
                                 { text: k},
-                                {text: scheme[k]}
+                                {text: schema.types[k]}
                             ])
                         }
                         this.grid_scheme.rows = data;
                     }
                 }
+                (this.find("bt-rm-table") as GUI.tag.ButtonTag).onbtclick = async (e) => {
+                    try {
+                        if(!this.filehandle)
+                        {
+                            return this.notify(__("Please open a database file"));
+                        }
+                        if(this.tbl_list.selectedItem == undefined)
+                        {
+                            return;
+                        }
+                        const table = this.tbl_list.selectedItem.data.name;
+                        const ret = await this.openDialog("YesNoDialog", {
+                            title: __("Confirm delete?"),
+                            text: __("Do you realy want to delete table: {0}", table)
+                        });
 
-                (this.find("bt-add-table") as GUI.tag.ButtonTag).onbtclick = (e) => {
-                    if(!this.filehandle)
-                    {
-                        return this.notify(__("Please open a database file"));
+                        if(ret)
+                        {
+                            await this.filehandle.remove(table);
+                            this.list_tables();
+                        }
                     }
-                    this.openDialog(new NewTableDialog(), {
-                        title: __("Create new table")
-                    })
-                    .then((data) => {
-                        console.log(data);
-                    });
+                    catch(e)
+                    {
+                        this.error(__("Unable to execute action table delete: {0}", e.toString()), e);
+                    }
+                    
+                }
+                (this.find("bt-add-table") as GUI.tag.ButtonTag).onbtclick = async (e) => {
+                    try
+                    {
+                        if(!this.filehandle)
+                        {
+                            return this.notify(__("Please open a database file"));
+                        }
+                        const data = await this.openDialog(new NewTableDialog(), {
+                            title: __("Create new table")
+                        });
+                        this.filehandle.cache = data.schema;
+                        await this.filehandle.write(data.name);
+                        this.list_tables();
+                    }
+                    catch(e)
+                    {
+                        this.error(__("Unable to create table: {0}", e.toString()), e);
+                    }
+                }
+                (this.find("btn-edit-record") as GUI.tag.ButtonTag).onbtclick = async (e) => {
+                    this.edit_record();
+                }
+                (this.find("btn-add-record") as GUI.tag.ButtonTag).onbtclick = async (e) => {
+                    this.add_record();
+                }
+                (this.find("btn-delete-record") as GUI.tag.ButtonTag).onbtclick = async (e) => {
+                    this.remove_record();
                 }
                 this.btn_loadmore.onbtclick = async (e) => {
                     try
@@ -173,14 +233,14 @@ namespace OS {
                         const handle: API.VFS.BaseFileHandle = this.tbl_list.selectedItem.data.handle;
                         await handle.onready();
                         this.last_max_id = 0;
-                        this.grid_table.rows = [];
-                        const headers =
-                            Object.getOwnPropertyNames(handle.info.scheme).map((e)=>{
-                                return {text: e}
-                            });
+                        const headers = handle.info.schema.fields.map((e) =>  {
+                            return {text: e}
+                        });
                         this.grid_table.header = headers;
+                        this.grid_table.rows = [];
                         const records = await handle.read({fields:["COUNT(*)"]});
                         this.n_records = records[0]["(COUNT(*))"];
+                        this.btn_loadmore.text = `0/${this.n_records}`;
                         await this.load_table();
                         this.container.selectedIndex = 1;
                     }
@@ -189,12 +249,126 @@ namespace OS {
                         this.error(__("Error reading table: {0}", e.toString()),e);
                     }
                 }
+                this.grid_table.oncelldbclick = async (e) => {
+                    this.edit_record();
+                }
                 this.openFile();
+            }
+            private async add_record()
+            {
+                try
+                {
+                    const table_handle = this.tbl_list.selectedItem;
+                    if(!table_handle)
+                    {
+                        return;
+                    }
+                    const file_hd = table_handle.data.handle;
+                    const schema = table_handle.data.handle.info.schema;
+                    const model = {};
+                    for(let k in schema.types)
+                    {
+                        if(["INTEGER", "REAL", "NUMERIC"].includes(schema.types[k]))
+                        {
+                            model[k] =  0;
+                        }
+                        else
+                        {
+                            model[k] = "";
+                        }
+                    }
+                    console.log(model);
+                    const data = await this.openDialog(new RecordEditDialog(), {
+                        title: __("New record"),
+                        schema: schema,
+                        record: model
+                    });
+                    file_hd.cache = data;
+                    await file_hd.write(undefined);
+                    this.n_records += 1;
+                    await this.load_table();
+                }
+                catch (e)
+                {
+                    this.error(__("Error edit/view record: {0}", e.toString()), e);
+                }
+            }
+            private async remove_record()
+            {
+                try
+                {
+                    const cell = this.grid_table.selectedCell;
+                    const row = this.grid_table.selectedRow;
+                    const table_handle = this.tbl_list.selectedItem;
+                    if(!cell || !table_handle)
+                    {
+                        return;
+                    }
+                    const pk_id = cell.data.record[table_handle.data.handle.info.schema.pk];
+                    const ret = await this.openDialog("YesNoDialog", {
+                        title: __("Delete record"),
+                        text: __("Do you realy want to delete record {0}",pk_id)
+                    });
+                    if(!ret)
+                    {
+                        return;
+                    }
+                    const file_hd = `${table_handle.data.handle.path}@${pk_id}`.asFileHandle();
+                    await file_hd.remove();
+                    this.n_records--;
+                    // remove the target row
+                    this.grid_table.delete(row);
+                    this.btn_loadmore.text = `${this.grid_table.rows.length}/${this.n_records}`;
+                }
+                catch(e)
+                {
+                    this.error(__("Error deleting record: {0}", e.toString()),e);
+                }
+            }
+            private async edit_record()
+            {
+                try
+                {
+                    const cell = this.grid_table.selectedCell;
+                    const row = this.grid_table.selectedRow;
+                    const table_handle = this.tbl_list.selectedItem;
+                    if(!cell || !table_handle)
+                    {
+                        return;
+                    }
+                    const data = await this.openDialog(new RecordEditDialog(), {
+                        title: __("View/edit record"),
+                        schema: table_handle.data.handle.info.schema,
+                        record: cell.data.record
+                    });
+                    const pk_id = cell.data.record[table_handle.data.handle.info.schema.pk];
+                    const file_hd = `${table_handle.data.handle.path}@${pk_id}`.asFileHandle();
+                    file_hd.cache = data;
+                    await file_hd.write(undefined);
+                    const row_data = [];
+                    for(let k of file_hd.info.schema.fields)
+                    {
+                        let text:string = data[k];
+                        if(text.length > 100)
+                        {
+                            text = text.substring(0,100);
+                        }
+                        row_data.push({
+                            text: text,
+                            record: data
+                        });
+                    }
+                    row.data = row_data;
+                }
+                catch (e)
+                {
+                    this.error(__("Error edit/view record: {0}", e.toString()), e);
+                }
             }
 
             private async load_table()
             {
-                if(this.grid_table.rows.length >= this.n_records)
+                if(this.grid_table.rows && this.grid_table.rows.length >= this.n_records)
                 {
                     return;
                 }
@@ -202,15 +376,13 @@ namespace OS {
                             return;
                 const handle: API.VFS.BaseFileHandle = this.tbl_list.selectedItem.data.handle;
                 await handle.onready();
-                const headers =
-                    Object.getOwnPropertyNames(handle.info.scheme).map((e)=>{
-                        return {text: e}
-                    });
-                // read all records
-                const records = await handle.read({
-                    where:{ id$gt: this.last_max_id },
-                    limit: 10
+                const headers = handle.info.schema.fields.map((e) =>  {
+                    return {text: e}
                 });
+                // read all records
+                const filter = { where: {}, limit: 10}
+                filter.where[`${handle.info.schema.pk}\$gt`] = this.last_max_id;
+                const records = await handle.read(filter);
                 
                 if(records && records.length > 0)
                 {
@@ -234,13 +406,16 @@ namespace OS {
                         }
                         this.grid_table.push(row, false);
                     }
-                    (this.grid_table as any).scroll_to_bottom();
+                    this.grid_table.scroll_to_bottom();
                 }
 
                 this.btn_loadmore.text = `${this.grid_table.rows.length}/${this.n_records}`;
             }
         }
 
+        SQLiteDBBrowser.dependencies = [
+            "pkg://SQLiteDB/libsqlite.js"
+        ]
 
         class NewTableDialog extends GUI.BasicDialog {
             /**
@@ -270,7 +445,6 @@ namespace OS {
                 this.container = this.find("container") as HTMLDivElement;
                 (this.find("btnCancel") as GUI.tag.ButtonTag).onbtclick = (e) => this.quit();
                 (this.find("btnAdd") as GUI.tag.ButtonTag).onbtclick = (e) => this.addField();
-                $(this.find("wrapper"))
                 $(this.container)
                     .css("overflow-y", "auto");
                 this.addField();
@@ -281,7 +455,7 @@ namespace OS {
                     {
                         return this.notify(__("Please enter table name"));
                     }
-
+                    const tblname = input.value;
                     const inputs = $("input", this.container) as JQuery<HTMLInputElement>;
                     const lists = $("afx-list-view", this.container) as JQuery<GUI.tag.ListViewTag>;
                     if(inputs.length == 0)
@@ -301,7 +475,7 @@ namespace OS {
                         cdata[key] = lists[i].selectedItem.data.text;
                     }
                     if (this.handle)
-                        this.handle(cdata);
+                        this.handle({ name: tblname, schema: cdata});
                     this.quit();
                 }
             }
@@ -356,7 +530,7 @@ namespace OS {
         <afx-label text="__(Fields in table:)" data-height="30"></afx-label>
         <div data-id="container" style="position:relative;"></div>
         <afx-hbox data-height="35">
-            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "35" ></afx-button>
+            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "content" ></afx-button>
             <div style = "text-align: right;">
                 <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
                 <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
@@ -364,5 +538,90 @@ namespace OS {
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>`;
+
+        class RecordEditDialog extends GUI.BasicDialog
+        {
+            /**
+             * Reference to the form container
+             *
+             * @private
+             * @type {HTMLDivElement}
+             * @memberof RecordEditDialog
+             */
+            private container: HTMLDivElement;
+            /**
+             * Creates an instance of RecordEditDialog.
+             * @memberof RecordEditDialog
+             */
+            constructor() {
+                super("RecordEditDialog");
+            }
+
+            /**
+             * Main entry point
+             *
+             * @memberof RecordEditDialog
+             */
+            main(): void {
+                super.main();
+                this.container = this.find("container") as HTMLDivElement;
+                (this.find("btnCancel") as GUI.tag.ButtonTag).onbtclick = (e) => this.quit();
+                $(this.container)
+                    .css("overflow-y", "auto");
+                if(!this.data || !this.data.schema)
+                {
+                    throw new Error(__("No data provided for dialog").__());
+                }
+                for(let k in this.data.schema.types)
+                {
+                    const input = $("<afx-input>").appendTo(this.container)[0] as GUI.tag.InputTag;
+                    input.uify(this.observable);
+                    input.label = k;
+                    if(k == this.data.schema.pk)
+                    {
+                        input.disable = true;
+                    }
+                    if(this.data.schema.types[k] == "TEXT")
+                    {
+                        input.verbose = true;
+                        $(input).css("height", "100px");
+                    }
+                    if(this.data.record[k] != undefined)
+                    {
+                        input.value = this.data.record[k];
+                    }
+                }
+                (this.find("btnOk") as GUI.tag.ButtonTag).onbtclick = (e) => {
+                    const inputs = $("afx-input", this.container) as JQuery<GUI.tag.InputTag>;
+                    const data = {};
+                    for(let input of inputs)
+                    {
+                        data[input.label.__()] = input.value;
+                    }
+                    if (this.handle)
+                        this.handle(data);
+                    this.quit();
+                }
+            }
+        }
+
+        /**
+         * Scheme definition
+         */
+        RecordEditDialog.scheme = `\
+<afx-app-window width='550' height='500'>
+    <afx-vbox padding = "5">
+        <div data-id="container" style="row-gap: 5px;"></div>
+        <afx-hbox data-height="35">
+            <div></div>
+            <div data-width="content">
+                <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+            </div>
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>`;
     }
+
+
 }

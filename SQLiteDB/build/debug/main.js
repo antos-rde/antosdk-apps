@@ -6,12 +6,12 @@ var OS;
     (function (application) {
         /**
          *
-         * @class SQLiteDB
+         * @class SQLiteDBBrowser
          * @extends {BaseApplication}
          */
-        class SQLiteDB extends application.BaseApplication {
+        class SQLiteDBBrowser extends application.BaseApplication {
             constructor(args) {
-                super("SQLiteDB", args);
+                super("SQLiteDBBrowser", args);
             }
             menu() {
                 return [
@@ -19,12 +19,12 @@ var OS;
                         text: "__(File)",
                         nodes: [
                             {
-                                text: "__(New)",
+                                text: "__(New database)",
                                 dataid: "new",
                                 shortcut: 'A-N'
                             },
                             {
-                                text: "__(Open)",
+                                text: "__(Open database)",
                                 dataid: "open",
                                 shortcut: 'A-O'
                             },
@@ -53,7 +53,7 @@ var OS;
                     }
                     this.tbl_list.data = list;
                     if (list.length > 0) {
-                        this.tbl_list.selected = 0;
+                        this.tbl_list.selected = list.length - 1;
                     }
                 });
             }
@@ -114,29 +114,65 @@ var OS;
                     if (this.container.selectedIndex == 0) {
                         if (!this.tbl_list.selectedItem)
                             return;
-                        const scheme = this.tbl_list.selectedItem.data.handle.info.scheme;
-                        if (!scheme)
+                        const schema = this.tbl_list.selectedItem.data.handle.info.schema;
+                        if (!schema)
                             return;
                         const data = [];
-                        for (let k in scheme) {
+                        for (let k in schema.types) {
                             data.push([
                                 { text: k },
-                                { text: scheme[k] }
+                                { text: schema.types[k] }
                             ]);
                         }
                         this.grid_scheme.rows = data;
                     }
                 };
-                this.find("bt-add-table").onbtclick = (e) => {
-                    if (!this.filehandle) {
-                        return this.notify(__("Please open a database file"));
+                this.find("bt-rm-table").onbtclick = async (e) => {
+                    try {
+                        if (!this.filehandle) {
+                            return this.notify(__("Please open a database file"));
+                        }
+                        if (this.tbl_list.selectedItem == undefined) {
+                            return;
+                        }
+                        const table = this.tbl_list.selectedItem.data.name;
+                        const ret = await this.openDialog("YesNoDialog", {
+                            title: __("Confirm delete?"),
+                            text: __("Do you realy want to delete table: {0}", table)
+                        });
+                        if (ret) {
+                            await this.filehandle.remove(table);
+                            this.list_tables();
+                        }
                     }
-                    this.openDialog(new NewTableDialog(), {
-                        title: __("Create new table")
-                    })
-                        .then((data) => {
-                        console.log(data);
-                    });
+                    catch (e) {
+                        this.error(__("Unable to execute action table delete: {0}", e.toString()), e);
+                    }
+                };
+                this.find("bt-add-table").onbtclick = async (e) => {
+                    try {
+                        if (!this.filehandle) {
+                            return this.notify(__("Please open a database file"));
+                        }
+                        const data = await this.openDialog(new NewTableDialog(), {
+                            title: __("Create new table")
+                        });
+                        this.filehandle.cache = data.schema;
+                        await this.filehandle.write(data.name);
+                        this.list_tables();
+                    }
+                    catch (e) {
+                        this.error(__("Unable to create table: {0}", e.toString()), e);
+                    }
+                };
+                this.find("btn-edit-record").onbtclick = async (e) => {
+                    this.edit_record();
+                };
+                this.find("btn-add-record").onbtclick = async (e) => {
+                    this.add_record();
+                };
+                this.find("btn-delete-record").onbtclick = async (e) => {
+                    this.remove_record();
                 };
                 this.btn_loadmore.onbtclick = async (e) => {
                     try {
@@ -153,13 +189,14 @@ var OS;
                         const handle = this.tbl_list.selectedItem.data.handle;
                         await handle.onready();
                         this.last_max_id = 0;
-                        this.grid_table.rows = [];
-                        const headers = Object.getOwnPropertyNames(handle.info.scheme).map((e) => {
+                        const headers = handle.info.schema.fields.map((e) => {
                             return { text: e };
                         });
                         this.grid_table.header = headers;
+                        this.grid_table.rows = [];
                         const records = await handle.read({ fields: ["COUNT(*)"] });
                         this.n_records = records[0]["(COUNT(*))"];
+                        this.btn_loadmore.text = `0/${this.n_records}`;
                         await this.load_table();
                         this.container.selectedIndex = 1;
                     }
@@ -167,24 +204,119 @@ var OS;
                         this.error(__("Error reading table: {0}", e.toString()), e);
                     }
                 };
+                this.grid_table.oncelldbclick = async (e) => {
+                    this.edit_record();
+                };
                 this.openFile();
             }
+            async add_record() {
+                try {
+                    const table_handle = this.tbl_list.selectedItem;
+                    if (!table_handle) {
+                        return;
+                    }
+                    const file_hd = table_handle.data.handle;
+                    const schema = table_handle.data.handle.info.schema;
+                    const model = {};
+                    for (let k in schema.types) {
+                        if (["INTEGER", "REAL", "NUMERIC"].includes(schema.types[k])) {
+                            model[k] = 0;
+                        }
+                        else {
+                            model[k] = "";
+                        }
+                    }
+                    console.log(model);
+                    const data = await this.openDialog(new RecordEditDialog(), {
+                        title: __("New record"),
+                        schema: schema,
+                        record: model
+                    });
+                    file_hd.cache = data;
+                    await file_hd.write(undefined);
+                    this.n_records += 1;
+                    await this.load_table();
+                }
+                catch (e) {
+                    this.error(__("Error edit/view record: {0}", e.toString()), e);
+                }
+            }
+            async remove_record() {
+                try {
+                    const cell = this.grid_table.selectedCell;
+                    const row = this.grid_table.selectedRow;
+                    const table_handle = this.tbl_list.selectedItem;
+                    if (!cell || !table_handle) {
+                        return;
+                    }
+                    const pk_id = cell.data.record[table_handle.data.handle.info.schema.pk];
+                    const ret = await this.openDialog("YesNoDialog", {
+                        title: __("Delete record"),
+                        text: __("Do you realy want to delete record {0}", pk_id)
+                    });
+                    if (!ret) {
+                        return;
+                    }
+                    const file_hd = `${table_handle.data.handle.path}@${pk_id}`.asFileHandle();
+                    await file_hd.remove();
+                    this.n_records--;
+                    // remove the target row
+                    this.grid_table.delete(row);
+                    this.btn_loadmore.text = `${this.grid_table.rows.length}/${this.n_records}`;
+                }
+                catch (e) {
+                    this.error(__("Error deleting record: {0}", e.toString()), e);
+                }
+            }
+            async edit_record() {
+                try {
+                    const cell = this.grid_table.selectedCell;
+                    const row = this.grid_table.selectedRow;
+                    const table_handle = this.tbl_list.selectedItem;
+                    if (!cell || !table_handle) {
+                        return;
+                    }
+                    const data = await this.openDialog(new RecordEditDialog(), {
+                        title: __("View/edit record"),
+                        schema: table_handle.data.handle.info.schema,
+                        record: cell.data.record
+                    });
+                    const pk_id = cell.data.record[table_handle.data.handle.info.schema.pk];
+                    const file_hd = `${table_handle.data.handle.path}@${pk_id}`.asFileHandle();
+                    file_hd.cache = data;
+                    await file_hd.write(undefined);
+                    const row_data = [];
+                    for (let k of file_hd.info.schema.fields) {
+                        let text = data[k];
+                        if (text.length > 100) {
+                            text = text.substring(0, 100);
+                        }
+                        row_data.push({
+                            text: text,
+                            record: data
+                        });
+                    }
+                    row.data = row_data;
+                }
+                catch (e) {
+                    this.error(__("Error edit/view record: {0}", e.toString()), e);
+                }
+            }
             async load_table() {
-                if (this.grid_table.rows.length >= this.n_records) {
+                if (this.grid_table.rows && this.grid_table.rows.length >= this.n_records) {
                     return;
                 }
                 if (!this.tbl_list.selectedItem)
                     return;
                 const handle = this.tbl_list.selectedItem.data.handle;
                 await handle.onready();
-                const headers = Object.getOwnPropertyNames(handle.info.scheme).map((e) => {
+                const headers = handle.info.schema.fields.map((e) => {
                     return { text: e };
                 });
                 // read all records
-                const records = await handle.read({
-                    where: { id$gt: this.last_max_id },
-                    limit: 10
-                });
+                const filter = { where: {}, limit: 10 };
+                filter.where[`${handle.info.schema.pk}\$gt`] = this.last_max_id;
+                const records = await handle.read(filter);
                 if (records && records.length > 0) {
                     for (let e of records) {
                         const row = [];
@@ -208,7 +340,10 @@ var OS;
                 this.btn_loadmore.text = `${this.grid_table.rows.length}/${this.n_records}`;
             }
         }
-        application.SQLiteDB = SQLiteDB;
+        application.SQLiteDBBrowser = SQLiteDBBrowser;
+        SQLiteDBBrowser.dependencies = [
+            "pkg://SQLiteDB/libsqlite.js"
+        ];
         class NewTableDialog extends OS.GUI.BasicDialog {
             /**
              * Creates an instance of NewTableDialog.
@@ -227,7 +362,6 @@ var OS;
                 this.container = this.find("container");
                 this.find("btnCancel").onbtclick = (e) => this.quit();
                 this.find("btnAdd").onbtclick = (e) => this.addField();
-                $(this.find("wrapper"));
                 $(this.container)
                     .css("overflow-y", "auto");
                 this.addField();
@@ -236,6 +370,7 @@ var OS;
                     if (!input.value || input.value == "") {
                         return this.notify(__("Please enter table name"));
                     }
+                    const tblname = input.value;
                     const inputs = $("input", this.container);
                     const lists = $("afx-list-view", this.container);
                     if (inputs.length == 0) {
@@ -253,7 +388,7 @@ var OS;
                         cdata[key] = lists[i].selectedItem.data.text;
                     }
                     if (this.handle)
-                        this.handle(cdata);
+                        this.handle({ name: tblname, schema: cdata });
                     this.quit();
                 };
             }
@@ -304,8 +439,73 @@ var OS;
         <afx-label text="__(Fields in table:)" data-height="30"></afx-label>
         <div data-id="container" style="position:relative;"></div>
         <afx-hbox data-height="35">
-            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "35" ></afx-button>
+            <afx-button data-id = "btnAdd" iconclass="fa fa-plus" data-width = "content" ></afx-button>
             <div style = "text-align: right;">
+                <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
+            </div>
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>`;
+        class RecordEditDialog extends OS.GUI.BasicDialog {
+            /**
+             * Creates an instance of RecordEditDialog.
+             * @memberof RecordEditDialog
+             */
+            constructor() {
+                super("RecordEditDialog");
+            }
+            /**
+             * Main entry point
+             *
+             * @memberof RecordEditDialog
+             */
+            main() {
+                super.main();
+                this.container = this.find("container");
+                this.find("btnCancel").onbtclick = (e) => this.quit();
+                $(this.container)
+                    .css("overflow-y", "auto");
+                if (!this.data || !this.data.schema) {
+                    throw new Error(__("No data provided for dialog").__());
+                }
+                for (let k in this.data.schema.types) {
+                    const input = $("<afx-input>").appendTo(this.container)[0];
+                    input.uify(this.observable);
+                    input.label = k;
+                    if (k == this.data.schema.pk) {
+                        input.disable = true;
+                    }
+                    if (this.data.schema.types[k] == "TEXT") {
+                        input.verbose = true;
+                        $(input).css("height", "100px");
+                    }
+                    if (this.data.record[k] != undefined) {
+                        input.value = this.data.record[k];
+                    }
+                }
+                this.find("btnOk").onbtclick = (e) => {
+                    const inputs = $("afx-input", this.container);
+                    const data = {};
+                    for (let input of inputs) {
+                        data[input.label.__()] = input.value;
+                    }
+                    if (this.handle)
+                        this.handle(data);
+                    this.quit();
+                };
+            }
+        }
+        /**
+         * Scheme definition
+         */
+        RecordEditDialog.scheme = `\
+<afx-app-window width='550' height='500'>
+    <afx-vbox padding = "5">
+        <div data-id="container" style="row-gap: 5px;"></div>
+        <afx-hbox data-height="35">
+            <div></div>
+            <div data-width="content">
                 <afx-button data-id = "btnOk" text = "__(Ok)"></afx-button>
                 <afx-button data-id = "btnCancel" text = "__(Cancel)"></afx-button>
             </div>
@@ -447,22 +647,24 @@ var OS;
                 };
                 return this.request(rq);
             }
-            insert(table_name, record) {
+            insert(table_name, record, pk) {
                 let rq = {
                     action: 'insert',
                     args: {
                         table_name,
-                        record
+                        record,
+                        pk
                     }
                 };
                 return this.request(rq);
             }
-            update(table_name, record) {
+            update(table_name, record, pk) {
                 let rq = {
                     action: 'update',
                     args: {
                         table_name,
-                        record
+                        record,
+                        pk
                     }
                 };
                 return this.request(rq);
@@ -587,16 +789,29 @@ var OS;
                     return new Promise(async (resolve, reject) => {
                         try {
                             await this._handle.init();
-                            const d = { result: this._handle.fileinfo(), error: false };
+                            let d = {
+                                result: {
+                                    file: this._handle.fileinfo(),
+                                    schema: undefined
+                                }, error: false
+                            };
                             if (this._table_name) {
                                 const data = await this._handle.get_table_scheme(this._table_name);
                                 if (data.length == 0) {
-                                    d.result.scheme = undefined;
+                                    d.result.schema = undefined;
                                 }
                                 else {
-                                    d.result.scheme = {};
+                                    d.result.schema = {
+                                        fields: [],
+                                        types: {},
+                                        pk: undefined
+                                    };
+                                    d.result.schema.fields = data.map(e => e.name);
                                     for (let v of data) {
-                                        d.result.scheme[v.name] = v.type;
+                                        d.result.schema.types[v.name] = v.type;
+                                        if (v.pk) {
+                                            d.result.schema.pk = v.name;
+                                        }
                                     }
                                 }
                             }
@@ -624,7 +839,7 @@ var OS;
                 _rd(user_data) {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            if (this._table_name && !this.info.scheme) {
+                            if (this._table_name && !this.info.schema) {
                                 throw new Error(__("Table `{0}` does not exists in database: {1}", this._table_name, this.path).__());
                             }
                             if (!this._table_name) {
@@ -678,14 +893,15 @@ var OS;
                             if (!this.cache) {
                                 throw new Error(__("No data to submit to remote database, please check the `cache` field").__());
                             }
+                            await this.onready();
                             if (this._id && this._table_name) {
                                 this.cache.id = this._id;
-                                const ret = await this._handle.update(this._table_name, this.cache);
+                                const ret = await this._handle.update(this._table_name, this.cache, this.info.schema.pk);
                                 resolve({ result: ret, error: false });
                                 return;
                             }
                             if (this._table_name) {
-                                const ret = await this._handle.insert(this._table_name, this.cache);
+                                const ret = await this._handle.insert(this._table_name, this.cache, this.info.schema.pk);
                                 resolve({ result: ret, error: false });
                                 return;
                             }
@@ -709,7 +925,7 @@ var OS;
                 _rm(user_data) {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            if (this._table_name && !this.info.scheme) {
+                            if (this._table_name && !this.info.schema) {
                                 throw new Error(__("Table `{0}` does not exists in database: {1}", this._table_name, this.path).__());
                             }
                             if (!this._table_name) {

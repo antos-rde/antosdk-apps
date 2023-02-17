@@ -2,6 +2,7 @@
     <afx-vbox padding="5">
         <afx-hbox data-height="35">
             <afx-button data-id = "bt-add-table" iconclass = "bi bi-plus-lg" data-width="content"></afx-button>
+            <afx-button data-id = "bt-rm-table" iconclass = "bi bi-dash-lg" data-width="content"></afx-button>
             <afx-list-view dropdown = "true" data-id="tbl-list"></afx-list-view>
         </afx-hbox>
 
@@ -13,12 +14,13 @@
             <afx-hbox tabname = "__(Browse data)" iconclass = "bi bi-table">
                 <afx-vbox>
                     <afx-grid-view data-id="tb-browser"></afx-grid-view>
+                    <div data-height="5"></div>
                     <afx-hbox data-height="35">
                         <afx-button iconclass_end="bi bi-chevron-double-right" data-id="bt-load-next" data-width="content"></afx-button>
                         <div></div>
-                        <afx-button iconclass="bi bi-plus-lg" data-width="content"></afx-button>
-                        <afx-button iconclass="bi bi-pencil-square" data-width="content"></afx-button>
-                        <afx-button iconclass="bi bi-trash-fill" data-width="content"></afx-button>
+                        <afx-button iconclass="bi bi-plus-lg" data-id="btn-add-record" data-width="content"></afx-button>
+                        <afx-button iconclass="bi bi-pencil-square" data-id="btn-edit-record" data-width="content"></afx-button>
+                        <afx-button iconclass="bi bi-trash-fill" data-id= "btn-delete-record" data-width="content"></afx-button>
                     </afx-hbox>
                 </afx-vbox>
             </afx-hbox>

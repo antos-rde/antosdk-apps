@@ -44,7 +44,7 @@ handle.update = function(data)
     local tb = {}
     local gen = SQLQueryGenerator:new({})
     for k,v in pairs(data.record) do
-        if k ~= "id" then
+        if k ~= data.pk then
             table.insert(tb, string.format("%s=%s", k, gen:parse_value(v, {[type(v)] = true})))
         end
     end
@@ -92,7 +92,7 @@ handle.insert = function(data)
     local vals = {}
     local gen = SQLQueryGenerator:new({})
     for k,v in pairs(data.record) do
-        if k ~= "id" then
+        if k ~= data.pk then
             table.insert(keys,k)
             table.insert(vals,gen:parse_value(v, {[type(v)] = true}))
         end
@@ -119,7 +119,9 @@ handle.create_table = function(data)
     end
     local tb = {}
     for k,v in pairs(data.scheme) do
-        table.insert(tb, k.." "..v)
+        if k ~= "id" then
+            table.insert(tb, k.." "..v)
+        end
     end
     local sql = string.format("CREATE TABLE IF NOT EXISTS %s(id INTEGER PRIMARY KEY,%s)", data.table_name, table.concat(tb,","))
     LOG_DEBUG("Execute query: [%s]", sql)
@@ -186,7 +188,7 @@ handle.table_scheme = function(data)
     if not db then
         return error("table_scheme: Unable to open sqlite db file")
     end
-    local sql = string.format("SELECT p.name, p.type FROM  sqlite_master AS m JOIN pragma_table_info(m.name) AS p WHERE m.type ='table' AND m.name = '%s'", data.table_name)
+    local sql = string.format("SELECT p.name, p.type, p.pk FROM  sqlite_master AS m JOIN pragma_table_info(m.name) AS p WHERE m.type ='table' AND m.name = '%s'", data.table_name)
     local ret, err = sqlite.query(db, sql);
     sqlite.dbclose(db)
     if not ret then

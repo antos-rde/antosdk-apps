@@ -1,16 +1,16 @@
 {
     "pkgname": "SQLiteDB",
-    "app":"SQLiteDB",
-    "name":"SQLite3 VFS API",
+    "app":"SQLiteDBBrowser",
+    "name":"SQLite3 Browser",
     "description":"API for manipulate SQLite database as VFS handle",
     "info":{
-        "author": "",
-        "email": ""
+        "author": "Dany LE",
+        "email": "mrsang@iohub.dev"
     },
     "version":"0.1.0-a",
-    "category":"Other",
-    "iconclass":"fa fa-adn",
-    "mimes":[".*"],
+    "category":"Library",
+    "iconclass":"bi bi-database",
+    "mimes":["application/vnd.sqlite3"],
     "dependencies":[],
     "locale": {}
 }

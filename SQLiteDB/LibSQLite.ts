@@ -164,25 +164,27 @@ namespace OS {
                 return this.request(rq);
             }
             
-            insert(table_name:string, record: GenericObject<any>): Promise<any>
+            insert(table_name:string, record: GenericObject<any>, pk:string): Promise<any>
             {
                 let rq = {
                     action: 'insert',
                     args: {
                         table_name,
-                        record
+                        record,
+                        pk
                     }
                 }
                 return this.request(rq);
             }
 
-            update(table_name:string, record: GenericObject<any>): Promise<any>
+            update(table_name:string, record: GenericObject<any>, pk:string ): Promise<any>
             {
                 let rq = {
                     action: 'update',
                     args: {
                         table_name,
-                        record
+                        record,
+                        pk
                     }
                 }
                 return this.request(rq);
@@ -317,20 +319,33 @@ namespace OS {
                         try {
                             await this._handle.init();
                             
-                            const d = {result: this._handle.fileinfo(), error: false};
+                            let d = {
+                                result: {
+                                    file:this._handle.fileinfo(),
+                                    schema: undefined
+                                }, error: false};
                             if(this._table_name)
                             {
                                 const data = await this._handle.get_table_scheme(this._table_name);
                                 if(data.length == 0)
                                 {
-                                    d.result.scheme = undefined
+                                    d.result.schema = undefined
                                 }
                                 else
                                 {
-                                    d.result.scheme = {}
+                                    d.result.schema = {
+                                        fields: [],
+                                        types: {},
+                                        pk: undefined
+                                    }
+                                    d.result.schema.fields = data.map(e=>e.name);
                                     for(let v of data)
                                     {
-                                        d.result.scheme[v.name] = v.type;
+                                        d.result.schema.types[v.name] = v.type;
+                                        if(v.pk)
+                                        {
+                                            d.result.schema.pk = v.name;
+                                        }
                                     }
                                 }
                             }
@@ -358,7 +373,7 @@ namespace OS {
                 protected _rd(user_data: any): Promise<any> {
                     return new Promise(async (resolve, reject) => {
                         try{
-                            if(this._table_name && ! this.info.scheme)
+                            if(this._table_name && ! this.info.schema)
                             {
                                 throw new Error(__("Table `{0}` does not exists in database: {1}", this._table_name, this.path).__());
                             }
@@ -422,17 +437,18 @@ namespace OS {
                             {
                                 throw new Error(__("No data to submit to remote database, please check the `cache` field").__());
                             }
+                            await this.onready();
                             if(this._id && this._table_name)
                             {
                                 this.cache.id = this._id;
-                                const ret = await this._handle.update(this._table_name, this.cache);
+                                const ret = await this._handle.update(this._table_name, this.cache, this.info.schema.pk);
                                 resolve({result:ret, error: false});
                                 return
                             }
 
                             if(this._table_name)
                             {
-                                const ret = await this._handle.insert(this._table_name, this.cache);
+                                const ret = await this._handle.insert(this._table_name, this.cache, this.info.schema.pk);
                                 resolve({result:ret, error: false});
                                 return
                             }
@@ -458,7 +474,7 @@ namespace OS {
                 protected _rm(user_data: any): Promise<RequestResult> {
                     return new Promise(async (resolve, reject) => {
                         try {
-                            if(this._table_name && ! this.info.scheme)
+                            if(this._table_name && ! this.info.schema)
                             {
                                 throw new Error(__("Table `{0}` does not exists in database: {1}", this._table_name, this.path).__());
                             }
