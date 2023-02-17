@@ -90,16 +90,6 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/build/release/Archive.zip"
 	},
 	{
-		"pkgname": "Blogger",
-		"name": "Blogging application",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/README.md",
-		"category": "Internet",
-		"author": "Xuan Sang LE",
-		"version": "0.2.7-a",
-		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["none"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Blogger/build/release/Blogger.zip"
-	},
-	{
 		"pkgname": "Booklet",
 		"name": "Booklet",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/README.md",
@@ -130,16 +120,6 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/CodePad/build/release/CodePad.zip"
 	},
 	{
-		"pkgname": "DBDecoder",
-		"name": "DBDecoder",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/README.md",
-		"category": "Other",
-		"author": "",
-		"version": "0.0.2-a",
-		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DBDecoder/build/release/DBDecoder.zip"
-	},
-	{
 		"pkgname": "DiffEditor",
 		"name": "Diff Editor",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/README.md",
@@ -148,16 +128,6 @@
 		"version": "0.1.5-a",
 		"dependencies": ["AceDiff@3.0.3-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/build/release/DiffEditor.zip"
-	},
-	{
-		"pkgname": "Docify",
-		"name": "Docify",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/README.md",
-		"category": "Office",
-		"author": "",
-		"version": "0.0.8-b",
-		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Docify/build/release/Docify.zip"
 	},
 	{
 		"pkgname": "Dockman",
