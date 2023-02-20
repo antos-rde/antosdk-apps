@@ -232,6 +232,7 @@ namespace OS {
             *      user: "dany'",
             *      $or: {
             *          'user.email': "test@mail.com",
+            *           age: [15, 20, 25],
             *          age$lte: 30,
             *          $and: {
             *              'user.birth$ne': 1986,
@@ -258,6 +259,9 @@ namespace OS {
             *      ( contacts.user = 'dany''' ) AND 
             *      ( 
             *          ( user.email = 'test@mail.com' ) OR 
+            *           ( contacts.age = 15 ) OR 
+            *           ( contacts.age = 20 ) OR
+            *           ( contacts.age = 25 ) OR
             *          ( contacts.age <= 30 ) OR 
             *          ( 
             *              ( user.birth != 1986 ) AND 

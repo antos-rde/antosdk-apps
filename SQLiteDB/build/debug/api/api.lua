@@ -99,12 +99,14 @@ handle.insert = function(data)
     end
     local sql = string.format("INSERT INTO  %s (%s) VALUES(%s)", data.table_name, table.concat(keys,","), table.concat(vals,","))
     LOG_DEBUG("Execute query: [%s]", sql)
-    local ret, err = sqlite.exec(db, sql);
+    local ret, err = sqlite.exec(db, sql)
+    local id = sqlite.last_insert_id(db)
     sqlite.dbclose(db)
     if not ret then
         return error("insert: Unable to insert to %s: %s", data.table_name, err)
     else
-        return result(ret)
+        
+        return result(id)
     end
 end
 

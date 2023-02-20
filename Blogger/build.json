@@ -13,18 +13,22 @@
                 }
             ]
         },
-        "coffee": {
+        "ts": {
             "require": [
-                "coffee"
+                "ts"
             ],
             "jobs": [
                 {
-                    "name": "coffee-compile",
+                    "name": "ts-import",
+                    "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
+                },
+                {
+                    "name": "ts-compile",
                     "data": {
                         "src": [
-                            "main.coffee",
-                            "dialogs.coffee",
-                            "tags.coffee"
+                            "main.ts",
+                            "dialogs.ts",
+                            "tags.ts"
                         ],
                         "dest": "build/debug/main.js"
                     }
@@ -51,9 +55,7 @@
                     "data": {
                         "src": [
                             "scheme.html",
-                            "cvsection.html",
                             "api/sendmail.lua",
-                            "sendmail.html",
                             "package.json",
                             "README.md",
                             "main.css"
@@ -63,13 +65,34 @@
                 }
             ]
         },
+         "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/", "api/"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
+        },
+        "debug": {
+            "depend": [
+                "init",
+                "ts",
+                "copy"
+            ]
+        },
         "release": {
             "require": [
                 "zip"
             ],
             "depend": [
                 "init",
-                "coffee",
+                "ts",
                 "uglify",
                 "copy"
             ],

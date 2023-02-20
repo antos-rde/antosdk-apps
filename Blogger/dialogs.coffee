@@ -160,7 +160,7 @@ class BloggerSendmailDiaglog extends this.OS.GUI.BasicDialog
                     content: (@find "contentarea").value
             @_api.apigateway data, false
                 .then (d) =>
-                    return @notify __("Unable to send mail to: {0}", d.result.join(", ")) if d.error
+                    return @notify __("Unable to send mail to: {0}", d.result.join(",")) if d.error
                     @quit()
                 .catch (e) =>
                     console.log e

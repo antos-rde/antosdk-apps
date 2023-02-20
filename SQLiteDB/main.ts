@@ -86,11 +86,21 @@ namespace OS {
             }
             private async openFile() {
                 try {
-                    const d_1 = await this.openDialog("FileDialog",{
-                        title: __("Open file"),
-                        mimes: this.meta().mimes
-                    });
-                    this.filehandle=`sqlite://${d_1.file.path.asFileHandle().genealogy.join("/")}`.asFileHandle();
+                    let file: API.VFS.BaseFileHandle;
+                    if (this.args && this.args.length > 0) {
+                        file = this.args[0].path.asFileHandle();
+                    }
+                    else
+                    {
+                        const d_1 = await this.openDialog("FileDialog",{
+                            title: __("Open file"),
+                            mimes: this.meta().mimes
+                        });
+                        file = d_1.file.path.asFileHandle();
+                    }
+
+                    
+                    this.filehandle=`sqlite://${file.genealogy.join("/")}`.asFileHandle();
                     await this.filehandle.onready();
                     this.list_tables();
                 }
@@ -239,7 +249,7 @@ namespace OS {
                         this.grid_table.header = headers;
                         this.grid_table.rows = [];
                         const records = await handle.read({fields:["COUNT(*)"]});
-                        this.n_records = records[0]["(COUNT(*))"];
+                        this.n_records = records[0]["COUNT(*)"];
                         this.btn_loadmore.text = `0/${this.n_records}`;
                         await this.load_table();
                         this.container.selectedIndex = 1;
@@ -252,6 +262,7 @@ namespace OS {
                 this.grid_table.oncelldbclick = async (e) => {
                     this.edit_record();
                 }
+
                 this.openFile();
             }
             private async add_record()

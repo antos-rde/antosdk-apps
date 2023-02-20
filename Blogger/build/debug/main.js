@@ -1,1 +1,1180 @@
-(function(){var t,e,i,s,a,n;(e=class extends this.OS.application.BaseApplication{constructor(t){super("Blogger",t)}main(){var t;return this.user={},this.cvlist=this.find("cv-list"),this.cvlist.ontreeselect=t=>{var e;if(t)return e=t.data.item.data,this.CVSectionByCID(Number(e.id))},this.inputtags=this.find("input-tags"),this.bloglist=this.find("blog-list"),this.seclist=this.find("cv-sec-list"),t=this.find("photo"),$(t).click(e=>this.openDialog("FileDialog",{title:__("Select image file"),mimes:["image/.*"]}).then(e=>t.value=e.file.path).catch(t=>this.error(__("Unable to get file"),t))),this.userdb=new this._api.DB("user"),this.cvcatdb=new this._api.DB("cv_cat"),this.cvsecdb=new this._api.DB("cv_sections"),this.blogdb=new this._api.DB("blogs"),this.tabcontainer=this.find("tabcontainer"),this.tabcontainer.ontabselect=t=>this.fetchData(t.data.container.aid),this.find("bt-user-save").onbtclick=t=>this.saveUser(),this.find("cv-cat-add").onbtclick=t=>{var e;return e=t=>this.openDialog(new s,{title:__("Add category"),tree:t}).then(t=>{var e;return e={name:t.value,pid:t.p.id,publish:1},this.cvcatdb.save(e).then(t=>this.refreshCVCat()).catch(t=>this.error(__("Cannot add new category"),t))}).catch(t=>this.error(t.toString(),t)),this.fetchCVCat().then(t=>e(t)).catch(t=>(e({text:"Porfolio",id:"0",nodes:[]}),this.error(__("Unable to fetch categories"),t)))},this.find("cv-cat-edit").onbtclick=t=>{var e,i;if((i=this.cvlist.selectedItem)&&(e=i.data))return this.fetchCVCat().then(t=>this.openDialog(new s,{title:__("Edit category"),tree:t,cat:e}).then(t=>{var i;return i={id:e.id,publish:e.publish,pid:t.p.id,name:t.value},this.cvcatdb.save(i).then(t=>this.refreshCVCat()).catch(t=>this.error(__("Cannot Edit category"),t))})).catch(t=>this.error(__("Unable to fetch categories"),t))},this.find("cv-cat-del").onbtclick=t=>{var e,i;if((i=this.cvlist.selectedItem)&&(e=i.data))return this.openDialog("YesNoDialog",{title:__("Delete category"),iconclass:"fa fa-question-circle",text:__("Do you really want to delete: {0}?",e.name)}).then(t=>{if(t)return this.deleteCVCat(e)}).catch(t=>this.error(t.toString(),t))},this.find("cv-sec-add").onbtclick=t=>{var e,s;if(s=this.cvlist.selectedItem)return(e=s.data)&&"0"!==e.id?this.openDialog(new i(this),{title:__("New section entry for {0}",e.name)}).then(t=>(t.cid=Number(e.id),t.start=Number(t.start),t.end=Number(t.end),this.cvsecdb.save(t).then(t=>this.CVSectionByCID(Number(e.id))).catch(t=>this.error(__("Cannot save section: {0}",t.toString()),t)))):this.notify(__("Please select a category"))},this.find("cv-sec-move").onbtclick=t=>{var e,i;return(i=this.find("cv-sec-list").selectedItem)?(e=i.data,this.fetchCVCat().then(t=>this.openDialog(new s,{title:__("Move to"),tree:t,selonly:!0}).then(t=>{var i;return i={id:e.id,cid:t.p.id},this.cvsecdb.save(i).then(t=>(this.CVSectionByCID(e.cid),this.find("cv-sec-list").unselect())).catch(t=>this.error(__("Cannot move section"),t))}))):this.notify(__("Please select a section to move"))},this.find("cv-sec-edit").onbtclick=t=>{var e,s;return(s=this.find("cv-sec-list").selectedItem)?(e=s.data,this.openDialog(new i(this),{title:__("Modify section entry"),section:e}).then(t=>(t.cid=Number(e.cid),t.start=Number(t.start),t.end=Number(t.end),this.cvsecdb.save(t).then(t=>this.CVSectionByCID(Number(e.cid))).catch(t=>this.error(__("Cannot save section: {0}",t.toString()),t))))):this.notify(__("Please select a section to edit"))},this.seclist.onitemclose=t=>{var e;if(t)return e=t.data.item.data,this.openDialog("YesNoDialog",{iconclass:"fa fa-question-circle",text:__("Do you really want to delete: {0}?",e.title)}).then(i=>{if(i)return this.cvsecdb.delete(e.id).then(e=>this.seclist.delete(t.data.item)).catch(t=>this.error(__("Cannot delete the section: {0}",t.toString()),t))}),!1},this.editor=new EasyMDE({element:this.find("markarea"),autoDownloadFontAwesome:!1,autofocus:!0,tabSize:4,indentWithTabs:!0,toolbar:[{name:__("New"),className:"fa fa-file",action:t=>(this.bloglist.unselect(),this.clearEditor())},{name:__("Save"),className:"fa fa-save",action:t=>this.saveBlog()},"|","bold","italic","heading","|","quote","code","unordered-list","ordered-list","|","link","image","table","horizontal-rule",{name:"image",className:"fa fa-file-image-o",action:t=>this.openDialog("FileDialog",{title:__("Select image file"),mimes:["image/.*"]}).then(t=>t.file.path.asFileHandle().publish().then(t=>this.editor.codemirror.getDoc().replaceSelection(`![](${this._api.handle.shared}/${t.result})`)).catch(t=>this.error(__("Cannot export file for embedding to text"),t)))},{name:"Youtube",className:"fa fa-youtube",action:t=>this.editor.codemirror.getDoc().replaceSelection("[[youtube:]]")},"|",{name:__("Preview"),className:"fa fa-eye no-disable",action:t=>(this.previewOn=!this.previewOn,EasyMDE.togglePreview(t),renderMathInElement(this.find("editor-container")))},"|",{name:__("Send mail"),className:"fa fa-paper-plane",action:t=>{var e,i;return(i=this.bloglist.selectedItem)?(e=i.data,this.openDialog(new a(this),{title:__("Send mail"),content:this.editor.value(),id:e.id}).then((function(t){return console.log("Email sent")}))):this.error(__("No post selected"))}}]}),this.bloglist.onlistselect=e=>{var i;if((t=this.bloglist.selectedItem)&&(i=t.data))return this.blogdb.get(Number(i.id)).then(t=>(this.editor.value(t.content),this.inputtags.value=t.tags,this.find("blog-publish").swon=!!Number(t.publish))).catch(t=>this.error(__("Cannot fetch the entry content"),t))},this.bloglist.onitemclose=e=>{var i;if(e)return t=e.data.item,i=t.data,this.openDialog("YesNoDialog",{title:__("Delete a post"),iconclass:"fa fa-question-circle",text:__("Do you really want to delete this post ?")}).then(e=>{if(e)return this.blogdb.delete(i.id).then(e=>(this.bloglist.delete(t),this.bloglist.unselect(),this.clearEditor()))}),!1},this.bindKey("CTRL-S",()=>{var t;if((t=this.tabcontainer.selectedTab)&&"blog-container"===t.container.aid)return this.saveBlog()}),this.on("resize",()=>this.resizeContent()),this.resizeContent(),this.loadBlogs()}fetchData(t){switch(t){case"user-container":return this.userdb.get(null).then(t=>{var e,i,s,a,n;for(this.user=t[0],a=[],e=0,s=(i=this.select("[input-class='user-input']")).length;e<s;e++)n=i[e],a.push($(n).val(this.user[n.name]));return a}).catch(t=>this.error(__("Cannot fetch user data"),t));case"cv-container":return this.refreshCVCat();default:return this.loadBlogs()}}saveUser(){var t,e,i,s;for(t=0,i=(e=this.select("[input-class='user-input']")).length;t<i;t++)s=e[t],this.user[s.name]=$(s).val();return this.user.fullname&&""!==this.user.fullname?this.userdb.save(this.user).then(t=>this.notify(__("User data updated"))).catch(t=>this.error(__("Cannot save user data"),t)):this.notify(__("Full name must be entered"))}refreshCVCat(){return this.fetchCVCat().then(t=>(this.cvlist.data=t,this.cvlist.expandAll())).catch(t=>this.error(__("Unable to load categories"),t))}fetchCVCat(){return new Promise((t,e)=>{var i,s;return s={text:"Porfolio",id:"0",nodes:[]},i={order:{name:"ASC"}},this.cvcatdb.find(i).then(e=>(this.catListToTree(e,s,"0"),t(s))).catch((function(t){return e(__e(t))}))})}catListToTree(t,e,i){var s,a,n,r,o;if(0===(n=function(){var e,s,a;for(a=[],e=0,s=t.length;e<s;e++)(o=t[e]).pid===i&&a.push(o);return a}()).length)return e.nodes=null;for(r=[],s=0,a=n.length;s<a;s++)(o=n[s]).nodes=[],o.text=o.name,this.catListToTree(t,o,o.id),r.push(e.nodes.push(o));return r}deleteCVCat(t){var e,i,s,a;return s=[],(i=function(t){var e,a,n,r,o;if(s.push(t.id),t.nodes){for(r=[],e=0,a=(n=t.nodes).length;e<a;e++)o=n[e],r.push(i(o));return r}})(t),e=function(){var t,e,i;for(i=[],t=0,e=s.length;t<e;t++)a=s[t],i.push({"=":{cid:a}});return i}(),this.cvsecdb.delete({or:e}).then(i=>(e=function(){var t,e,i;for(i=[],t=0,e=s.length;t<e;t++)a=s[t],i.push({"=":{id:a}});return i}(),this.cvcatdb.delete({or:e}).then(t=>(this.refreshCVCat(),this.seclist.data=[])).catch(e=>this.error(__("Cannot delete the category: {0} [{1}]",t.name,e.toString()),e)))).catch(e=>this.error(__("Cannot delete all content of: {0} [{1}]",t.name,e.toString()),e))}CVSectionByCID(t){var e;return e={exp:{"=":{cid:t}},order:{start:"DESC"}},this.cvsecdb.find(e).then(t=>{var e,i,s,a;for(i=[],this.find("cv-sec-status").text=__("Found {0} sections",t.length),e=0,s=t.length;e<s;e++)(a=t[e]).closable=!0,a.tag="afx-blogger-cvsection-item",a.start=Number(a.start),a.end=Number(a.end),a.start<1e3&&(a.start=void 0),a.end<1e3&&(a.end=void 0),i.push(a);return this.seclist.data=i}).catch(t=>this.error(t.toString(),t))}saveBlog(){var t,e,i,s,a,n,r;return s=void 0,(a=this.bloglist.selectedItem)&&(s=a.data),n=this.inputtags.value,t=this.editor.value(),(r=new RegExp("^#+(.*)\n","g").exec(t))&&2===r.length?""===n?this.notify(__("Please enter tags")):(e=new Date,i={content:t,title:r[1].trim(),tags:n,ctime:s?s.ctime:e.timestamp(),ctimestr:s?s.ctimestr:e.toString(),utime:e.timestamp(),utimestr:e.toString(),rendered:this.process(this.editor.options.previewRender(t)),publish:this.find("blog-publish").swon?1:0},s&&(i.id=s.id),this.blogdb.save(i).then(t=>this.loadBlogs()).catch(t=>this.error(__("Cannot save blog: {0}",t.toString()),t))):this.notify(__("Please insert a title in the text: beginning with heading"))}process(t){var e,i,s,a,n,r,o,l,h;for(i=function(t){return`<iframe\n    class = "embeded-video"\n    width="560" height="315" \n    src="https://www.youtube.com/embed/${t}"\n    frameborder="0" allow="encrypted-media" allowfullscreen\n></iframe>`},o=/\[\[youtube:([^\]]*)\]\]/g,l=[];null!==(s=o.exec(t));)l.push(s);if(!(l.length>0))return t;for(h="",e=0,a=0,r=l.length;a<r;a++)n=l[a],h+=t.substring(e,n.index),h+=i(n[1]),e=n.index+n[0].length;return h+t.substring(e,t.length)}clearEditor(){return this.editor.value(""),this.inputtags.value="",this.find("blog-publish").swon=!1}loadBlogs(){var t,e,i;return e=this.bloglist.selectedItem,i=$(e).index(),t={order:{ctime:"DESC"},fields:["id","title","ctimestr","ctime","utime","utimestr"]},this.blogdb.find(t).then(t=>{var e,s;for(e=0,s=t.length;e<s;e++)t[e].tag="afx-blogger-post-item";return this.bloglist.data=t,-1!==i?this.bloglist.selected=i:(this.clearEditor(),this.bloglist.selected=-1)}).catch(t=>this.error(__("No post found: {0}",t.toString()),t))}resizeContent(){var t,e,i,s,a,n;return i=this.find("editor-container"),e=$(".EasyMDEContainer",i).children(),a=$(this.scheme).find(".afx-window-top")[0],n=e[0],s=e[3],t=$(this.scheme).height()-$(a).height()-$(n).height()-$(s).height()-90,$(e[1]).css("height",t+"px")}}).singleton=!0,e.dependencies=["pkg://SimpleMDE/main.js","pkg://SimpleMDE/main.css","pkg://Katex/main.js","pkg://Katex/main.css"],this.OS.register("Blogger",e),(s=class t extends this.OS.GUI.BasicDialog{constructor(){super("BloggerCategoryDialog",t.scheme)}main(){var t;if(super.main(),this.tree=this.find("tree"),this.txtinput=this.find("txtinput"),this.find("bt-ok").onbtclick=t=>{var e,i,s;return(e=this.tree.selectedItem)?(i=e.data,""!==(s=this.txtinput.value)||this.data.selonly?this.data.cat&&this.data.cat.id===i.id?this.notify(__("Parent can not be the category itself")):(this.handle&&this.handle({p:i,value:s}),this.quit()):this.notify(__("Please enter category name"))):this.notify(__("Please select a parent category"))},this.find("bt-cancel").onbtclick=t=>this.quit(),this.data&&this.data.tree)return this.data&&this.data.cat&&(this.txtinput.value=this.data.cat.name,(t="0"===this.data.cat.pid?this.data.tree:this.findDataByID(this.data.cat.pid,this.data.tree.nodes))&&(t.selected=!0)),this.tree.data=this.data.tree,this.tree.expandAll()}findDataByID(t,e){var i,s,a;for(s=0,a=e.length;s<a;s++){if((i=e[s]).id===t)return i;i.nodes&&this.findDataByID(t,i.nodes)}}}).scheme='<afx-app-window width=\'300\' height=\'400\'>\n    <afx-vbox padding="5">\n        <afx-label text="__(Pick a parent)" data-height="25" class="lbl-header" ></afx-label>\n        <afx-tree-view data-id="tree" ></afx-tree-view>\n        <afx-label text="__(Category name)" data-height="25" class="lbl-header" ></afx-label>\n        <input type="text" data-height="25" data-id = "txtinput"/ >\n        <afx-hbox data-height = \'35\'>\n            <div  style=\' text-align:right;\'>\n                <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>\n                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>\n            </div>\n        </afx-hbox>\n    </afx-vbox>\n</afx-app-window>',i=class extends this.OS.GUI.BasicDialog{constructor(t){super("BloggerCVSectionDiaglog",(t.meta().path+"/cvsection.html").asFileHandle())}main(){var t,e;return super.main(),this.editor=new EasyMDE({autoDownloadFontAwesome:!1,element:this.find("contentarea"),status:!1,toolbar:!1}),$(this.select('[class = "CodeMirror-scroll"]')[0]).css("min-height","50px"),$(this.select('[class="CodeMirror cm-s-paper CodeMirror-wrap"]')[0]).css("min-height","50px"),t=this.select("[input-class='user-input']"),this.data&&this.data.section&&function(){var i,s,a;for(a=[],i=0,s=t.length;i<s;i++)e=t[i],a.push($(e).val(this.data.section[e.name]));return a}.call(this),this.data&&this.data.section&&this.editor.value(this.data.section.content),this.find("section-publish").swon=!!(this.data&&this.data.section&&Number(this.data.section.publish)),this.find("bt-cv-sec-save").onbtclick=i=>{var s,a,n,r;for(s={},a=0,n=t.length;a<n;a++)s[(e=t[a]).name]=$(e).val();return s.content=this.editor.value(),""===s.title&&""===s.content?this.notify(__("Title or content must not be blank")):(this.data&&this.data.section&&(s.id=this.data.section.id),r=this.find("section-publish").swon,s.publish=!0===r?1:0,this.handle&&this.handle(s),this.quit())},this.on("resize",()=>this.resizeContent()),this.resizeContent()}resizeContent(){var t,e,i;return i=this.find("editor-container"),e=$(".EasyMDEContainer",i).children(),t=$(i).height()-30,$(e[0]).css("height",t+"px")}},(a=class t extends this.OS.GUI.BasicDialog{constructor(t){super("BloggerSendmailDiaglog",(t.meta().path+"/sendmail.html").asFileHandle())}main(){var e,i;return super.main(),this.subdb=new this.parent._api.DB("subscribers"),this.maillinglist=this.find("email-list"),i=new RegExp("^#+(.*)\n","g").exec(this.data.content),this.find("mail-title").value=i[1],e=this.data.content.substring(0,500)+"...",this.find("contentarea").value=t.template.format(this.data.id,e),this.subdb.find({}).then(t=>{var e,i,s;for(e=0,i=t.length;e<i;e++)(s=t[e]).text=s.name,s.switch=!0,s.checked=!0;return this.maillinglist.items=t}).catch(t=>this.error(__("Cannot fetch subscribers data: {0}",t.toString()),t)),this.find("bt-sendmail").onbtclick=t=>{var e,i,s,a,n,r;for(i=[],s=0,n=(a=this.maillinglist.items).length;s<n;s++)!0===(r=a[s]).checked&&(console.log(r.email),i.push(r.email));return 0===i.length?this.notify(__("No email selected")):(e={path:this.parent.path()+"/sendmail.lua",parameters:{to:i,title:this.find("mail-title").value,content:this.find("contentarea").value}},this._api.apigateway(e,!1).then(t=>t.error?this.notify(__("Unable to send mail to: {0}",t.result.join(", "))):this.quit()).catch(t=>(console.log(t),this.error(__("Error sending mail: {0}",t.toString()),t))))}}}).template="Hello,\n\nXuan Sang LE has just published a new post on his blog: https://blog.lxsang.me/post/id/{0}\n\n==========\n{1}\n==========\n\n\nRead the full article via:\nhttps://blog.lxsang.me/post/id/{0}\n\nYou receive this email because you have been subscribed to his blog.\n\nHave a nice day,\n\nSent from Blogger, an AntOS application",n=class extends this.OS.GUI.tag.ListViewItemTag{constructor(){super()}ondatachange(){var t,e,i,s,a,n;if(this.data){for(e in n=this.data,i=["content","start","end"],this.closable=n.closable,a=[],s=this.refs)t=s[e],n[e]&&""!==n[e]?i.includes(e)?a.push($(t).text(n[e])):a.push(t.text=n[e]):a.push(void 0);return a}}reload(){}init(){}itemlayout(){return{el:"div",children:[{el:"afx-label",ref:"title",class:"afx-cv-sec-title"},{el:"afx-label",ref:"subtitle",class:"afx-cv-sec-subtitle"},{el:"p",ref:"content",class:"afx-cv-sec-content"},{el:"p",class:"afx-cv-sec-period",children:[{el:"i",ref:"start"},{el:"i",ref:"end",class:"period-end"}]},{el:"afx-label",ref:"location",class:"afx-cv-sec-loc"}]}}},this.OS.GUI.tag.define("afx-blogger-cvsection-item",n),t=class extends this.OS.GUI.tag.ListViewItemTag{constructor(){super()}ondatachange(t){if(this.data)return(t=this.data).closable=!0,this.closable=t.closable,this.refs.title.text=t.title,this.refs.ctimestr.text=__("Created: {0}",t.ctimestr),this.refs.utimestr.text=__("Updated: {0}",t.utimestr)}reload(){}init(){}itemlayout(){return{el:"div",children:[{el:"afx-label",ref:"title",class:"afx-blogpost-title"},{el:"afx-label",ref:"ctimestr",class:"blog-dates"},{el:"afx-label",ref:"utimestr",class:"blog-dates"}]}}},this.OS.GUI.tag.define("afx-blogger-post-item",t)}).call(this);
+
+// Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
+// AnTOS Web desktop is is licensed under the GNU General Public
+// License v3.0, see the LICENCE file for more information
+// This program is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of 
+// the License, or (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+// You should have received a copy of the GNU General Public License
+//along with this program. If not, see https://www.gnu.org/licenses/.
+var OS;
+(function (OS) {
+    let application;
+    (function (application) {
+        class Blogger extends application.BaseApplication {
+            constructor(args) {
+                super("Blogger", args);
+                this.previewOn = false;
+            }
+            async init_db() {
+                try {
+                    const f = await this.openDialog("FileDialog", {
+                        title: __("Open/create new database"),
+                        file: "Untitled.db"
+                    });
+                    var d_1 = f.file.path.asFileHandle();
+                    if (f.file.type === "file") {
+                        d_1 = d_1.parent();
+                    }
+                    const target = `${d_1.path}/${f.name}`.asFileHandle();
+                    this.dbhandle = `sqlite://${target.genealogy.join("/")}`.asFileHandle();
+                    const tables = await this.dbhandle.read();
+                    /**
+                     * Init following tables if not exist:
+                     * - user
+                     * - cvcat
+                     * - cvsec
+                     * - blogdb
+                    */
+                    if (!tables.user) {
+                        this.dbhandle.cache = {
+                            address: "TEXT",
+                            Phone: "TEXT",
+                            shortbiblio: "TEXT",
+                            fullname: "TEXT",
+                            email: "TEXT", url: "TEXT",
+                            photo: "TEXT"
+                        };
+                        const r = await this.dbhandle.write("user");
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                    }
+                    if (!tables.cv_cat) {
+                        this.dbhandle.cache = {
+                            publish: "NUMERIC",
+                            name: "TEXT",
+                            pid: "NUMERIC"
+                        };
+                        const r = await this.dbhandle.write("cv_cat");
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                    }
+                    if (!tables.cv_sections) {
+                        this.dbhandle.cache = {
+                            title: "TEXT",
+                            start: "NUMERIC",
+                            location: "TEXT",
+                            end: "NUMERIC",
+                            content: "TEXT",
+                            subtitle: "TEXT",
+                            publish: "NUMERIC",
+                            cid: "NUMERIC"
+                        };
+                        const r = await this.dbhandle.write("cv_sections");
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                    }
+                    if (!tables.blogs) {
+                        this.dbhandle.cache = {
+                            tags: "TEXT",
+                            content: "TEXT",
+                            utime: "NUMERIC",
+                            rendered: "TEXT",
+                            title: "TEXT",
+                            utimestr: "TEXT",
+                            ctime: "NUMERIC",
+                            ctimestr: "TEXT",
+                            publish: "INTEGER DEFAULT 0",
+                        };
+                        const r = await this.dbhandle.write("blogs");
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                    }
+                    if (!tables.st_similarity) {
+                        this.dbhandle.cache = {
+                            pid: "NUMERIC",
+                            sid: "NUMERIC",
+                            score: "NUMERIC"
+                        };
+                        const r = await this.dbhandle.write("st_similarity");
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                    }
+                    if (!tables.subscribers) {
+                        this.dbhandle.cache = {
+                            name: "TEXT",
+                            email: "TEXT"
+                        };
+                        const r = await this.dbhandle.write("subscribers");
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                    }
+                    this.userdb = `${this.dbhandle.path}@user`.asFileHandle();
+                    this.cvcatdb = `${this.dbhandle.path}@cv_cat`.asFileHandle();
+                    this.cvsecdb = `${this.dbhandle.path}@cv_sections`.asFileHandle();
+                    this.blogdb = `${this.dbhandle.path}@blogs`.asFileHandle();
+                    this.subdb = `${this.dbhandle.path}@subscribers`.asFileHandle();
+                    await this.loadBlogs();
+                }
+                catch (e) {
+                    this.error(__("Unable to init database file: {0}", e.toString()), e);
+                    this.dbhandle = undefined;
+                }
+            }
+            main() {
+                this.user = {};
+                this.cvlist = this.find("cv-list");
+                this.cvlist.ontreeselect = (d) => {
+                    if (!d) {
+                        return;
+                    }
+                    const { data } = d.data.item;
+                    return this.CVSectionByCID(Number(data.id));
+                };
+                this.inputtags = this.find("input-tags");
+                this.bloglist = this.find("blog-list");
+                this.seclist = this.find("cv-sec-list");
+                let el = this.find("photo");
+                $(el)
+                    .on("click", async (e) => {
+                    try {
+                        const ret = await this.openDialog("FileDialog", {
+                            title: __("Select image file"),
+                            mimes: ["image/.*"]
+                        });
+                        return el.value = ret.file.path;
+                    }
+                    catch (e) {
+                        return this.error(__("Unable to get file"), e);
+                    }
+                });
+                this.tabcontainer = this.find("tabcontainer");
+                this.tabcontainer.ontabselect = (e) => {
+                    return this.fetchData(e.data.container.aid);
+                };
+                this.find("bt-user-save").onbtclick = (e) => {
+                    return this.saveUser();
+                };
+                this.find("cv-cat-add").onbtclick = async (e) => {
+                    try {
+                        const tree = await this.fetchCVCat();
+                        const d = await this.openDialog(new application.blogger.BloggerCategoryDialog(), {
+                            title: __("Add category"),
+                            tree
+                        });
+                        this.cvcatdb.cache = {
+                            name: d.value,
+                            pid: d.p.id,
+                            publish: 1
+                        };
+                        const r = await this.cvcatdb.write(undefined);
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        await this.refreshCVCat();
+                    }
+                    catch (e) {
+                        this.error(__("cv-cat-add: {0}", e.toString()), e);
+                    }
+                };
+                this.find("cv-cat-edit").onbtclick = async (e) => {
+                    try {
+                        const sel = this.cvlist.selectedItem;
+                        if (!sel) {
+                            return;
+                        }
+                        const cat = sel.data;
+                        if (!cat) {
+                            return;
+                        }
+                        const tree = await this.fetchCVCat();
+                        const d = await this.openDialog(new application.blogger.BloggerCategoryDialog(), {
+                            title: __("Edit category"),
+                            tree, cat
+                        });
+                        this.cvcatdb.cache = {
+                            id: cat.id,
+                            publish: cat.publish,
+                            pid: d.p.id,
+                            name: d.value
+                        };
+                        const r = await this.cvcatdb.write(undefined);
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        await this.refreshCVCat();
+                    }
+                    catch (e) {
+                        this.error(__("cv-cat-edit: {0}", e.toString()), e);
+                    }
+                };
+                this.find("cv-cat-del").onbtclick = async (e) => {
+                    try {
+                        const sel = this.cvlist.selectedItem;
+                        if (!sel) {
+                            return;
+                        }
+                        const cat = sel.data;
+                        if (!cat) {
+                            return;
+                        }
+                        const d = await this.openDialog("YesNoDialog", {
+                            title: __("Delete category"),
+                            iconclass: "fa fa-question-circle",
+                            text: __("Do you really want to delete: {0}?", cat.name)
+                        });
+                        if (!d) {
+                            return;
+                        }
+                        await this.deleteCVCat(cat);
+                    }
+                    catch (e) {
+                        this.error(__("cv-cat-del: {0}", e.toString()), e);
+                    }
+                };
+                this.find("cv-sec-add").onbtclick = async (e) => {
+                    try {
+                        const sel = this.cvlist.selectedItem;
+                        if (!sel) {
+                            return;
+                        }
+                        const cat = sel.data;
+                        if (!cat || (cat.id === "0")) {
+                            return this.toast(__("Please select a category"));
+                        }
+                        const d = await this.openDialog(new application.blogger.BloggerCVSectionDiaglog(), {
+                            title: __("New section entry for {0}", cat.name)
+                        });
+                        d.cid = Number(cat.id);
+                        d.start = Number(d.start);
+                        d.end = Number(d.end);
+                        this.cvsecdb.cache = d;
+                        // d.publish = 1
+                        const r = await this.cvsecdb.write(undefined);
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        await this.CVSectionByCID(Number(cat.id));
+                    }
+                    catch (e) {
+                        this.error(__("cv-sec-add: {0}", e.toString()), e);
+                    }
+                };
+                this.find("cv-sec-move").onbtclick = async (e) => {
+                    try {
+                        const sel = this.seclist.selectedItem;
+                        if (!sel) {
+                            return this.toast(__("Please select a section to move"));
+                        }
+                        const sec = sel.data;
+                        const tree = await this.fetchCVCat();
+                        const d = await this.openDialog(new application.blogger.BloggerCategoryDialog(), {
+                            title: __("Move to"),
+                            tree,
+                            selonly: true
+                        });
+                        this.cvsecdb.cache = {
+                            id: sec.id,
+                            cid: d.p.id
+                        };
+                        const r = await this.cvsecdb.write(undefined);
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        await this.CVSectionByCID(sec.cid);
+                        this.seclist.unselect();
+                    }
+                    catch (e) {
+                        this.error(__("cv-sec-move: {0}", e.toString()), e);
+                    }
+                };
+                this.find("cv-sec-edit").onbtclick = async (e) => {
+                    try {
+                        const sel = this.seclist.selectedItem;
+                        if (!sel) {
+                            return this.toast(__("Please select a section to edit"));
+                        }
+                        const sec = sel.data;
+                        const d = await this.openDialog(new application.blogger.BloggerCVSectionDiaglog(), {
+                            title: __("Modify section entry"),
+                            section: sec
+                        });
+                        d.cid = Number(sec.cid);
+                        d.start = Number(d.start);
+                        d.end = Number(d.end);
+                        this.cvsecdb.cache = d;
+                        //d.publish = Number sec.publish
+                        const r = await this.cvsecdb.write(undefined);
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        await this.CVSectionByCID(Number(sec.cid));
+                    }
+                    catch (e) {
+                        this.error(__("cv-sec-edit: {0}", e.toString()), e);
+                    }
+                };
+                this.seclist.onitemclose = (evt) => {
+                    if (!evt) {
+                        return;
+                    }
+                    const data = evt.data.item.data;
+                    this.openDialog("YesNoDialog", {
+                        iconclass: "fa fa-question-circle",
+                        text: __("Do you really want to delete: {0}?", data.title)
+                    }).then(async (b) => {
+                        if (!b) {
+                            return;
+                        }
+                        try {
+                            const r = await this.cvsecdb.remove({
+                                where: {
+                                    id: data.id
+                                }
+                            });
+                            if (r.error) {
+                                throw new Error(r.error);
+                            }
+                            return this.seclist.delete(evt.data.item);
+                        }
+                        catch (e) {
+                            return this.error(__("Cannot delete the section: {0}", e.toString()), e);
+                        }
+                    });
+                    return false;
+                };
+                this.editor = new EasyMDE({
+                    element: this.find("markarea"),
+                    autoDownloadFontAwesome: false,
+                    autofocus: true,
+                    tabSize: 4,
+                    indentWithTabs: true,
+                    toolbar: [
+                        {
+                            name: __("New"),
+                            className: "fa fa-file",
+                            action: (e) => {
+                                this.bloglist.unselect();
+                                return this.clearEditor();
+                            }
+                        },
+                        {
+                            name: __("Save"),
+                            className: "fa fa-save",
+                            action: (e) => {
+                                return this.saveBlog();
+                            }
+                        },
+                        "|", "bold", "italic", "heading", "|", "quote", "code",
+                        "unordered-list", "ordered-list", "|", "link",
+                        "image", "table", "horizontal-rule",
+                        {
+                            name: "image",
+                            className: "fa fa-file-image-o",
+                            action: (_) => {
+                                return this.openDialog("FileDialog", {
+                                    title: __("Select image file"),
+                                    mimes: ["image/.*"]
+                                }).then((d) => {
+                                    return d.file.path.asFileHandle().publish()
+                                        .then((r) => {
+                                        const doc = this.editor.codemirror.getDoc();
+                                        return doc.replaceSelection(`![](${this._api.handle.shared}/${r.result})`);
+                                    }).catch((e) => this.error(__("Cannot export file for embedding to text"), e));
+                                });
+                            }
+                        },
+                        {
+                            name: "Youtube",
+                            className: "fa fa-youtube",
+                            action: (e) => {
+                                const doc = this.editor.codemirror.getDoc();
+                                return doc.replaceSelection("[[youtube:]]");
+                            }
+                        },
+                        "|",
+                        {
+                            name: __("Preview"),
+                            className: "fa fa-eye no-disable",
+                            action: (e) => {
+                                this.previewOn = !this.previewOn;
+                                EasyMDE.togglePreview(e);
+                                ///console.log @select ".editor-preview editor-preview-active"
+                                renderMathInElement(this.find("editor-container"));
+                            }
+                        },
+                        "|",
+                        {
+                            name: __("Send mail"),
+                            className: "fa fa-paper-plane",
+                            action: async (e) => {
+                                try {
+                                    const d = await this.subdb.read();
+                                    const sel = this.bloglist.selectedItem;
+                                    if (!sel) {
+                                        return this.error(__("No post selected"));
+                                    }
+                                    const data = sel.data;
+                                    await this.openDialog(new application.blogger.BloggerSendmailDiaglog(), {
+                                        title: __("Send mail"),
+                                        content: this.editor.value(),
+                                        mails: d,
+                                        id: data.id
+                                    });
+                                    this.toast(__("Emails sent"));
+                                }
+                                catch (e) {
+                                    this.error(__("Error sending mails: {0}", e.toString()), e);
+                                }
+                            }
+                        }
+                    ]
+                });
+                this.bloglist.onlistselect = (e) => {
+                    const el = this.bloglist.selectedItem;
+                    if (!el) {
+                        return;
+                    }
+                    const sel = el.data;
+                    if (!sel) {
+                        return;
+                    }
+                    return this.blogdb.read({
+                        where: {
+                            id: Number(sel.id)
+                        }
+                    })
+                        .then((r) => {
+                        this.editor.value(r.content);
+                        this.inputtags.value = r.tags;
+                        return this.find("blog-publish").swon = Number(r.publish) ? true : false;
+                    }).catch((e) => {
+                        return this.error(__("Cannot fetch the entry content"), e);
+                    });
+                };
+                this.bloglist.onitemclose = (e) => {
+                    if (!e) {
+                        return;
+                    }
+                    const el = e.data.item;
+                    const data = el.data;
+                    this.openDialog("YesNoDialog", {
+                        title: __("Delete a post"),
+                        iconclass: "fa fa-question-circle",
+                        text: __("Do you really want to delete this post ?")
+                    }).then(async (b) => {
+                        if (!b) {
+                            return;
+                        }
+                        const r = await this.blogdb.remove({
+                            where: {
+                                id: Number(data.id)
+                            }
+                        });
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        this.bloglist.delete(el);
+                        this.bloglist.unselect();
+                        return this.clearEditor();
+                    });
+                    return false;
+                };
+                this.bindKey("CTRL-S", () => {
+                    const sel = this.tabcontainer.selectedTab;
+                    if (!sel || (sel.container.aid !== "blog-container")) {
+                        return;
+                    }
+                    return this.saveBlog();
+                });
+                this.on("resize", () => {
+                    return this.resizeContent();
+                });
+                this.resizeContent();
+                return this.init_db();
+            }
+            // @fetchData 0
+            // USER TAB
+            fetchData(idx) {
+                switch (idx) {
+                    case "user-container": //user info
+                        return this.userdb.read()
+                            .then((d) => {
+                            if (!d || d.length == 0) {
+                                return;
+                            }
+                            this.user = d[0];
+                            const inputs = this.select("[input-class='user-input']");
+                            return inputs.map((i, v) => ($(v)).val(this.user[v.name]));
+                        }).catch((e) => this.error(__("Cannot fetch user data"), e));
+                    case "cv-container": // category
+                        return this.refreshCVCat();
+                    default:
+                        return this.loadBlogs();
+                }
+            }
+            async saveUser() {
+                try {
+                    const inputs = this.select("[input-class='user-input']");
+                    for (let v of inputs) {
+                        this.user[v.name] = ($(v)).val();
+                    }
+                    if (!this.user.fullname || (this.user.fullname === "")) {
+                        return this.toast(__("Full name must be entered"));
+                    }
+                    //console.log @user
+                    let fp = this.userdb;
+                    if (this.user && this.user.id) {
+                        fp = `${this.userdb.path}@${this.user.id}`.asFileHandle();
+                    }
+                    fp.cache = this.user;
+                    const r = await fp.write(undefined);
+                    if (r.error) {
+                        throw new Error(r.error);
+                    }
+                    if (!this.user.id) {
+                        this.user.id = r.result;
+                    }
+                    this.toast(__("User data updated"));
+                }
+                catch (e) {
+                    this.error(__("Cannot save user data: {0}", e.toString()), e);
+                }
+            }
+            // PORFOLIO TAB
+            refreshCVCat() {
+                return this.fetchCVCat().then((data) => {
+                    this.cvlist.data = data;
+                    return this.cvlist.expandAll();
+                }).catch((e) => this.error(__("Unable to load categories"), e));
+            }
+            fetchCVCat() {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const data = {
+                            text: "Porfolio",
+                            id: "0",
+                            nodes: []
+                        };
+                        const filter = {
+                            order: ["name$asc"]
+                        };
+                        const d = await this.cvcatdb.read(filter);
+                        this.catListToTree(d, data, "0");
+                        resolve(data);
+                    }
+                    catch (e) {
+                        reject(__e(e));
+                    }
+                });
+            }
+            //it = (@cvlist.find "pid", "2")[0]
+            //@cvlist.set "selectedItem", it
+            catListToTree(table, data, id) {
+                let v;
+                const result = table.filter((e) => {
+                    e.pid == id;
+                });
+                if (result.length === 0) {
+                    return data.nodes = null;
+                }
+                for (let v of result) {
+                    v.nodes = [];
+                    v.text = v.name;
+                    this.catListToTree(table, v, v.id);
+                    data.nodes.push(v);
+                }
+            }
+            deleteCVCat(cat) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        let v;
+                        const ids = [];
+                        var func = function (c) {
+                            ids.push(c.id);
+                            if (c.nodes) {
+                                c.nodes.map((v) => func(v));
+                            }
+                        };
+                        func(cat);
+                        // delete all content
+                        let r = await this.cvsecdb.remove({
+                            where: {
+                                $or: {
+                                    cid: ids
+                                }
+                            }
+                        });
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        r = await this.cvcatdb.remove({
+                            where: {
+                                $or: {
+                                    id: ids
+                                }
+                            }
+                        });
+                        if (r.error) {
+                            throw new Error(r.error);
+                        }
+                        await this.refreshCVCat();
+                        this.seclist.data = [];
+                    }
+                    catch (e) {
+                        reject(__e(e));
+                    }
+                });
+            }
+            CVSectionByCID(cid) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const d = await this.cvsecdb.read({
+                            where: { cid },
+                            order: ["start$desc"]
+                        });
+                        const items = [];
+                        this.find("cv-sec-status").text = __("Found {0} sections", d.length);
+                        for (let v of d) {
+                            v.closable = true;
+                            v.tag = "afx-blogger-cvsection-item";
+                            v.start = Number(v.start);
+                            v.end = Number(v.end);
+                            if (v.start < 1000) {
+                                v.start = undefined;
+                            }
+                            if (v.end < 1000) {
+                                v.end = undefined;
+                            }
+                            items.push(v);
+                        }
+                        this.seclist.data = items;
+                    }
+                    catch (e) {
+                        reject(__e(e));
+                    }
+                });
+            }
+            // blog
+            async saveBlog() {
+                try {
+                    let sel = undefined;
+                    const selel = this.bloglist.selectedItem;
+                    if (selel) {
+                        sel = selel.data;
+                    }
+                    const tags = this.inputtags.value;
+                    const content = this.editor.value();
+                    const title = (new RegExp("^#+(.*)\n", "g")).exec(content);
+                    if (!title || (title.length !== 2)) {
+                        return this.toast(__("Please insert a title in the text: beginning with heading"));
+                    }
+                    if (tags === "") {
+                        return this.toast(__("Please enter tags"));
+                    }
+                    const d = new Date();
+                    const data = {
+                        content,
+                        title: title[1].trim(),
+                        tags,
+                        ctime: sel ? sel.ctime : d.timestamp(),
+                        ctimestr: sel ? sel.ctimestr : d.toString(),
+                        utime: d.timestamp(),
+                        utimestr: d.toString(),
+                        rendered: this.process(this.editor.options.previewRender(content)),
+                        publish: this.find("blog-publish").swon ? 1 : 0
+                    };
+                    if (sel) {
+                        data.id = sel.id;
+                    }
+                    //save the data
+                    this.blogdb.cache = data;
+                    const r = await this.blogdb.write(undefined);
+                    if (r.error) {
+                        throw new Error(r.error);
+                    }
+                    await this.loadBlogs();
+                }
+                catch (e) {
+                    this.error(__("Cannot save blog: {0}", e.toString()), e);
+                }
+            }
+            process(text) {
+                // find video tag and rendered it
+                let found;
+                const embed = (id) => `\
+<iframe
+class = "embeded-video"
+width="560" height="315" 
+src="https://www.youtube.com/embed/${id}"
+frameborder="0" allow="encrypted-media" allowfullscreen
+></iframe>\
+`;
+                const re = /\[\[youtube:([^\]]*)\]\]/g;
+                const replace = [];
+                while ((found = re.exec(text)) !== null) {
+                    replace.push(found);
+                }
+                if (!(replace.length > 0)) {
+                    return text;
+                }
+                let ret = "";
+                let begin = 0;
+                for (let it of replace) {
+                    ret += text.substring(begin, it.index);
+                    ret += embed(it[1]);
+                    begin = it.index + it[0].length;
+                }
+                ret += text.substring(begin, text.length);
+                //console.log ret
+                return ret;
+            }
+            clearEditor() {
+                this.editor.value("");
+                this.inputtags.value = "";
+                return this.find("blog-publish").swon = false;
+            }
+            // load blog
+            loadBlogs() {
+                return new Promise(async (ok, reject) => {
+                    try {
+                        let selidx = -1;
+                        const el = this.bloglist.selectedItem;
+                        selidx = $(el).index();
+                        const filter = {
+                            order: ["ctime$desc"],
+                            fields: [
+                                "id",
+                                "title",
+                                "ctimestr",
+                                "ctime",
+                                "utime",
+                                "utimestr"
+                            ]
+                        };
+                        const r = await this.blogdb.read(filter);
+                        for (let v of r) {
+                            v.tag = "afx-blogger-post-item";
+                        }
+                        this.bloglist.data = r;
+                        if (selidx !== -1) {
+                            return this.bloglist.selected = selidx;
+                        }
+                        else {
+                            this.clearEditor();
+                            return this.bloglist.selected = -1;
+                        }
+                    }
+                    catch (e) {
+                        reject(__e(e));
+                    }
+                });
+            }
+            resizeContent() {
+                const container = this.find("editor-container");
+                const children = ($(".EasyMDEContainer", container)).children();
+                const titlebar = (($(this.scheme)).find(".afx-window-top"))[0];
+                const toolbar = children[0];
+                const statusbar = children[3];
+                const cheight = ($(this.scheme)).height() - ($(titlebar)).height() - ($(toolbar)).height() - ($(statusbar)).height() - 90;
+                return ($(children[1])).css("height", cheight + "px");
+            }
+        }
+        application.Blogger = Blogger;
+        Blogger.singleton = true;
+        Blogger.dependencies = [
+            "pkg://SimpleMDE/main.js",
+            "pkg://SimpleMDE/main.css",
+            "pkg://Katex/main.js",
+            "pkg://Katex/main.css",
+            "pkg://SQLiteDB/libsqlite.js",
+        ];
+    })(application = OS.application || (OS.application = {}));
+})(OS || (OS = {}));
+
+// Copyright 2017-2018 Xuan Sang LE <xsang.le AT gmail DOT com>
+// AnTOS Web desktop is is licensed under the GNU General Public
+// License v3.0, see the LICENCE file for more information
+// This program is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation, either version 3 of 
+// the License, or (at your option) any later version.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+// You should have received a copy of the GNU General Public License
+//along with this program. If not, see https://www.gnu.org/licenses/.
+var OS;
+(function (OS) {
+    let application;
+    (function (application) {
+        let blogger;
+        (function (blogger) {
+            class BloggerCategoryDialog extends OS.GUI.BasicDialog {
+                constructor() {
+                    super("BloggerCategoryDialog", BloggerCategoryDialog.scheme);
+                }
+                main() {
+                    super.main();
+                    this.tree = this.find("tree");
+                    this.txtinput = this.find("txtinput");
+                    this.find("bt-ok").onbtclick = (e) => {
+                        const sel = this.tree.selectedItem;
+                        if (!sel) {
+                            return this.notify(__("Please select a parent category"));
+                        }
+                        const seldata = sel.data;
+                        const val = this.txtinput.value;
+                        if ((val === "") && !this.data.selonly) {
+                            return this.notify(__("Please enter category name"));
+                        }
+                        if (this.data.cat && (this.data.cat.id === seldata.id)) {
+                            return this.notify(__("Parent can not be the category itself"));
+                        }
+                        if (this.handle) {
+                            this.handle({ p: seldata, value: val });
+                        }
+                        return this.quit();
+                    };
+                    this.find("bt-cancel").onbtclick = (e) => {
+                        return this.quit();
+                    };
+                    if (this.data && this.data.tree) {
+                        if (this.data && this.data.cat) {
+                            let seldata;
+                            this.txtinput.value = this.data.cat.name;
+                            if (this.data.cat.pid === "0") {
+                                seldata = this.data.tree;
+                            }
+                            else {
+                                seldata = this.findDataByID(this.data.cat.pid, this.data.tree.nodes);
+                            }
+                            if (seldata) {
+                                seldata.selected = true;
+                            }
+                        }
+                        this.tree.data = this.data.tree;
+                        return this.tree.expandAll();
+                    }
+                }
+                // TODO set selected category name
+                findDataByID(id, list) {
+                    for (let data of list) {
+                        if (data.id === id) {
+                            return data;
+                        }
+                        if (data.nodes) {
+                            this.findDataByID(id, data.nodes);
+                        }
+                    }
+                    return undefined;
+                }
+            }
+            blogger.BloggerCategoryDialog = BloggerCategoryDialog;
+            BloggerCategoryDialog.scheme = `\
+<afx-app-window width='300' height='400'>
+    <afx-vbox padding="5">
+        <afx-label text="__(Pick a parent)" data-height="25" class="lbl-header" ></afx-label>
+        <afx-tree-view data-id="tree" ></afx-tree-view>
+        <afx-label text="__(Category name)" data-height="25" class="lbl-header" ></afx-label>
+        <input type="text" data-height="25" data-id = "txtinput"/ >
+        <afx-hbox data-height = '35'>
+            <div  style=' text-align:right;'>
+                <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+        </afx-hbox>
+    </afx-vbox>
+</afx-app-window>\s
+        `;
+            // This dialog is use for cv section editing
+            class BloggerCVSectionDiaglog extends OS.GUI.BasicDialog {
+                constructor() {
+                    super("BloggerCVSectionDiaglog");
+                }
+                main() {
+                    super.main();
+                    this.editor = new EasyMDE({
+                        autoDownloadFontAwesome: false,
+                        element: this.find("contentarea"),
+                        status: false,
+                        toolbar: false
+                    });
+                    ($((this.select('[class = "CodeMirror-scroll"]'))[0])).css("min-height", "50px");
+                    ($((this.select('[class="CodeMirror cm-s-paper CodeMirror-wrap"]'))[0])).css("min-height", "50px");
+                    const inputs = this.select("[input-class='user-input']");
+                    if (this.data && this.data.section) {
+                        for (let v of inputs) {
+                            ($(v)).val(this.data.section[v.name]);
+                        }
+                    }
+                    if (this.data && this.data.section) {
+                        this.editor.value(this.data.section.content);
+                    }
+                    this.find("section-publish").swon = (this.data && this.data.section && Number(this.data.section.publish) ? true : false);
+                    this.find("bt-cv-sec-save").onbtclick = (e) => {
+                        const data = {};
+                        for (let v of inputs) {
+                            data[v.name] = ($(v)).val();
+                        }
+                        data.content = this.editor.value();
+                        if ((data.title === "") && (data.content === "")) {
+                            return this.notify(__("Title or content must not be blank"));
+                        }
+                        //return @notify "Content must not be blank" if data.content is ""
+                        if (this.data && this.data.section) {
+                            data.id = this.data.section.id;
+                        }
+                        const val = this.find("section-publish").swon;
+                        if (val === true) {
+                            data.publish = 1;
+                        }
+                        else {
+                            data.publish = 0;
+                        }
+                        if (this.handle) {
+                            this.handle(data);
+                        }
+                        return this.quit();
+                    };
+                    this.on("resize", () => this.resizeContent());
+                    return this.resizeContent();
+                }
+                resizeContent() {
+                    const container = this.find("editor-container");
+                    const children = ($(".EasyMDEContainer", container)).children();
+                    const cheight = ($(container)).height() - 30;
+                    return ($(children[0])).css("height", cheight + "px");
+                }
+            }
+            blogger.BloggerCVSectionDiaglog = BloggerCVSectionDiaglog;
+            BloggerCVSectionDiaglog.scheme = `\
+<afx-app-window data-id = "blogger-cv-sec-win" apptitle="Porforlio section" width="450" height="400">
+    <afx-vbox padding="5">
+        <afx-hbox data-height = "30" >
+            <afx-label data-width= "70" text = "__(Title)"></afx-label>
+            <input type = "text" name="title" input-class = "user-input"></input>
+        </afx-hbox>
+        <afx-hbox data-height = "30" >
+            <afx-label text = "__(Subtitle)" data-width= "70"></afx-label>
+            <input type = "text" name="subtitle" input-class = "user-input"></input>
+        </afx-hbox>
+        <afx-hbox data-height = "30" >
+            <afx-label text = "__(Location)" data-width= "70"></afx-label>
+            <input type = "text" name="location" input-class = "user-input"></input>
+        </afx-hbox>
+        <afx-hbox data-height = "30" >
+            <afx-label text = "__(From)" data-width= "70"></afx-label>
+            <input type = "text" name="start" input-class = "user-input"></input>
+            <afx-label text = "To:" style="text-align:center;" data-width= "70"></afx-label>
+            <input type = "text"  name="end" input-class = "user-input"></input>
+        </afx-hbox>
+        <afx-label data-height = "30" text = "Content" style = "margin-left:5px;"></afx-label>
+        <div data-id="editor-container">
+        <textarea name="content" data-id = "contentarea" ></textarea>
+        </div>
+        <div data-height = "35" style="text-align: right;">
+            <afx-switch  data-id = "section-publish" data-width="30"></afx-switch>
+            <afx-button iconclass = "fa fa-save" data-id = "bt-cv-sec-save"  text = "__(Save)"></afx-button>
+        </div>
+    </afx-vbox>
+</afx-app-window>`;
+            // this dialog is for send mail
+            class BloggerSendmailDiaglog extends OS.GUI.BasicDialog {
+                constructor() {
+                    super("BloggerSendmailDiaglog");
+                }
+                main() {
+                    super.main();
+                    this.maillinglist = this.find("email-list");
+                    const title = (new RegExp("^#+(.*)\n", "g")).exec(this.data.content);
+                    this.find("mail-title").value = title[1];
+                    const content = (this.data.content.substring(0, 500)) + "...";
+                    this.find("contentarea").value = BloggerSendmailDiaglog.template.format(this.data.id, content);
+                    const mlist = this.data.mails.map((el) => {
+                        return {
+                            text: el.name,
+                            email: el.email,
+                            switch: true,
+                            checked: true
+                        };
+                    });
+                    this.maillinglist.data = mlist;
+                    return this.find("bt-sendmail").onbtclick = (e) => {
+                        const items = this.maillinglist.data;
+                        const emails = [];
+                        for (let v of items) {
+                            if (v.checked === true) {
+                                console.log(v.email);
+                                emails.push(v.email);
+                            }
+                        }
+                        if (emails.length === 0) {
+                            return this.notify(__("No email selected"));
+                        }
+                        // send the email
+                        const data = {
+                            path: `${this.meta().path}/sendmail.lua`,
+                            parameters: {
+                                to: emails,
+                                title: this.find("mail-title").value,
+                                content: this.find("contentarea").value
+                            }
+                        };
+                        return this._api.apigateway(data, false)
+                            .then((d) => {
+                            if (d.error) {
+                                return this.notify(__("Unable to send mail to: {0}", d.result.join(",")));
+                            }
+                            return this.quit();
+                        }).catch((e) => {
+                            console.log(e);
+                            return this.error(__("Error sending mail: {0}", e.toString()), e);
+                        });
+                    };
+                }
+            }
+            blogger.BloggerSendmailDiaglog = BloggerSendmailDiaglog;
+            BloggerSendmailDiaglog.scheme = `\
+<afx-app-window data-id = "blogger-send-mail-win" apptitle="Send mail" width="500" height="400" resizable = "false">
+    <afx-hbox>
+        <afx-menu data-width="150" data-id="email-list"></afx-menu>
+        <afx-resizer data-width="3"></afx-resizer>
+        <div data-width="5"></div>
+        <afx-vbox >
+                <div data-height="5"></div>
+                <afx-label data-height="20" text = "__(Title)"></afx-label>
+                <input type = "text" data-height="20" name="title" data-id = "mail-title"></input>
+                <afx-label data-height = "20" text = "Content" ></afx-label>
+                <textarea name="content" data-id = "contentarea" ></textarea>
+                <div data-height="5"></div>
+                <afx-hbox data-height = "30">
+                    <div></div>
+                    <afx-button iconclass = "fa fa-paper-plane" data-id = "bt-sendmail" data-width="60" text = "__(Send)"></afx-button>
+                </afx-hbox>
+        </afx-vbox>
+        <div data-width="5"></div>
+    </afx-hbox>
+</afx-app-window>`;
+            BloggerSendmailDiaglog.template = `\
+Hello,
+
+Xuan Sang LE has just published a new post on his blog: https://blog.iohub.dev/post/id/{0}
+
+==========
+{1}
+==========
+
+
+Read the full article via:
+https://blog.iohub.dev/post/id/{0}
+
+You receive this email because you have been subscribed to his blog.
+
+Have a nice day,
+
+Sent from Blogger, an AntOS application\
+`;
+        })(blogger = application.blogger || (application.blogger = {}));
+    })(application = OS.application || (OS.application = {}));
+})(OS || (OS = {}));
+
+var OS;
+(function (OS) {
+    let application;
+    (function (application) {
+        let blogger;
+        (function (blogger) {
+            class CVSectionListItemTag extends OS.GUI.tag.ListViewItemTag {
+                constructor() {
+                    super();
+                }
+                ondatachange() {
+                    if (!this.data) {
+                        return;
+                    }
+                    const v = this.data;
+                    const nativel = ["content", "start", "end"];
+                    this.closable = v.closable;
+                    return (() => {
+                        const result = [];
+                        for (let k in this.refs) {
+                            const el = this.refs[k];
+                            if (v[k] && (v[k] !== "")) {
+                                if (nativel.includes(k)) {
+                                    result.push($(el).text(v[k]));
+                                }
+                                else {
+                                    result.push(el.text = v[k]);
+                                }
+                            }
+                            else {
+                                result.push(undefined);
+                            }
+                        }
+                        return result;
+                    })();
+                }
+                reload() { }
+                init() { }
+                itemlayout() {
+                    return {
+                        el: "div", children: [
+                            { el: "afx-label", ref: "title", class: "afx-cv-sec-title" },
+                            { el: "afx-label", ref: "subtitle", class: "afx-cv-sec-subtitle" },
+                            { el: "p", ref: "content", class: "afx-cv-sec-content" },
+                            {
+                                el: "p", class: "afx-cv-sec-period", children: [
+                                    { el: "i", ref: "start" },
+                                    { el: "i", ref: "end", class: "period-end" }
+                                ]
+                            },
+                            { el: "afx-label", ref: "location", class: "afx-cv-sec-loc" }
+                        ]
+                    };
+                }
+            }
+            OS.GUI.tag.define("afx-blogger-cvsection-item", CVSectionListItemTag);
+            class BlogPostListItemTag extends OS.GUI.tag.ListViewItemTag {
+                constructor() {
+                    super();
+                }
+                ondatachange() {
+                    if (!this.data) {
+                        return;
+                    }
+                    const v = this.data;
+                    v.closable = true;
+                    this.closable = v.closable;
+                    this.refs.title.text = v.title;
+                    this.refs.ctimestr.text = __("Created: {0}", v.ctimestr);
+                    this.refs.utimestr.text = __("Updated: {0}", v.utimestr);
+                }
+                reload() { }
+                init() { }
+                itemlayout() {
+                    return {
+                        el: "div", children: [
+                            { el: "afx-label", ref: "title", class: "afx-blogpost-title" },
+                            { el: "afx-label", ref: "ctimestr", class: "blog-dates" },
+                            { el: "afx-label", ref: "utimestr", class: "blog-dates" },
+                        ]
+                    };
+                }
+            }
+            OS.GUI.tag.define("afx-blogger-post-item", BlogPostListItemTag);
+        })(blogger = application.blogger || (application.blogger = {}));
+    })(application = OS.application || (OS.application = {}));
+})(OS || (OS = {}));
