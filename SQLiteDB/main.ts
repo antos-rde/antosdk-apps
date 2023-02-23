@@ -235,6 +235,23 @@ namespace OS {
                         this.error(__("Error reading table: {0}", e.toString()),e);
                     }
                 }
+
+                (this.find("bt-refresh") as GUI.tag.ButtonTag).onbtclick = async (e) => {
+                    try
+                    {
+                        this.last_max_id = 0;
+                        const handle: API.VFS.BaseFileHandle = this.tbl_list.selectedItem.data.handle;
+                        const records = await handle.read({fields:["COUNT(*)"]});
+                        this.n_records = records[0]["COUNT(*)"];
+                        this.grid_table.rows = [];
+                        await this.load_table();
+                    }
+                    catch(e)
+                    {
+                        this.error(__("Error reload table: {0}", e.toString()),e);
+                    }
+                }
+
                 this.tbl_list.onlistselect = async (_) => {
                     try
                     {
@@ -406,7 +423,7 @@ namespace OS {
                         for(let v in headers)
                         {
                             let text:string = e[headers[v].text];
-                            if(text.length > 100)
+                            if(text && text.length > 100)
                             {
                                 text = text.substring(0,100);
                             }

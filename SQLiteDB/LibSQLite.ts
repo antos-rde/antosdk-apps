@@ -406,15 +406,27 @@ namespace OS {
                                 filter.table_name = this._table_name;
                                 if(this._id)
                                 {
-                                    filter.where = { id: this._id};
+                                    filter.where = {};
+                                    filter.where[this.info.schema.pk] = this._id;
                                 }
-                                let data = await this._handle.select(filter);
+                                let data: GenericObject<any>[] = await this._handle.select(filter);
                                 if(this._id)
                                 {
                                     this.cache = data[0];
                                 }
                                 else
                                 {
+                                    for(let row of data)
+                                    {
+                                        if(row[this.info.schema.pk])
+                                        {
+                                            Object.defineProperty(row, '$vfs', {
+                                                value: `${this.path}@${row[this.info.schema.pk]}`.asFileHandle(),
+                                                enumerable: false,
+                                                configurable: false
+                                            })
+                                        }
+                                    }
                                     this.cache = data;
                                 }
                                 resolve(this.cache)
@@ -444,7 +456,7 @@ namespace OS {
                             await this.onready();
                             if(this._id && this._table_name)
                             {
-                                this.cache.id = this._id;
+                                this.cache[this.info.schema.pk] = this._id;
                                 const ret = await this._handle.update(this._table_name, this.cache, this.info.schema.pk);
                                 resolve({result:ret, error: false});
                                 return
@@ -504,7 +516,8 @@ namespace OS {
                                 filter.table_name = this._table_name;
                                 if(this._id)
                                 {
-                                    filter.where = { id: this._id};
+                                    filter.where = {};
+                                    filter.where[this.info.schema.pk] = this._id;
                                 }
                                 let ret = await this._handle.delete_records(filter);
                                 resolve({result: ret, error: false});

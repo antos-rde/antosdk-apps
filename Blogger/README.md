@@ -6,6 +6,7 @@ Blackend for my blog at https://blog.iohub.dev
 ## Change logs
 
 ### v0.2.x-a
+* Patch 10: Migrate code to typescript, use SQLiteDB lib for database access
 * Patch 9: Update to use the new MDE library
 * Patch 8: Support for antOS 2.0.x
 * Patch 7: Fix sendmail API security bug

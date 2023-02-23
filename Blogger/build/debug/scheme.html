@@ -1,5 +1,5 @@
 <afx-app-window data-id = "blogger-win" apptitle="Blogger" width="650" height="500">
-    <afx-hbox >
+    <afx-hbox padding="5">
         <afx-tab-container data-id = "tabcontainer" dir = "row" tabbarwidth= "40">
             
             <afx-hbox data-id="user-container" data-height="100%" iconclass="fa fa-user-circle">
@@ -65,7 +65,10 @@
             
             
             <afx-hbox data-id = "blog-container" data-height="100%" iconclass="fa fa-book">
-                <afx-list-view data-id = "blog-list" min-width="100" data-width="200"></afx-list-view>
+                <afx-vbox>
+                    <afx-list-view data-id = "blog-list" min-width="100" data-width="200"></afx-list-view>
+                    <afx-button data-id = "blog-load-more"  text = "__(Load more)" iconclass_end = "bi bi-chevron-double-right" data-height="content"></afx-button>
+                </afx-vbox>
                 <afx-resizer data-width = "3"></afx-resizer>
                 <afx-vbox>
                     <div data-id = "editor-container">

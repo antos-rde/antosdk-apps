@@ -95,8 +95,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.2.9-a",
-		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r"],"mimes":["none"],
+		"version": "0.2.10-a",
+		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r","SQLiteDB@0.1.0-a"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/build/release/Blogger.zip"
 	},
 	{
@@ -408,6 +408,16 @@
 		"version": "2.18.0-r",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SimpleMDE/build/release/SimpleMDE.zip"
+	},
+	{
+		"pkgname": "SQLiteDB",
+		"name": "SQLite3 Browser",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SQLiteDB/README.md",
+		"category": "Library",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SQLiteDB/build/release/SQLiteDB.zip"
 	},
 	{
 		"pkgname": "SystemControl",
