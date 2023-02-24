@@ -175,7 +175,7 @@ namespace OS {
             // this dialog is for send mail
             export class BloggerSendmailDiaglog extends OS.GUI.BasicDialog {
                 static template: string;
-                private maillinglist: OS.GUI.tag.ListViewTag;
+                private maillinglist: OS.GUI.tag.StackMenuTag;
                 // TODO: convert to SQLite handle
                 private subdb: API.VFS.BaseFileHandle;
                 constructor() {
@@ -184,7 +184,7 @@ namespace OS {
 
                 main() {
                     super.main();
-                    this.maillinglist = this.find("email-list") as OS.GUI.tag.ListViewTag;
+                    this.maillinglist = this.find("email-list") as OS.GUI.tag.StackMenuTag;
                     const title = (new RegExp("^#+(.*)\n", "g")).exec(this.data.content);
                     (this.find("mail-title") as HTMLInputElement).value = title[1];
                     const content = (this.data.content.substring(0, 500)) + "...";
@@ -196,16 +196,16 @@ namespace OS {
                             switch: true,
                             checked: true 
                         }
-                    })
-                    this.maillinglist.data = mlist;
+                    });
+                    console.log(mlist);
+                    this.maillinglist.items = mlist;
                     
                     return (this.find("bt-sendmail") as OS.GUI.tag.ButtonTag).onbtclick = (e: any) => {
-                        const items = this.maillinglist.data;
+                        const items = this.maillinglist.items;
                         const emails = [];
                         for (let v of items) {
                             if (v.checked === true) {
-                                console.log(v.email);
-                                emails.push(v.email);
+                                emails.push(v);
                             }
                         }
 
@@ -216,15 +216,18 @@ namespace OS {
                             parameters: {
                                 to: emails,
                                 title: (this.find("mail-title") as HTMLInputElement).value,
-                                content: (this.find("contentarea") as HTMLTextAreaElement).value
+                                content: (this.find("contentarea") as HTMLTextAreaElement).value,
+                                user: (this.find("mail-user") as HTMLInputElement).value,
+                                password: (this.find("mail-password") as HTMLInputElement).value,
                             }
                         };
                         return this._api.apigateway(data, false)
                             .then((d: { error: any; result: { join: (arg0: string) => any; }; }) => {
-                                if (d.error) { return this.notify(__("Unable to send mail to: {0}", d.result.join(","))); }
+                                if (d.error) {
+                                    const str = d.result.join(',');
+                                    return this.notify(__("Unable to send mail to: {0}", str)); }
                                 return this.quit();
                             }).catch((e) => {
-                                console.log(e);
                                 return this.error(__("Error sending mail: {0}", e.toString()), e);
                             });
                     };
@@ -232,24 +235,25 @@ namespace OS {
             }
 
             BloggerSendmailDiaglog.scheme = `\
-<afx-app-window data-id = "blogger-send-mail-win" apptitle="Send mail" width="500" height="400" resizable = "false">
-    <afx-hbox>
-        <afx-menu data-width="150" data-id="email-list"></afx-menu>
+<afx-app-window data-id = "blogger-send-mail-win" apptitle="Send mail" width="600" height="400" resizable = "false">
+    <afx-hbox padding="5">
+        <afx-stack-menu data-width="200" data-id="email-list"></afx-stack-menu>
         <afx-resizer data-width="3"></afx-resizer>
-        <div data-width="5"></div>
         <afx-vbox >
-                <div data-height="5"></div>
                 <afx-label data-height="20" text = "__(Title)"></afx-label>
-                <input type = "text" data-height="20" name="title" data-id = "mail-title"></input>
-                <afx-label data-height = "20" text = "Content" ></afx-label>
+                <input type = "text" data-height="25" name="title" data-id = "mail-title"></input>
+                <afx-label data-height = "20" text = "__(Content)" ></afx-label>
                 <textarea name="content" data-id = "contentarea" ></textarea>
-                <div data-height="5"></div>
+                <afx-label data-height="20" text = "__(IO Hub mail username/password)"></afx-label>
+                <afx-hbox data-height="25">
+                    <input type = "text" name="username" data-id = "mail-user"></input>
+                    <input type = "password" name="password" data-id = "mail-password"></input>
+                </afx-hbox>
                 <afx-hbox data-height = "30">
                     <div></div>
-                    <afx-button iconclass = "fa fa-paper-plane" data-id = "bt-sendmail" data-width="60" text = "__(Send)"></afx-button>
+                    <afx-button iconclass = "fa fa-paper-plane" data-id = "bt-sendmail" data-width="content" text = "__(Send)"></afx-button>
                 </afx-hbox>
         </afx-vbox>
-        <div data-width="5"></div>
     </afx-hbox>
 </afx-app-window>`;
 
@@ -257,7 +261,7 @@ namespace OS {
             BloggerSendmailDiaglog.template = `\
 Hello,
 
-Xuan Sang LE has just published a new post on his blog: https://blog.iohub.dev/post/id/{0}
+Dany LE has just published a new post on his blog: https://blog.iohub.dev/post/id/{0}
 
 ==========
 {1}

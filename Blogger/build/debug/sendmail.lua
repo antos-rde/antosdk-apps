@@ -1,30 +1,42 @@
 
 local data = ...
--- print(data.content)
+-- load the smtp support
+local smtp = require("socket.smtp")
+
+local from = string.format("<%s@iohub.dev>", data.user);
+
+local mesgt = {
+  headers = {
+    from = string.format("Dany <%s@iohub.dev>", data.user),
+    to = "",
+    subject = data.title
+  },
+  body = data.content
+}
+
 local error_msg = {}
 local iserror = false
-local tmp_name = "/tmp/"..os.time(os.date("!*t"))
-local file = io.open (tmp_name , "w")
-if file then
-    file:write("From: mrsang@lxsang.me\n")
-    file:write("Subject: " .. data.title .. "\n")
-    file:write( data.content.."\n")
-    file:close()
-    for k,v in pairs(data.to) do
-        print("sent to:"..v)
-        local to = v
-        local cmd = 'cat ' ..tmp_name .. '| sendmail ' .. to
-        --print(cmd)
-        local r = os.execute(cmd)
-        if not r then
-            iserror = true
-            table.insert(error_msg, v)
-            print("Unable to send mail to: "..v)
-        end
+
+for k,v in pairs(data.to) do
+    LOG_DEBUG("Send email to:"..v.email)
+    local rcpt = string.format("<%s>",v.email)
+    mesgt.headers.to = string.format("%s <%s>",v.text, v.email)
+    local r, e = smtp.send{
+        from = from,
+        rcpt = rcpt,
+        server = "iohub.dev",
+        domain = "iohub.dev",
+        user = data.user,
+        password = data.password,
+        source = smtp.message(mesgt)
+    }
+
+    local r = os.execute(cmd)
+    if not r then
+        iserror = true
+        table.insert(error_msg, v.email)
+        LOG_ERROR(string.format("Unable to send mail to %s: %s",v.email, e))
     end
-else
-    iserror = true
-    table.insert(error_msg, "Cannot create mail file")
 end
 local result = {}
 result.error = iserror
