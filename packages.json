@@ -154,9 +154,9 @@
 		"name": "Docify",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Docify/README.md",
 		"category": "Office",
-		"author": "",
-		"version": "0.0.9-b",
-		"dependencies": [],
+		"author": "Dany LE",
+		"version": "0.1.0-b",
+		"dependencies": ["SQLiteDB@0.1.0-a"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Docify/build/release/Docify.zip"
 	},
 	{

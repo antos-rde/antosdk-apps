@@ -13,17 +13,35 @@
                 }
             ]
         },
-        "coffee": {
+         "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/", "api/", "css/", "coffees/"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
+        },
+        "ts": {
             "require": [
-                "coffee"
+                "ts"
             ],
             "jobs": [
                 {
-                    "name": "coffee-compile",
+                    "name": "ts-import",
+                    "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
+                },
+                {
+                    "name": "ts-compile",
                     "data": {
                         "src": [
-                            "coffees/dialogs.coffee",
-                            "coffees/main.coffee"
+                            "ts/dialogs.ts",
+                            "ts/main.ts"
                         ],
                         "dest": "build/debug/main.js"
                     }
@@ -65,7 +83,7 @@
             ],
             "depend": [
                 "init",
-                "coffee",
+                "ts",
                 "uglify",
                 "copy"
             ],
@@ -77,6 +95,14 @@
                         "dest": "build/release/Docify.zip"
                     }
                 }
+            ]
+        },
+
+        "debug": {
+            "depend": [
+                "init",
+                "ts",
+                "copy"
             ]
         }
     }

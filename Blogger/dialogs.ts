@@ -87,7 +87,7 @@ namespace OS {
             </div>
         </afx-hbox>
     </afx-vbox>
-</afx-app-window>\s
+</afx-app-window>\
         `;
 
             // This dialog is use for cv section editing

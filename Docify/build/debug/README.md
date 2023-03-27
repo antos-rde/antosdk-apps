@@ -2,6 +2,7 @@
 Simple PDF document manager
 
 ## Change logs
+- v0.1.0-b: use libsqlite for database handling
 - v0.0.9-b: Adapt to support AntOS 2.0.x
 - v0.0.8-b: Allow upload files directly from the app
 - v0.0.7-a: Change category and icon
