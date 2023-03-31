@@ -9,7 +9,10 @@ Small application for zip file manager
 
 ## Changle log
 
-### v0.0.2-a
+### v0.0.4-a
+* Fix file dialog bug when extract zip content
+
+### v0.0.3-a
 * Change category to utility
 
 ### v0.0.2-a

@@ -85,7 +85,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Archive/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.0.3-a",
+		"version": "0.0.4-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Archive/build/release/Archive.zip"
 	},
