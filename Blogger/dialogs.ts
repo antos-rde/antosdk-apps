@@ -212,7 +212,7 @@ namespace OS {
                         if (emails.length === 0) { return this.notify(__("No email selected")); }
                         // send the email
                         const data = {
-                            path: `${this.meta().path}/sendmail.lua`,
+                            path: `${this.meta().path}/api/sendmail.lua`,
                             parameters: {
                                 to: emails,
                                 title: (this.find("mail-title") as HTMLInputElement).value,
@@ -222,7 +222,7 @@ namespace OS {
                             }
                         };
                         return this._api.apigateway(data, false)
-                            .then((d: { error: any; result: { join: (arg0: string) => any; }; }) => {
+                            .then((d) => {
                                 if (d.error) {
                                     const str = d.result.join(',');
                                     return this.notify(__("Unable to send mail to: {0}", str)); }

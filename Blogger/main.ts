@@ -499,6 +499,36 @@ namespace OS {
                                     this.error(__("Error sending mails: {0}", e.toString()), e);
                                 }
                             }
+                        },
+                        "|",
+                        {
+                            name: __("TFIDF analyse"),
+                            className: "fa fa-area-chart",
+                            action: async (e: any) => {
+                                try {
+                                    const q = await this.openDialog("PromptDialog",{
+                                        title: __("TFIDF Analyse"),
+                                        text: __("Max number of related posts to keep per post?"),
+                                        value: "5"
+                                    });
+                                    const data = {
+                                        path: `${this.meta().path}/api/ai/analyse.lua`,
+                                        parameters: {
+                                            dbpath: this.dbhandle.info.file.path,
+                                            top: parseInt(q)
+                                        }
+                                    };
+                                    const d = await this._api.apigateway(data, false);
+                                    if (d.error) {
+                                        throw new Error(d.error);
+                                    }
+                                    this.toast(d.result);
+                                }
+                                catch(e)
+                                {
+                                    this.error(__("Error analysing posts: {0}", e.toString()), e);
+                                }
+                            }
                         }
                     ]
                 });

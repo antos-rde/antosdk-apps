@@ -55,7 +55,7 @@
                     "data": {
                         "src": [
                             "scheme.html",
-                            "api/sendmail.lua",
+                            "api",
                             "package.json",
                             "README.md",
                             "main.css"
