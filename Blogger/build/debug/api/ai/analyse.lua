@@ -42,6 +42,23 @@ if data then
     end
 
     cluster.tfidf(documents)
+    -- indexing all terms to cache file
+    local cache_file =  dbpath..".index.json"
+    local f = io.open(cache_file, "w")
+    if f then
+        local indexes = {}
+        for id, doc in pairs(documents) do
+            for term,v in pairs(doc) do
+                if not indexes[term] then
+                    indexes[term] = {}
+                end
+                indexes[term][tostring(id)] = doc[term].tfidf
+            end
+        end
+        f:write(JSON.encode(indexes))
+        f:close()
+    end
+    --
     --local v = cluster.search("arm", documents)
     --echo(JSON.encode(v))
     local vectors, maxv, size = cluster.get_vectors(documents)
