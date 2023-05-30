@@ -1,7 +1,7 @@
 importScripts('typescript.min.js');
 
 const tslib = {};
-
+const SDK_URL = "https://ci.iohub.dev/public/antos-release/sdk";
 
 class TSJob extends AntOSDKBaseJob {
     constructor(data)
@@ -21,6 +21,9 @@ class TSJob extends AntOSDKBaseJob {
                 break;
             case 'ts-compile':
                 this.compile();
+                break;
+            case 'ts-antos-sdk':
+                this.load_sdk();
                 break;
             default:
                 const err_msg = `Unkown job ${this.job.cmd}`;
@@ -53,6 +56,44 @@ class TSJob extends AntOSDKBaseJob {
                 this.log_error("Fail to load Typescript module");
                 this.error(e);
             });
+    }
+    async load_sdk()
+    {
+        let version = "master";
+        if(this.job.data && this.job.data.version)
+        {
+            version = this.job.data.version;
+        }
+        const files = [
+            `${SDK_URL}/${version}/core.d.ts`,
+            `${SDK_URL}/${version}/jquery.d.ts`,
+            `${SDK_URL}/${version}/antos.d.ts`,
+        ];
+        try{
+            const promises = [];
+            const load = [];
+            for(let file of files)
+            {
+                if(!tslib[file])
+                {
+                    load.push(file);
+                    this.log_info(`Loading library ${file}`);
+                    promises.push(this.get(file, undefined));
+                }
+            }
+            const results = await Promise.all(promises);
+            for(let i in load)
+            {
+                const lib = load[i];
+                tslib[lib] = ts.createSourceFile(lib, results[i], ts.ScriptTarget.Latest);
+                this.log_info(`Typescript library ${lib} loaded`);
+            }
+            this.result("Typescript libraries loaded");
+        }
+        catch(e)
+        {
+            this.log_error(e.toString());
+        }
     }
     compile()
     {
@@ -140,3 +181,4 @@ class TSJob extends AntOSDKBaseJob {
 
 API.jobhandle["ts-import"] = TSJob;
 API.jobhandle["ts-compile"] = TSJob;
+API.jobhandle["ts-antos-sdk"] = TSJob;
