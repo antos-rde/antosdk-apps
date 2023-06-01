@@ -244,7 +244,7 @@ namespace OS {
                         {
                             text: __("Change theme"),
                             onmenuselect: async (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                             ) => {
                                 try{
                                     const themes = this.eum.active.getThemes();
@@ -263,7 +263,7 @@ namespace OS {
                         {
                             text: __("Change language mode"),
                             onmenuselect: async (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                             ) => {
                                 try{
                                     const modes = this.eum.active.getModes().map(v => {
@@ -284,7 +284,7 @@ namespace OS {
                             text: __("Build with AntOSDK"),
                             shortcut: " (CTRL-ALT-B)",
                             onmenuselect: async (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                             ) => {
                                 try{
                                     this.build();
@@ -542,7 +542,7 @@ namespace OS {
                             dataid: "recent",
                             nodes: recent,
                             onchildselect: (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                                 r: CodePad
                             ) => {
                                 const handle = e.data.item.data.text.asFileHandle();
@@ -574,7 +574,7 @@ namespace OS {
                         },
                     ],
                     onchildselect: (
-                        e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                        e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                         r: CodePad
                     ) => {
                         return this.menuAction(e.data.item.data.dataid, r);
@@ -591,9 +591,9 @@ namespace OS {
              * @memberof CodePad
              */
             private ctxFileMenuHandle(
-                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
             ): void {
-                const el = e.data.item as GUI.tag.MenuEntryTag;
+                const el = e.data.item;
                 if (!el) {
                     return;
                 }
@@ -845,7 +845,7 @@ namespace OS {
                             }
                         ],
                         onchildselect: (
-                            e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                            e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                             r: EditorFileHandle
                         ) => {
                             switch (e.data.item.data.dataid) {

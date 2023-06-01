@@ -139,7 +139,7 @@ namespace OS {
                     const selected = this.targets.selectedItem;
                     if(!selected)
                         return;
-                    this.load(this.compile([selected.data.text]));
+                    this.load(this.compile([selected.data.text])).catch((e) => this.logger.error(__(e.stack)));
                 }
 
                 (this.find("btnclear") as GUI.tag.ButtonTag).onbtclick = (e) => {

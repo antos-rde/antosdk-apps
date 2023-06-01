@@ -817,7 +817,7 @@ namespace OS {
                             dataid: "recent",
                             nodes: recent,
                             onchildselect: (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                                 r: Antedit
                             ) => {
                                 const handle = e.data.item.data.text.asFileHandle();
@@ -849,7 +849,7 @@ namespace OS {
                         },
                     ],
                     onchildselect: (
-                        e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                        e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                         r: Antedit
                     ) => {
                         return this.menuAction(e.data.item.data.dataid, r);
@@ -866,9 +866,9 @@ namespace OS {
              * @memberof Antedit
              */
             private ctxFileMenuHandle(
-                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
             ): void {
-                const el = e.data.item as GUI.tag.MenuEntryTag;
+                const el = e.data.item;
                 if (!el) {
                     return;
                 }
@@ -1150,7 +1150,7 @@ namespace OS {
                             }
                         ],
                         onchildselect: (
-                            e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                            e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                             r: EditorFileHandle
                         ) => {
                             switch (e.data.item.data.dataid) {

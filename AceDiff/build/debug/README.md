@@ -6,3 +6,6 @@ It's built on top of google-diff-match-patch library. That lib handles the hard 
 Github page: [https://github.com/ace-diff/ace-diff](https://github.com/ace-diff/ace-diff).
 
 The ACE diff depends on the ACECore package.
+
+## Change logs
+- v0.1.1-a: add dependencies

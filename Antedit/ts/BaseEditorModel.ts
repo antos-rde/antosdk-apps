@@ -59,8 +59,7 @@ namespace OS {
                     });
                 }
                 
-                protected _wr(t: string, d: any): Promise<any> {
-                    this.cache = d;
+                protected _wr(t: string): Promise<any> {
                     return new Promise((resolve, reject) =>
                     {
                         resolve({
