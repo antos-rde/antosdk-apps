@@ -217,7 +217,11 @@ namespace OS {
                                 this.logger.error(ret.error);
                                 throw new Error(ret.error);
                             }
-                            const dirs = ret.result.filter(e => e.type === "dir");
+                            let dirs = ret.result.filter(e => e.type === "dir");
+                            if(data.modules)
+                            {
+                                dirs = dirs.filter(e => data.modules.includes(e.filename));
+                            }
                             for(let entry of dirs)
                             {
                                 const build_file = `${entry.path}/build.json`.asFileHandle();
