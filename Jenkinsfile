@@ -21,6 +21,7 @@ pipeline{
     stage('Build release') {
       steps {
         sh'''
+          printenv
           echo "archiving release"
         '''
         script {
