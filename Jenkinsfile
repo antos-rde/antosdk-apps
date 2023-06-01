@@ -22,7 +22,10 @@ pipeline{
       steps {
         sh'''
           printenv
-          echo "archiving release"
+          echo "publishing release"
+          tag="$GIT_BRANCH"
+          [ -d "/home/dany/public/antos-release/packages/$tag" ] && rm -rf /home/dany/public/antos-release/packages/$tag || true
+          cp -rfv release /home/dany/public/antos-release/packages/$tag
         '''
         script {
             // only useful for any master branch
