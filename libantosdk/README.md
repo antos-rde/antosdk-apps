@@ -2,6 +2,7 @@
 AntOSDK: development API for AntOS based applications/projects
 
 ## Change logs
+- 0.1.1: linux worker is renamed to backend, linux-exec job re to cmd-exec, add lua-exec job for backend lua script execution
 - 0.1.0: antOS SDK is no longer delivered in this package, it will be fetched directly from AntOS release site
 - 0.0.18: Add some public API on grid view
 - 0.0.17: Use lastest AntOS d.ts file

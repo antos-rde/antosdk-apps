@@ -1,8 +1,0 @@
-{
-    "name": "libantosdk",
-    "css": ["main.css"],
-    "javascripts": [],
-    "coffees": [],
-    "ts": ["ts/main.ts", "ts/app.ts"],
-    "copies": ["core","package.json","scheme.html", "README.md"]
-}

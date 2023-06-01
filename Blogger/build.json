@@ -19,8 +19,10 @@
             ],
             "jobs": [
                 {
-                    "name": "ts-import",
-                    "data": ["sdk://core/ts/core.d.ts", "sdk://core/ts/jquery.d.ts","sdk://core/ts/antos.d.ts"]
+                    "name": "ts-antos-sdk",
+                    "data": {
+                        "version": "2.0.x"
+                    }
                 },
                 {
                     "name": "ts-compile",

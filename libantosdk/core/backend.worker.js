@@ -1,4 +1,4 @@
-class LinuxJob extends AntOSDKBaseJob {
+class BackendJob extends AntOSDKBaseJob {
     constructor(data)
     {
         super(data);
@@ -6,13 +6,16 @@ class LinuxJob extends AntOSDKBaseJob {
     execute()
     {
         switch (this.job.cmd) {
-            case 'linux-exec':
+            case 'cmd-exec':
                 /**
                  * Execute a linux command with the
                  * help of a server side lua API
                  * script
                  */
                 this.exec();
+                break;
+            case 'lua-exec':
+                this.xlua(this.job.data.path, this.job.data.params);
                 break;
             default:
                 const err_msg = `Unkown job ${this.job.cmd}`;
@@ -24,6 +27,21 @@ class LinuxJob extends AntOSDKBaseJob {
     exec()
     {
         const path = "pkg://libantosdk/core/lua/api.lua".abspath(this.job.root);
+        if(!this.job.data.pwd)
+        {
+            this.job.data.pwd = this.job.root;
+        }
+        const params = {
+                action: "exec",
+                args: this.job.data
+            };
+        this.xlua(path, params);
+    }
+
+
+    
+    xlua(path, params)
+    {
         const url = API.REST.replace("http","ws") + "/system/apigateway?ws=1";
         try{
             const socket = new WebSocket(url);
@@ -37,17 +55,10 @@ class LinuxJob extends AntOSDKBaseJob {
                 this.result("Done");
             };
             socket.onopen = (e) => {
-                if(!this.job.data.pwd)
-                {
-                    this.job.data.pwd = this.job.root;
-                }
                 // send the command
                 const cmd = {
                     path: path,
-                    parameters: {
-                        action: "exec",
-                        args: this.job.data
-                    }
+                    parameters: params
                 };
                 socket.send(JSON.stringify(cmd));
             };
@@ -71,4 +82,7 @@ class LinuxJob extends AntOSDKBaseJob {
     }
 }
 
-API.jobhandle["linux-exec"] = LinuxJob;
+
+
+API.jobhandle["cmd-exec"] = BackendJob;
+API.jobhandle["lua-exec"] = BackendJob;
