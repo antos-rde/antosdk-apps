@@ -3,7 +3,7 @@ class SysmondService extends OS.application.BaseService
         super "SysmondService", args
         @text = __("{0}%", 0.toString())
         @iconclass = "fa fa-android"
-        @app = undefined
+        @app = args[0].app
         #@nodes = [
         #    {text: __("Status"), id: 1},
         #    {text: __("Shutdown"), id: 3},
@@ -50,7 +50,7 @@ class SysmondService extends OS.application.BaseService
         
         if not @setting().topic
             console.log "Open dialog"
-            @_gui.openDialog("PromptDialog", { 
+            @app.openDialog("PromptDialog", { 
                 title: __("Enter topic name"),
                 label: __("Please enter topic name")
             })

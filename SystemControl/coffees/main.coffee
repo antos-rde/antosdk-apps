@@ -47,7 +47,11 @@ class SystemControl extends this.OS.application.BaseApplication
                 @battery.option("height", $(el).height())
                 $(el).children().show()
                 
-        @_gui.pushService("SystemControl/SysmondService", [])
+        @_gui.pushService("SystemControl/SysmondService", [{
+            path: @meta().path,
+            type: "app",
+            app: @
+        }])
             .then (p) =>
                 @service = p
                 p.app = @

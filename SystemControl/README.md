@@ -7,3 +7,6 @@ via the Antunnel service
 
 ![https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/screenshot.png](https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/screenshot.png)
 
+
+## changelogs
+- 0.1.12-a: use application based dialog instead of  global dialog
