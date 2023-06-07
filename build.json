@@ -1,5 +1,16 @@
 {
     "targets" : {
+        "Build single package" :{
+            "jobs": [
+                {
+                    "name": "batch",
+                    "data": {
+                        "target": "release",
+                        "modules": ["About"]
+                    }
+                }
+            ]
+        },
         "Build all" :{
             "jobs": [
                 {
