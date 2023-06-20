@@ -561,7 +561,7 @@ namespace OS {
                 this.loadExtensionMetaData();
                 this.toggleSideBar();
                 this.toggleSplitMode();
-                this.applyAllSetting();
+                //this.applyAllSetting();
             }
 
             /**
@@ -718,7 +718,7 @@ namespace OS {
 
             showOutput(toggle: boolean = false): void {
                 if (toggle)
-                    this.showBottomBar(true);
+                    this.setting.showBottomBar = true;
                 this.bottombar.selectedIndex = 0;
             }
             
@@ -749,7 +749,6 @@ namespace OS {
              * @memberof Antedit
              */
             public showBottomBar(v: boolean): void {
-                this.setting.showBottomBar = v;
                 if (v) {
                     $(this.bottombar).show();
                 }
@@ -765,7 +764,7 @@ namespace OS {
              * @memberof Antedit
              */
             private toggleBottomBar(): void {
-                this.showBottomBar(!this.setting.showBottomBar);
+                this.setting.showBottomBar = !this.setting.showBottomBar;
             }
             
             /**

@@ -8,3 +8,4 @@ This package is used mainly by the File application to communicate with differen
 file hosting protocols
 
 ## Change logs
+* v0.1.1-b Use new Task API for tracking task

@@ -364,7 +364,7 @@ namespace OS {
                 }
                 this.toggleSideBar();
                 this.toggleSplitMode();
-                this.applyAllSetting();
+                //this.applyAllSetting();
             }
 
             /**
@@ -390,7 +390,7 @@ namespace OS {
                                 this.sdk = new (API as any).AntOSDKBuilder(this.logger,"");
                             }
                             this.logger.clear();
-                            this.showBottomBar(true);
+                            this.setting.showBottomBar = true;
                             // check for meta file
                             const meta_file = `${this.currdir.path}/build.json`.asFileHandle();
                             const meta = await meta_file.read("json");
@@ -454,7 +454,7 @@ namespace OS {
 
             showOutput(toggle: boolean = false): void {
                 if (toggle)
-                    this.showBottomBar(true);
+                    this.setting.showBottomBar = true;
                 this.bottombar.selectedIndex = 0;
             }
 
@@ -479,7 +479,6 @@ namespace OS {
              * @memberof CodePad
              */
             public showBottomBar(v: boolean): void {
-                this.setting.showBottomBar = v;
                 if (v) {
                     $(this.bottombar).show();
                 }
@@ -495,7 +494,7 @@ namespace OS {
              * @memberof CodePad
              */
             private toggleBottomBar(): void {
-                this.showBottomBar(!this.setting.showBottomBar);
+                this.setting.showBottomBar = !this.setting.showBottomBar;
             }
 
             private toggleSplitMode(): void {

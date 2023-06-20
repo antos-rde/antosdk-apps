@@ -45,7 +45,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.2.4-b",
+		"version": "0.2.5-b",
 		"dependencies": ["MonacoCore@0.33.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antedit/build/release/Antedit.zip"
 	},
@@ -70,16 +70,6 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelPlugins/build/release/AntunnelPlugins.zip"
 	},
 	{
-		"pkgname": "AntunnelTestClient",
-		"name": "AntunnelTestClient",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelTestClient/README.md",
-		"category": "Development",
-		"author": "Dany LE",
-		"version": "0.1.0-a",
-		"dependencies": ["Antunnel@0.2.1-b"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelTestClient/build/release/AntunnelTestClient.zip"
-	},
-	{
 		"pkgname": "Archive",
 		"name": "Archive",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Archive/README.md",
@@ -95,7 +85,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.2.11-a",
+		"version": "0.2.12-a",
 		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r","SQLiteDB@0.1.0-a"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/build/release/Blogger.zip"
 	},
@@ -125,7 +115,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/CodePad/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.6-b",
+		"version": "0.1.7-b",
 		"dependencies": ["ACECore@1.4.12-r"],"mimes":["text/.*","[^/]*/json.*","[^/]*/.*ml","[^/]*/javascript","dir"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/CodePad/build/release/CodePad.zip"
 	},
@@ -425,8 +415,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/README.md",
 		"category": "System",
 		"author": "",
-		"version": "0.1.11-a",
-		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.11-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
+		"version": "0.1.12-a",
+		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.12-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/build/release/SystemControl.zip"
 	},
 	{
@@ -445,7 +435,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/vfsx/README.md",
 		"category": "Library",
 		"author": "Dany LE",
-		"version": "0.1.0-b",
+		"version": "0.1.1-b",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/vfsx/build/release/vfsx.zip"
 	},

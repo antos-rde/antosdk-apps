@@ -6,7 +6,7 @@
                     "name": "batch",
                     "data": {
                         "target": "release",
-                        "modules": ["About"]
+                        "modules": ["Blogger"]
                     }
                 }
             ]
