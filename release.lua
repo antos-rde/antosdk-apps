@@ -41,7 +41,7 @@ end
 
 local packages = {}
 
-for i,v in ipairs(r) do
+for i,v in pairs(r) do
     if v.type == "dir" then
         local ar_file = v.path.."/build/release/"..v.filename..".zip"
         local meta_file = v.path.."/package.json"
@@ -74,6 +74,12 @@ for i,v in ipairs(r) do
                 download = release_url..v.filename..".zip"
             }
             table.insert(packages, pkg)
+        --else
+        --    if not ulib.exists(ar_file) then
+        --        output("AR file not found "..ar_file)
+        --    else
+        --        output("Meta file not found "..meta_file)
+        --    end
         end
     end
 end

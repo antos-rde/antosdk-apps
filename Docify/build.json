@@ -20,7 +20,7 @@
                     "name":"locale-gen",
                     "data": {
                         "src": "",
-                        "exclude": ["build/", "api/", "css/", "coffees/"],
+                        "exclude": ["build/", "css/", "coffees/"],
                         "locale": "en_GB",
                         "dest": "package.json"
                     }
@@ -70,8 +70,8 @@
                     "data": {
                         "src": [
                             "assets/scheme.html",
-                            "api/api.lua",
                             "package.json",
+                            "css/main.css",
                             "README.md"
                         ],
                         "dest": "build/debug"

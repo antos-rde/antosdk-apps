@@ -1,5 +1,7 @@
 namespace OS {
     export namespace application {
+        declare var pdfjsLib;
+        declare var PDFLib;
     
         export class Docify extends BaseApplication {
             private catview: GUI.tag.ListViewTag;
@@ -108,7 +110,8 @@ namespace OS {
             main() {
                 
                 if (!this.setting.printer) { this.setting.printer = ""; }
-                
+                pdfjsLib.GlobalWorkerOptions.workerSrc = "pkg://libpdfjs/pdf.worker.js".asFileHandle().getlink();
+
                 this.catview = this.find("catview") as GUI.tag.ListViewTag;
                 this.docview = this.find("docview") as GUI.tag.ListViewTag;
                 this.docpreview = this.find("preview-canvas") as HTMLCanvasElement;
@@ -288,12 +291,13 @@ namespace OS {
                         const timestamp = Math.floor(Date.now() / 1000);
                         data.ctime = timestamp;
                         data.mtime = timestamp;
-                        const r = await this.exec("merge_files", data);
-                        if(r.error)
+                        const r = await this.merge_files(data);
+                        data.file = r.path;
+                        /*if(r.error)
                         {
                             throw new Error(r.error.toString());
                         }
-                        data.file = r.result;
+                        data.file = r.result;*/
                         this.docdb.cache = data;
                         const d = await this.docdb.write(undefined);
                         if(d.error)
@@ -326,12 +330,16 @@ namespace OS {
                         {
                             throw new Error(r.error.toString());
                         }
-                        r = await this.exec("deletedoc", {file: item.data.file});
-                        if(r.error)
-                        {
-                            throw new Error(r.error.toString());
+                        // delete file
+                        try {
+                            await item.data.file.asFileHandle().remove();
+                            const thumb = await this.get_thumb_path(item.data.file);
+                            await thumb.asFileHandle().remove();
                         }
-                        this.notify(r.result.toString());
+                        catch(e)
+                        {
+                            console.log(e);
+                        }
                         this.update_doclist(item.data.cid);
                         return this.clear_preview();
                     }
@@ -362,22 +370,40 @@ namespace OS {
                         data.id = item.data.id;
                         const timestamp = Math.floor(Date.now() / 1000);
                         data.mtime = timestamp;
-                        let d = await this.exec("updatedoc", {
-                            data,
-                            rm: !data.file.includes(item.data.file) ? item.data.file : false
-                        });
-                        if(d.error)
+                        if(data.file.includes(item.data.file) && data.file.length == 1)
                         {
-                            throw new Error(d.error);
+                            // nothing changes
+                            data.file = item.data.file;
                         }
+                        else
+                        {
+                            if(!data.file.includes(item.data.file))
+                            {
+                                // remove old file
+                                try {
+                                    console.log("remove old file", item.data.file);
+                                    await item.data.file.asFileHandle().remove();
+                                    const thumb = await this.get_thumb_path(item.data.file);
+                                    await thumb.asFileHandle().remove();
+                                }
+                                catch(e)
+                                {
+                                    console.log(e);
+                                }
+                            }
+                            // merge all PDF file
+                            const merged_file = await this.merge_files(data);
+                            data.file = merged_file.path;
+                        }
+                        data.mtime = Math.floor(Date.now() / 1000);
                         const handle = item.data.$vfs;
-                        handle.cache = d.result;
-                        d = await handle.write(undefined);
+                        handle.cache = data;
+                        const d = await handle.write(undefined);
                         if(d.error)
                         {
                             throw new Error(d.error);
                         }
-                        if (d.result) { this.toast(d.result); }
+                        this.toast(__("Document updated"));
                         this.update_doclist(catiem.data.id);
                         return this.clear_preview();
                     }
@@ -389,6 +415,90 @@ namespace OS {
                 return this.initialize();
             }
             
+            private async get_thumb_path(filepath: string| API.VFS.BaseFileHandle)
+            {
+                const path = filepath.asFileHandle().path;
+                let thumb_name = await this.sha1(path.replace(this.setting.docpath,""));
+                return `${this.setting.docpath}/cache/${thumb_name}.png`;
+            }
+
+            private async merge_files(data) {
+                const paths: string[] = data.file;
+                const cat = data.cid.toFixed(1).toString();
+                const dir = `${this.setting.docpath}/${cat}`.asFileHandle();
+                try{
+                    await dir.onready();
+                }
+                catch(_)
+                {
+                    const ret = await dir.parent().mk(cat);
+                    if(ret.error)
+                    {
+                        throw new Error(ret.error.toString());
+                    }
+                    await dir.onready();
+                }
+                const des_file = `${dir.path}/${new Date(Date.now()).getTime().toString()}.pdf`.asFileHandle();
+                // concat the file
+                const pdfdoc = await PDFLib.PDFDocument.create();
+                let pages = [];
+                for(const path of paths)
+                {
+                    const arr = await path.asFileHandle().read("binary");
+                    const doc = await PDFLib.PDFDocument.load(arr, { ignoreEncryption: true });
+                    const copiedpages = await pdfdoc.copyPages(doc, doc.getPageIndices());
+                    pages = pages.concat(copiedpages);
+                }
+                for (let i = 0; i < pages.length; i++) {
+                    await pdfdoc.insertPage(i, pages[i]);
+                }
+                const buffer =  await pdfdoc.save();
+                des_file.cache = new Blob([buffer]);
+                const ret = await des_file.write("binary");
+                if(ret.error)
+                {
+                    throw new Error(ret.error.toString());
+                }
+                // move thumb file
+                let src_tfile = await this.get_thumb_path(paths[0]);
+                const dest_tfile = await this.get_thumb_path(des_file);
+                try {
+                    console.log("Move", src_tfile, "to", dest_tfile);
+                    const ret = await src_tfile.asFileHandle().move(dest_tfile);
+                    if(ret.error)
+                    {
+                        console.log(ret.error);
+                    }
+                }
+                catch(e)
+                {
+                    console.log(e);
+                }
+                // remove other file and thumb file
+                for(const path of paths)
+                {
+                    try{
+                        src_tfile = await this.get_thumb_path(path);
+                        console.log("'Remove file", path, src_tfile);
+                        let  ret = await path.asFileHandle().remove();
+                        if(ret.error)
+                        {
+                            console.log(ret);
+                        }
+                        ret = await src_tfile.asFileHandle().remove();
+                        if(ret.error)
+                        {
+                            console.log(ret);
+                        }
+                    }
+                    catch(e)
+                    {
+                        console.log(e);
+                    }
+                }
+                return des_file;
+            }
+
             private async update_doclist(cid: any) {
                 try
                 {
@@ -399,7 +509,6 @@ namespace OS {
                         order: ["year$desc", "month$desc", "day$desc"]
                     });
                     
-                    // this.exec("select",{table: "docs", cond:`cid = ${cid} ORDER BY year DESC, month DESC, day DESC`});
                     if(d.error)
                     {
                         throw new Error(d.error);
@@ -420,14 +529,72 @@ namespace OS {
                 this.docpreview.getContext('2d').clearRect(0,0,this.docpreview.width,this.docpreview.height);
                 return this.docgrid.rows = [];
             }
+
+            private async sha1(str) {
+                const enc = new TextEncoder();
+                const hash = await crypto.subtle.digest('SHA-1', enc.encode(str));
+                return Array.from(new Uint8Array(hash))
+                    .map(v => (v.toString(16) as any).padStart(2, '0'))
+                    .join('');
+            }
             
+            private async genthumb(path: string)
+            {
+                 /** try to search if the thumb file exists,
+                 * if it does not exist, generate it using
+                 * pdfjs library and an hidden canvas
+                 */
+                const tpath = await this.get_thumb_path(path);
+
+                const file = tpath.asFileHandle();
+                try {
+                   await file.onready();
+                }
+                catch(e)
+                {
+                    // generate thumb file
+                    //data = await file.read("binary");
+                    console.log("Try to generate thumb file for", path);
+                    const canvas = this.find("tmp-canvas") as HTMLCanvasElement;
+                    const context = canvas.getContext('2d');
+                    const pdf = await pdfjsLib.getDocument(path.asFileHandle().getlink()).promise;
+
+                    const page = await pdf.getPage(1);
+
+                    const viewport = page.getViewport({ scale: 0.33});
+                    // Support HiDPI-screens.
+                    const outputScale = window.devicePixelRatio || 1;
+
+                    canvas.width = Math.floor(viewport.width * outputScale);
+                    canvas.height = Math.floor(viewport.height * outputScale);
+                    canvas.style.width = Math.floor(viewport.width) + "px";
+                    canvas.style.height =  Math.floor(viewport.height) + "px";
+
+                    const transform = outputScale !== 1
+                        ? [outputScale, 0, 0, outputScale, 0, 0]
+                        : null;
+
+                    const renderContext = {
+                        canvasContext: context,
+                        transform: transform,
+                        viewport: viewport
+                    };
+                    await page.render(renderContext).promise;
+                    const url = canvas.toDataURL('image/png');
+                    file.cache = url;
+                    const ret = await file.write("base64");
+                    if(ret.error)
+                    {
+                        throw new Error(ret.error.toString());
+                    }
+                    await file.onready();
+                }
+                return file;
+            }
+
             async preview(path: any, canvas: HTMLCanvasElement) {
                 try {
-                    const d = await this.exec("preview", path);
-                    if (d.error) {
-                        throw new Error(d.error);
-                    }
-                    const file = d.result.asFileHandle();
+                    const file = await this.genthumb(path);
                     const data = await file.read("binary");
                     const img = new Image();
                     //($ me.view).append img
@@ -435,7 +602,6 @@ namespace OS {
                         const context = canvas.getContext('2d');
                         canvas.height = img.height;
                         canvas.width = img.width;
-                        //console.log canvas.width, canvas.height
                         return context.drawImage(img, 0, 0);
                     };
                     
@@ -492,18 +658,6 @@ namespace OS {
                 }
             }
             
-            exec(action: string, args?: GenericObject<any>) {
-                const cmd  = { 
-                    path: `${this.path()}/api.lua`,
-                    parameters: {
-                        action,
-                        docpath: this.setting.docpath,
-                        args
-                    }
-                };
-                return this.call(cmd);
-            }
-            
             menu() {
                 return [
                     {
@@ -538,6 +692,10 @@ namespace OS {
                 }
             }
         }
-        Docify.dependencies = ["pkg://SQLiteDB/libsqlite.js"];
+        Docify.dependencies = [
+            "pkg://SQLiteDB/libsqlite.js",
+            "pkg://libpdfjs/pdf.js",
+            "pkg://PDFLib/main.js"
+        ];
     }
 }

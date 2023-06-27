@@ -7,14 +7,16 @@
         "author": "Dany LE",
         "email": "mrsang@iohub.dev"
     },
-    "version": "0.1.0-b",
+    "version": "0.1.1-b",
     "category": "Office",
     "iconclass": "bi bi-collection-fill",
     "mimes": [
         "none"
     ],
     "dependencies": [
-        "SQLiteDB@0.1.0-a"
+        "SQLiteDB@0.1.0-a",
+        "libpdfjs@2.6.347-r",
+        "PDFLib@1.17.1"
     ],
     "locale": {},
     "locales": {
