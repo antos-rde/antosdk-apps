@@ -330,6 +330,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/OnlyOffice/build/release/OnlyOffice.zip"
 	},
 	{
+		"pkgname": "PDFLib",
+		"name": "PDFLib",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/PDFLib/README.md",
+		"category": "Library",
+		"author": "pdf-lib.js.org",
+		"version": "1.17.1",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/PDFLib/build/release/PDFLib.zip"
+	},
+	{
 		"pkgname": "Preview",
 		"name": "Preview",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Preview/README.md",

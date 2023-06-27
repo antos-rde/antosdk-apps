@@ -1,0 +1,45 @@
+{
+    "name": "PDFLib",
+    "targets":{
+        "clean": {
+            "jobs": [
+                {
+                    "name": "vfs-rm_no_error",
+                    "data": ["build/debug","build/release"]
+                },
+                {
+                    "name": "vfs-mkdir",
+                    "data": ["build/debug","build/release"]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "main.js",
+                            "package.json",
+                            "README.md"
+                        ],
+                        "dest":"build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "depend": ["clean", "copy"],
+            "require": ["zip"],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src":"build/debug",
+                        "dest":"build/release/PDFLib.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

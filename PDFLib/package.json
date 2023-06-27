@@ -1,0 +1,15 @@
+{
+    "pkgname": "PDFLib",
+    "name":"PDFLib",
+    "description":"Create and modify PDF documents in any JavaScript environment",
+    "info":{
+        "author": "pdf-lib.js.org",
+        "email": ""
+    },
+    "version":"1.17.1",
+    "category":"Library",
+    "iconclass":"fa fa-cog",
+    "mimes":["none"],
+    "dependencies":[],
+    "locale": {}
+}
