@@ -6,6 +6,7 @@ Blackend for my blog at https://blog.iohub.dev
 ## Change logs
 
 ### v0.2.x-a
+* Patch 13: fix bug on blog save
 * Patch 12: support send mail via SSL
 * Patch 11: Add TFIDF analyse functionality
 * Patch 10: Migrate code to typescript, use SQLiteDB lib for database access

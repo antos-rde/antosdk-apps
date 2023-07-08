@@ -815,7 +815,9 @@ namespace OS {
                     else
                     {
                         //data.text = data.title;
-                        selel.data = data;
+                        selel.data.utime = data.utime;
+                        selel.data.utimestr = data.utimestr;
+                        selel.data = selel.data;
                     }
                 }
                 catch(e)
