@@ -435,8 +435,8 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/README.md",
 		"category": "System",
 		"author": "",
-		"version": "0.1.12-a",
-		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.12-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
+		"version": "0.1.13-a",
+		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.13-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/build/release/SystemControl.zip"
 	},
 	{

@@ -9,4 +9,5 @@ via the Antunnel service
 
 
 ## changelogs
+- 0.1.13-a: fix setting bug on new AntOS local setting API
 - 0.1.12-a: use application based dialog instead of  global dialog
