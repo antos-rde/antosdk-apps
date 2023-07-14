@@ -45,7 +45,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.2.5-b",
+		"version": "0.2.6-b",
 		"dependencies": ["MonacoCore@0.33.0-r"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antedit/build/release/Antedit.zip"
 	},
@@ -125,7 +125,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/CodePad/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.7-b",
+		"version": "0.1.8-b",
 		"dependencies": ["ACECore@1.4.12-r"],"mimes":["text/.*","[^/]*/json.*","[^/]*/.*ml","[^/]*/javascript","dir"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/CodePad/build/release/CodePad.zip"
 	},
@@ -305,7 +305,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LuaPlayground/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.1-a",
+		"version": "0.1.2-a",
 		"dependencies": ["ACECore@1.4.12-r"],"mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LuaPlayground/build/release/LuaPlayground.zip"
 	},
@@ -405,7 +405,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ShowCase/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.0.7-a",
+		"version": "0.0.8-a",
 		"dependencies": [],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ShowCase/build/release/ShowCase.zip"
 	},

@@ -143,6 +143,12 @@ class ShowCase extends this.OS.application.BaseApplication
             { text: "Multi-input dialog", id: "minputs" },
              { text: "Multi key value dialog", id: "mkv" }
         ]
+        @morphon Ant.OS.GUI.RESPONSIVE.MEDIUM, (fulfilled) =>
+            if fulfilled
+                this.find("tabctn").dir = "row"
+            else
+                this.find("tabctn").dir = "column"
+
 
         btrun.onbtclick = (e) =>
             item = dllist.selectedItem

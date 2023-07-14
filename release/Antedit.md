@@ -5,6 +5,7 @@ the editor that powers VS Code.
 The editor functionality can be extended by its extension mechanism.
 Extension can be developed/released/isntalled by the editor itself.
 ### Change logs
+- 0.2.6-b: Fix resizer bug on new UI API
 - 0.2.5-b: Fix setting bug with new AntOS setting API
 - 0.2.3-b: Minor changes to adapt the core UI to the new AntOS 2.0.x
 - 0.2.3-b: Allow reload current file via context menu in case of external changes
