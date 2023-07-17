@@ -9,6 +9,8 @@ It support a wide range of documents.
 ![https://github.com/lxsang/antosdk-apps/blob/master/LibreOffice/libreoffice.png?raw=true](https://github.com/lxsang/antosdk-apps/blob/master/LibreOffice/libreoffice.png?raw=true)
 
 ## Change log
+- v 0.1.5-a:
+    * allow user to configure document server URI
 - v 0.1.4-a:
     * Update backend script to latest API changes
     * use luasocket + luasec to fetch LibreOffice service discovery
