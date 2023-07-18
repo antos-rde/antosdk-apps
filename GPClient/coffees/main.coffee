@@ -65,7 +65,7 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                         .then (data) =>
                             console.log(data)
                             @parent.setting.clients.push(data)
-                            @clist.data = @parent.setting.clients.map (e) =>
+                            @clist.data = @parent.setting.clients.map (e,i) =>
                                 {
                                     text: e.text,
                                     url: e.url
@@ -90,17 +90,17 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                  iconclass: "fa fa-pencil-square-o",
                  onbtclick: (e) =>
                     item = @clist.selectedItem
+                    index = @clist.selected
                     return unless item
                     @openDialog(new ClientDialog(), {
-                        title: __("Add new client"),
+                        title: __("Edit client"),
                         text: item.data.text,
                         url: item.data.url
                     })
                         .then (data) =>
-                            #console.log(data)
                             return unless data
-                            item.data.text = data.text
-                            item.data.url = data.url
+                            @parent.setting.clients[index].text = data.text
+                            @parent.setting.clients[index].url = data.url
                             @refresh_list()
             }
         ]
