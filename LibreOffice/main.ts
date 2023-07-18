@@ -5,6 +5,7 @@ namespace OS {
             opendoc: "data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAD8UlEQVR42q1Va2gcVRQ+587s7mRItNskfaY1trRi2sZHNYoQHzGmQkAMlNZK1R+l0R+K/REhRAmzIEElaqX2R/tDhZamov4QbV0a6V9Nm9DiI8QEEtpI8zDbPPfh7sw93juzOzv7Ugge2L3nztz7fed859w7CHmGiKocYHVGwswcvLwFWnNzc3tLS8sjaTIvcX4kBZvD4fBAf3//aeEmShGUd3Z2nu7q6noBHZPABOjA2/9ijs4+wiwrydehUKivp6fnqPCjOQSHPhrTmKI2XP/uA33/k9s6Ot58rSkNnvPzZlKQkTDDMM4XJXjp08m3aiqV9xUex3sqZqCtqZ6QMSeDdKQeEoISGQiCvo9PfnY0tjBVQNC9d7vf0Fkcq2AK9jXeR8wrEQB6Ii8gkJWV/skz4ZlLI8posKbOQmQfnnl9y/f2gsMnbnbvuctnaCwOm9QZaH3ifmAlpCklj7RvLw/Bn8lqSPAy+PVGKnT2ja0hN4MdmxTDDzGs1Wbh+aYHXVm8kebNM5m4En3TfxXGY1WUBB3HblmGyCBLsLUaDZViuLN8DvY/s9cL+p8SZQi+DF+BkaW1ZKKON/+iLIGUaEMQDMZjsHtNBA7ue6hAnlISCfldv++HK/DL7SBwpsP0PGQlOnh8onttBRpgruDD6xbgcGtDTgb5EkmXc27XVozus7MXr8Lg7BoCtRznlyF0/litgfUdAxcCqnovAK/l3IRKnWBz9Z155ZMZQEHUcnRcZz41twyROAJj8rZhN5KmOYxtvcMLLz5egxanCimrIiT2qUpBAT1sztzGppw1psXBIlkj0aQIsYHRSAqffnd4fOeWDRoRXy8iYgGBXab5PKDu1SAxwQXOji5BPGlCirNMB94em5xdxGffGx3as23zRotbLoGu+XMzQEgDOagZAqE/SplknUzLwtjfFqDiJ9kTDNn8bxO3JvC53vEfG+o21okF68VWTBN4znnaIUpzkJ2JBBZ1BlVVIJlMwUrCBKb43E2MscXBkekhPHBi8qvHdlc3Eqd1Ygtqoj56ma94Dci5FmT3ZEZRO4jGUwTMZzebXCIlFXkt/Tw8dwlfPjV9qrE+2MYYVckMHAK/q3uGwBN9uj3JliUaN4UsPoK8QyeT+un3hXPY/nmk59FdFa8GfBSUb/2MQ1lALXrXULYOIMDB0bz4BzCaoMTgSPQ4Hju31LHrbu0dXaM7ZDmJmxmof29T+wCq6QNCdmtmw0BcXOHJPyaTb2PvxciRYGX5J5wsvQRocYLSa5yTbiGPLifasfXAkada2g59kTKpuC6rNJ+C1uULX78iPlxKgHPrAfGssqiYqzOZRURRlGv/F2BJ+wdsRP1yLA0KOQAAAABJRU5ErkJggg==",
             newdoc: "data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAABmklEQVRIie2Vv0tbURTHP+fmJTGpIYM/KEoUHItOEtIu6uTk2r9BcNMWuro62X9D6OTWIhp00baLCI2giKKYVoMtJtTE93JPhyLSpyavLxE69Due+73nwzn3nnvhkSX+wNut2pugm9XapdkXicO/A3ysaZDk3UnD9yt77KETs9mOg4d8Jkiy+9TTCc8HIpmoSH7xU3Wo7QCA3k5DLtMY0hIgCKRlwB8QI6v+NSds0sKZpXBm/eFBf6AtFTTSf0BThT5kvxRw620G1FUREQxwUraUa3c9LbXoa0XZLbkUSpYBd4Pp+Bz6eTQJoPo7d0sVVD14FZ8mbc5JU8IRF6/CnpsfSXlr5iVsvw9VQa0Ox5eWRP0b/ZF9uqSII+7Nch+QwthJVSTUc31aUXqvN5npeE2Uexp/q5VQFfQkhCN9hquxZtb1f3PQzq+UQflCVK6bWcdCAboSQtHJMf/zHVV98pBt0Rnfmbx7TYWFZoC4A5m0oVh+mr2gP5viIpbUH7GIeAKcAilUPogQ6H9vqJuB8taGp9z88LJ/0H4BR3aNW1eB/4cAAAAASUVORK5CYII="
         }
+        const DEFAULT_LOO_URL = "https://loo.iohub.dev/hosting/discovery";
         /**
          *
          * @class LibreOffice
@@ -21,7 +22,6 @@ namespace OS {
             private mimes: string[];
             private current_mode: string;
 
-            static discovery_uri: string;
             constructor(args: AppArgumentsType[]) {
                 super("LibreOffice", args);
                 this.access_token = undefined;
@@ -63,6 +63,10 @@ namespace OS {
                     this.create("slide");
                 }
                 $(window).on("message", this.post_msg_handle);
+                if(!this.setting.loo_url)
+                {
+                    this.setting.loo_url = DEFAULT_LOO_URL;
+                }
                 this.discover()
                     .then((data) =>
                     {
@@ -72,7 +76,7 @@ namespace OS {
                     })
                     .catch((e) =>{
                         this.error(__("Unable to discover LibreOffice service: {0}", e.toString()), e);
-                        this.quit(true);
+                        //this.quit(true);
                     });
             }
             menu(): OS.GUI.BasicItemType[]{
@@ -111,6 +115,28 @@ namespace OS {
                                     break;
                                 default:
                             }
+                        }
+                    },
+                    {
+                        text: "__(Document server URI)",
+                        onmenuselect: async (_) =>
+                        {
+                            try{
+                                const data = await this.openDialog("PromptDialog", {
+                                    title: __("Document server URI"),
+                                    label: __("Please enter LOO discovery URI"),
+                                    value: this.setting.loo_url
+                                });
+                                this.setting.loo_url= data;
+                                const meta = await this.discover();
+                                this.editor_meta = meta;
+                                if(this.curr_file)
+                                    this.open();
+                            }
+                            catch(e)
+                            {
+                                this.error(__("Unable to set new document server URI: {0}", e.toString()), e);
+                            } 
                         }
                     }
                 ]
@@ -262,7 +288,7 @@ namespace OS {
             {
                 return new Promise(async (resolve, reject) => {
                     try{
-                        let xml_text = await LibreOffice.discovery_uri.asFileHandle().read();
+                        let xml_text = await this.setting.loo_url.asFileHandle().read();
                         let parser = new DOMParser();
                         let xml_doc = parser.parseFromString(xml_text,"text/xml");
                         let apps = xml_doc.getElementsByTagName("app");
@@ -469,6 +495,5 @@ namespace OS {
                 $(window).off("message",this.post_msg_handle);
             }
         }
-        LibreOffice.discovery_uri = "https://loo.iohub.dev/hosting/discovery";
     }
 }
