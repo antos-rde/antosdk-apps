@@ -70,6 +70,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelPlugins/build/release/AntunnelPlugins.zip"
 	},
 	{
+		"pkgname": "AntunnelTestClient",
+		"name": "AntunnelTestClient",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelTestClient/README.md",
+		"category": "Development",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": ["Antunnel@0.2.1-b"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelTestClient/build/release/AntunnelTestClient.zip"
+	},
+	{
 		"pkgname": "Archive",
 		"name": "Archive",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Archive/README.md",
