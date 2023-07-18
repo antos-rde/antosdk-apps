@@ -43,7 +43,14 @@ ClientDialog.scheme = """
 class ClientListDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
         super "ClientListDialog", ClientListDialog.scheme
-        
+    
+    refresh_list: () ->
+        @clist.data = @parent.setting.clients.map (e) =>
+            {
+                text: e.text,
+                url: e.url
+            }
+
     main: () ->
         super.main()
         @clist = @find("client-list")
@@ -56,9 +63,13 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                         title: __("Add new client")
                     })
                         .then (data) =>
-                            #console.log(data)
+                            console.log(data)
                             @parent.setting.clients.push(data)
-                            @clist.data = @parent.setting.clients
+                            @clist.data = @parent.setting.clients.map (e) =>
+                                {
+                                    text: e.text,
+                                    url: e.url
+                                }
                      
             },
             {
@@ -72,7 +83,7 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                         .then (d) =>
                             return unless d
                             @parent.setting.clients.splice(index,1)
-                            @clist.data = @parent.setting.clients
+                            @refresh_list()
             },
             {
                  text: "",
@@ -90,7 +101,7 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                             return unless data
                             item.data.text = data.text
                             item.data.url = data.url
-                            @clist.data = @parent.setting.clients
+                            @refresh_list()
             }
         ]
         @find("btnswitch").onbtclick = (e) =>
@@ -100,7 +111,7 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
             @parent.setting.cname = item.data.text
             @parent.switchClient()
             @quit()
-        @clist.data = @parent.setting.clients
+        @refresh_list()
 
 ClientListDialog.scheme = """
 <afx-app-window width='400' height='300'>
