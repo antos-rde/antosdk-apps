@@ -6,18 +6,23 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
     main: () ->
         super.main()
         @find("bbp").data = [
-            { text: "16 bits", value: 16, selected: true },
+            { text: "16 bits", value: 16},
             { text: "32 bits", value: 32 }
         ]
-        @find("jq").value = 40
+        (@find "txtWVNC").value = @parent.setting.wvnc
+        (@find "txtServer").value = @parent.setting.server
+        sel = 0
+        sel = 1 if @parent.setting.bbc is 32
+        (@find "bbp").selected = sel
+        (@find "jq").value = @parent.setting.quality
+        
         @find("bt-ok").onbtclick = (e) =>
             return unless @handle
-            data =
-                wvnc: (@find "txtWVNC").value
-                server: (@find "txtServer").value
-                bbp: (@find "bbp").selectedItem.data.value,
-                quality:(@find "jq").value
-            @handle data
+            @parent.setting.wvnc = (@find "txtWVNC").value
+            @parent.setting.server = (@find "txtServer").value
+            @parent.setting.bbc = (@find "bbp").selectedItem.data.value
+            @parent.setting.quality = (@find "jq").value
+            @handle undefined
             @quit()
         
         @find("bt-cancel").onbtclick = (e) =>
@@ -26,8 +31,8 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
 ConnectionDialog.scheme = """
 <afx-app-window width='350' height='320'>
     <afx-vbox padding="5">
-        <afx-input label="__(WVNC Websocket)" data-height="50" data-id="txtWVNC" value="wss://app.iohub.dev/wbs/wvnc"></afx-input>
-        <afx-input label="__(VNC Server)" data-height="50" data-id="txtServer" value="192.168.1.27:5900"></afx-input>
+        <afx-input label="__(WVNC Websocket)" data-height="50" data-id="txtWVNC"></afx-input>
+        <afx-input label="__(VNC Server)" data-height="50" data-id="txtServer" ></afx-input>
         <div data-height="5"></div>
         <afx-label text="__(Bits per pixel)" data-height="30" class="header" ></afx-label>
         <afx-list-view dropdown = "true" data-id ="bbp" data-height="35" ></afx-list-view>
@@ -92,6 +97,16 @@ class RemoteDesktop extends this.OS.application.BaseApplication
         @switch = @find "capture_mouse"
         @switch.onswchange = (e) =>
             @client.mouseCapture = @switch.swon
+        
+        proto = "ws"
+        proto += "s" if window.location.protocol.startsWith "https"
+        host = "#{window.location.host}"
+        if window.location.port and window.location.port isnt ""
+            host += ":#{window.location.port}"
+        @setting.wvnc = "#{proto}://#{host}/wvnc" unless @setting.wvnc
+        @setting.server = "127.0.0.1:5900" unless @setting.server
+        @setting.bbp = 16 unless @setting.bbp
+        @setting.quality = 40 unless @setting.quality
         @btreset.onbtclick = (e) =>
             w = $(@container).width()
             h = $(@container).height()
@@ -177,10 +192,10 @@ class RemoteDesktop extends this.OS.application.BaseApplication
     
     showConnectionDialog: () ->
         return unless @client
-        @openDialog new ConnectionDialog, { title: __("Connection")}
+        @openDialog new ConnectionDialog, { title: __("Connection"), data: @setting}
         .then (d) =>
-            @client.ws = d.wvnc
-            @client.connect d.server, d
+            @client.ws = @setting.wvnc
+            @client.connect @setting.server, @setting
     
     cleanup: () ->
         @client.disconnect(true) if @client

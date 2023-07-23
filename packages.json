@@ -375,7 +375,7 @@
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/RemoteDesktop/README.md",
 		"category": "Internet",
 		"author": "Dany LE",
-		"version": "0.1.16-b",
+		"version": "0.1.17-b",
 		"dependencies": [],"category":"Internet","icon":"icon.png","mimes":["none"],
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/RemoteDesktop/build/release/RemoteDesktop.zip"
 	},
