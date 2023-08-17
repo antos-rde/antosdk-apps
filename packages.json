@@ -430,6 +430,16 @@
 		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SQLiteDB/build/release/SQLiteDB.zip"
 	},
 	{
+		"pkgname": "SVGEdit",
+		"name": "SVG Editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SVGEdit/README.md",
+		"category": "Graphic",
+		"author": "Dany LE",
+		"version": "0.1.0-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SVGEdit/build/release/SVGEdit.zip"
+	},
+	{
 		"pkgname": "SystemControl",
 		"name": "System monitoring",
 		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/README.md",

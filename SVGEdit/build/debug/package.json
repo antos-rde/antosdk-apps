@@ -1,0 +1,16 @@
+{
+    "pkgname": "SVGEdit",
+    "app":"SVGEdit",
+    "name":"SVG Editor",
+    "description":"Powerful SVG Editor https://github.com/SVG-Edit/svgedit",
+    "info":{
+        "author": "Dany LE",
+        "email": "contact@iohub.dev"
+    },
+    "version":"0.1.0-r",
+    "category":"Graphic",
+    "iconclass":"bi bi-easel",
+    "mimes":["image/svg+xml"],
+    "dependencies":[],
+    "locale": {}
+}
