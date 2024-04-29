@@ -1,7 +1,16 @@
 <afx-app-window apptitle="VNC Remote Desktop" width="720" height="576" data-id="RemoteDesktop">
-    <afx-hbox >
+    <afx-vbox >
         <div data-id="container">
             <canvas data-id="screen"></canvas>
         </div>
-    </afx-hbox>
+        <afx-hbox data-height="35">
+            <afx-button  iconclass="fa fa-arrows-alt" data-id="btreset" data-width="content"></afx-button>
+            <div data-width = "5" ></div>
+            <afx-slider data-id="zoom" ></afx-slider>
+            <div data-width = "5" ></div>
+            <afx-switch  data-id="capture_mouse" swon="true" data-width="content" style="line-height:35px;"></afx-switch>
+            <afx-label text="__(Mouse capture)" data-width="content" style="line-height:35px;"></afx-label>
+            <div data-width = "2" ></div>
+        </afx-hbox>
+    </afx-vbox>
 </afx-app-window>

@@ -10,6 +10,7 @@ class WVNC
         @canvas = document.getElementById @canvas if typeof @canvas is 'string'
         @decoder = new Worker worker
         @enableEvent = false
+        @mouseCapture = true
         @pingto = false
         me = @
         @mouseMask = 0
@@ -47,15 +48,18 @@ class WVNC
             return false
 
         me.canvas.onmousemove = (e) ->
+            return unless me.mouseCapture
             sendMouseLocation e
 
         me.canvas.onmousedown = (e) ->
+            return unless me.mouseCapture
             state = 1 << e.button
             me.mouseMask = me.mouseMask | state
             sendMouseLocation e
             #e.preventDefault()
 
         me.canvas.onmouseup = (e) ->
+            return unless me.mouseCapture
             state = 1 << e.button
             me.mouseMask = me.mouseMask & (~state)
             sendMouseLocation e
@@ -109,6 +113,7 @@ class WVNC
         # mouse wheel event
         @canvas.addEventListener 'wheel', (e) ->
             return unless me.enableEvent
+            return unless me.mouseCapture
             #if (e.deltaY < 0) # up
             p = getMousePos e
             e.preventDefault()
@@ -149,12 +154,15 @@ class WVNC
 
     process: (msg) ->
         if not @socket
+            @socket.send(@buildCommand 0x04, 1)
             return
         data = new Uint8Array msg.pixels
         ctx = @canvas.getContext "2d", { alpha: false }
         imgData = ctx.createImageData  msg.w, msg.h
         imgData.data.set data
         ctx.putImageData imgData,msg.x, msg.y
+        # tell the server that we are ready
+        @socket.send(@buildCommand 0x04, 1)
         
 
     setScale: (n) ->
@@ -329,7 +337,6 @@ class WVNC
             when 0x84
                 # send data to web assembly for decoding
                 @decoder.postMessage data.buffer, [data.buffer]
-                @socket.send(@buildCommand 0x04, 1)
             when 0x85
                 # clipboard data from server
                 data = data.subarray 1

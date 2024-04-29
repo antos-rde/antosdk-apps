@@ -3,6 +3,8 @@ A back-end tool for my online document hub [https://doc.iohub.dev/antos/](https:
 
 
 ## Change logs
+### v0.2.5-a
+* Use the new MDE library
 ### v0.2.3-a
 * Chage app category name
 ### v0.2.1-a

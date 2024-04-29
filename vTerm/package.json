@@ -7,13 +7,13 @@
         "author": "Xuan Sang LE",
         "email": "xsang.le@gmail.com"
     },
-    "version":"0.1.17-a",
+    "version":"0.1.20-a",
     "category":"System",
     "iconclass":"bi bi-terminal-fill",
     "mimes":["none"],
     "dependencies": [
         "Antunnel@0.2.1-b",
-        "xTerm@4.8.1-r"
+        "xTerm@5.1.0-r"
     ],
     "locales":{
         "fr_FR": {

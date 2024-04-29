@@ -244,7 +244,7 @@ namespace OS {
                         {
                             text: __("Change theme"),
                             onmenuselect: async (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                             ) => {
                                 try{
                                     const themes = this.eum.active.getThemes();
@@ -263,7 +263,7 @@ namespace OS {
                         {
                             text: __("Change language mode"),
                             onmenuselect: async (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                             ) => {
                                 try{
                                     const modes = this.eum.active.getModes().map(v => {
@@ -284,7 +284,7 @@ namespace OS {
                             text: __("Build with AntOSDK"),
                             shortcut: " (CTRL-ALT-B)",
                             onmenuselect: async (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
                             ) => {
                                 try{
                                     this.build();
@@ -320,7 +320,8 @@ namespace OS {
                 this.bindKey("CTRL-ALT-B", () => this.build());
 
                 this.fileview.ondragndrop = (e) => {
-                    const src = e.data.from.data.path.asFileHandle();
+                    //const src = e.data.from.data.path.asFileHandle();
+                    const src = e.data.from[0].data.path.asFileHandle();
                     const des = e.data.to.data.path;
                     return src
                         .move(`${des}/${src.basename}`)
@@ -330,12 +331,12 @@ namespace OS {
                             if (p1.length < p2.length) {
                                 e.data.to.update(p1);
                                 (e.data
-                                    .from as GUI.tag.TreeViewTag).parent.update(
+                                    .from[0] as GUI.tag.TreeViewTag).parent.update(
                                         p2
                                     );
                             } else {
                                 (e.data
-                                    .from as GUI.tag.TreeViewTag).parent.update(
+                                    .from[0] as GUI.tag.TreeViewTag).parent.update(
                                         p2
                                     );
                                 e.data.to.update(p1);
@@ -363,7 +364,7 @@ namespace OS {
                 }
                 this.toggleSideBar();
                 this.toggleSplitMode();
-                this.applyAllSetting();
+                //this.applyAllSetting();
             }
 
             /**
@@ -389,7 +390,7 @@ namespace OS {
                                 this.sdk = new (API as any).AntOSDKBuilder(this.logger,"");
                             }
                             this.logger.clear();
-                            this.showBottomBar(true);
+                            this.setting.showBottomBar = true;
                             // check for meta file
                             const meta_file = `${this.currdir.path}/build.json`.asFileHandle();
                             const meta = await meta_file.read("json");
@@ -453,7 +454,7 @@ namespace OS {
 
             showOutput(toggle: boolean = false): void {
                 if (toggle)
-                    this.showBottomBar(true);
+                    this.setting.showBottomBar = true;
                 this.bottombar.selectedIndex = 0;
             }
 
@@ -478,7 +479,6 @@ namespace OS {
              * @memberof CodePad
              */
             public showBottomBar(v: boolean): void {
-                this.setting.showBottomBar = v;
                 if (v) {
                     $(this.bottombar).show();
                 }
@@ -494,7 +494,7 @@ namespace OS {
              * @memberof CodePad
              */
             private toggleBottomBar(): void {
-                this.showBottomBar(!this.setting.showBottomBar);
+                this.setting.showBottomBar = !this.setting.showBottomBar;
             }
 
             private toggleSplitMode(): void {
@@ -541,7 +541,7 @@ namespace OS {
                             dataid: "recent",
                             nodes: recent,
                             onchildselect: (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                                 r: CodePad
                             ) => {
                                 const handle = e.data.item.data.text.asFileHandle();
@@ -573,7 +573,7 @@ namespace OS {
                         },
                     ],
                     onchildselect: (
-                        e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                        e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                         r: CodePad
                     ) => {
                         return this.menuAction(e.data.item.data.dataid, r);
@@ -590,9 +590,9 @@ namespace OS {
              * @memberof CodePad
              */
             private ctxFileMenuHandle(
-                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
             ): void {
-                const el = e.data.item as GUI.tag.MenuEntryTag;
+                const el = e.data.item;
                 if (!el) {
                     return;
                 }
@@ -844,7 +844,7 @@ namespace OS {
                             }
                         ],
                         onchildselect: (
-                            e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                            e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                             r: EditorFileHandle
                         ) => {
                             switch (e.data.item.data.dataid) {

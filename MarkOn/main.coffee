@@ -29,7 +29,7 @@ class MarkOn extends this.OS.application.BaseApplication
         else
             @currfile = "Untitled".asFileHandle()
         @editormux = false
-        @editor = new SimpleMDE
+        @editor = new EasyMDE
             element: markarea
             autoDownloadFontAwesome: false
             autofocus: true
@@ -44,7 +44,7 @@ class MarkOn extends this.OS.application.BaseApplication
                     className: "fa fa-eye no-disable",
                     action: (e) =>
                         @previewOn = !@previewOn
-                        SimpleMDE.togglePreview e
+                        EasyMDE.togglePreview e
                         #if(self.previewOn) toggle the highlight
                         #{
                         #    var container = self._scheme.find(self,"Text")
@@ -64,7 +64,7 @@ class MarkOn extends this.OS.application.BaseApplication
             if @currfile.dirty is false
                 @currfile.dirty = true
                 @scheme.apptitle = "#{@currfile.basename}*"
-        @on "hboxchange", (e) => @resizeContent()
+        @on "resize", (e) => @resizeContent()
         @bindKey "ALT-N", () => @actionFile "#{@name}-New"
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
         @bindKey "CTRL-S", () => @actionFile "#{@name}-Save"
@@ -73,12 +73,12 @@ class MarkOn extends this.OS.application.BaseApplication
         @open @currfile
 
     resizeContent: () ->
-        children = ($ @container).children()
+        children = ($ ".EasyMDEContainer", @mycontainer).children()
         titlebar = (($ @scheme).find ".afx-window-top")[0]
-        toolbar = children[1]
-        statusbar = children[4]
+        toolbar = children[0]
+        statusbar = children[3]
         cheight = ($ @scheme).height() - ($ titlebar).height() - ($ toolbar).height() - ($ statusbar).height() - 40
-        ($ children[2]).css("height", cheight + "px")
+        ($ children[1]).css("height", cheight + "px")
     
     open: (file) ->
         #find table

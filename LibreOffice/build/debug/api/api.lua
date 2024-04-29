@@ -6,7 +6,6 @@ if not args then
     args = REQUEST
 end
 local vfs = require("vfs")
-local DLCMD="wget --no-check-certificate -O"
 local handle = {}
 --local logger =  Logger:new{ levels = {INFO = true, ERROR = true, DEBUG = false}}
 local result = function(data)
@@ -17,12 +16,22 @@ local error = function(msg)
     return {error = msg, result = false}
 end
 
+local fetch = function(url)
+    local https = require('ssl.https')
+    local body, code, headers = https.request(url)
+    if code~=200 then 
+        LOG_ERROR("Error: ".. (code or '') ) 
+        return nil
+    end
+    return body
+end
+
 handle.token = function(data)
     local file = vfs.ospath(data.file)
     local stat = ulib.file_stat(file)
     local ret = {
         sid = "access_token="..SESSION.sessionid,
-        key = std.sha1(file..":"..stat.mtime)
+        key = enc.sha1(file..":"..stat.mtime)
     }
     return result(ret)
 end
@@ -43,14 +52,9 @@ handle.duplicate = function(data)
 end 
 
 handle.discover = function(data)
-    local tmpfile = "/tmp/libreoffice_discover.xml"
-    local cmd = DLCMD.." "..tmpfile..' '..data.uri
-    os.execute(cmd)
+    content = fetch(url)
     -- move file to correct position
-    if ulib.exists(tmpfile) then
-        local f = assert(io.open(tmpfile, "rb"))
-        local content = f:read("*all")
-        f:close()
+    if content then
         return result(content)
     else
         return error("Unable to discover data")
@@ -74,7 +78,7 @@ handle.file = function(data)
         elseif REQUEST.method == "POST" then
             --local clen = tonumber(HEADER['Content-Length'])
             local barr = REQUEST["application/octet-stream"]
-            bytes.write(barr, path)
+            barr:fileout(path)
             return result(true)
         else
             return error("Unknown request method")

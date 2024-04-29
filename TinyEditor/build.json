@@ -1,0 +1,82 @@
+{
+    "name": "TinyEditor",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+        "coffee": {
+            "require": [
+                "coffee"
+            ],
+            "jobs": [
+                {
+                    "name": "coffee-compile",
+                    "data": {
+                        "src": [
+                            "coffees/main.coffee"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/main.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "assets/scheme.html",
+                            "package.json",
+                            "README.md",
+                            "css/main.css"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "coffee",
+                "uglify",
+                "copy"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/TinyEditor.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

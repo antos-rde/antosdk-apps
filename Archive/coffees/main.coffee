@@ -20,7 +20,7 @@ class Archive extends this.OS.application.BaseApplication
             item = @filetree.selectedItem
             return @notify __("Please select file/folder to extract") unless item
             treedata = item.data
-            @openDialog "FileDialog", { title: __("Select a folder"), mimes: ["dir"] }
+            @openDialog "FileDialog", { title: __("Select a folder"), type: "dir" }
                 .then (d) =>
                     @xtract(treedata, d.file.path)
                         .then () => @notify __("extract successful: {0}", treedata.path)

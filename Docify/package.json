@@ -1,0 +1,70 @@
+{
+    "pkgname": "Docify",
+    "app": "Docify",
+    "name": "Docify",
+    "description": "Simple document manager",
+    "info": {
+        "author": "Dany LE",
+        "email": "mrsang@iohub.dev"
+    },
+    "version": "0.1.1-b",
+    "category": "Office",
+    "iconclass": "bi bi-collection-fill",
+    "mimes": [
+        "none"
+    ],
+    "dependencies": [
+        "SQLiteDB@0.1.0-a",
+        "libpdfjs@2.6.347-r",
+        "PDFLib@1.17.1"
+    ],
+    "locale": {},
+    "locales": {
+        "en_GB": {
+            "title": "title",
+            "Day": "Day",
+            "Month": "Month",
+            "Year": "Year",
+            "Files": "Files",
+            "Note": "Note",
+            "Owner": "Owner",
+            "Tags": "Tags",
+            "Save": "Save",
+            "Document preview": "Document preview",
+            "Ok": "Ok",
+            "Unable to get owner data handle": "Unable to get owner data handle",
+            "Name": "Name",
+            "Do you realy want to delete: `{0}`": "Do you realy want to delete: `{0}`",
+            "Unable to fetch owner list: {0}": "Unable to fetch owner list: {0}",
+            "Please enter title": "Please enter title",
+            "Please attach files to the entry": "Please attach files to the entry",
+            "Unable to fetch unclassified file list: {0}": "Unable to fetch unclassified file list: {0}",
+            "Options": "Options",
+            "Owners": "Owners",
+            "Preview": "Preview",
+            "Change doc path": "Change doc path",
+            "No configured docpath": "No configured docpath",
+            "Unable to init database file: {0}": "Unable to init database file: {0}",
+            "Unable to download: {0}": "Unable to download: {0}",
+            "Unable to open file: {0}": "Unable to open file: {0}",
+            "Category": "Category",
+            "Unable to insert category: {0}": "Unable to insert category: {0}",
+            "Unable delete category: {0}": "Unable delete category: {0}",
+            "Unable to update category: {0}": "Unable to update category: {0}",
+            "Unable to fetch document detail: {0}": "Unable to fetch document detail: {0}",
+            "Please select a category": "Please select a category",
+            "Unable to add document: {0}": "Unable to add document: {0}",
+            "Do you really want to delete: `{0}`": "Do you really want to delete: `{0}`",
+            "Unable to delete document: {0}": "Unable to delete document: {0}",
+            "File uploaded": "File uploaded",
+            "Unable to upload document: {0}": "Unable to upload document: {0}",
+            "Unable to edit document metadata: {0}": "Unable to edit document metadata: {0}",
+            "Unable to update document list: {0}": "Unable to update document list: {0}",
+            "Unable to generate document thumbnail: {0}": "Unable to generate document thumbnail: {0}",
+            "Please select a doc path": "Please select a doc path",
+            "Error initialize database: {0}": "Error initialize database: {0}",
+            "Categories": "Categories",
+            "Documents": "Documents"
+        }
+    }
+}

@@ -34,7 +34,7 @@ class ShowCase extends this.OS.application.BaseApplication
             @notify e.data
 
         menu = @find 'menu'
-        menu.items = @menu()
+        menu.nodes = @menu()
 
         list.contextmenuHandle = (e, m) =>
             m.items = @menu()
@@ -143,6 +143,12 @@ class ShowCase extends this.OS.application.BaseApplication
             { text: "Multi-input dialog", id: "minputs" },
              { text: "Multi key value dialog", id: "mkv" }
         ]
+        @morphon Ant.OS.GUI.RESPONSIVE.MEDIUM, (fulfilled) =>
+            if fulfilled
+                this.find("tabctn").dir = "row"
+            else
+                this.find("tabctn").dir = "column"
+
 
         btrun.onbtclick = (e) =>
             item = dllist.selectedItem
@@ -208,7 +214,8 @@ class ShowCase extends this.OS.application.BaseApplication
                 when "text"
                     @openDialog("TextDialog", {
                             title: "Text dialog review",
-                            value: "txt data"
+                            value: "txt data",
+                            label: "this is the label"
                         })
                         .then (d) =>
                             @notify d
@@ -284,11 +291,11 @@ class ShowCase extends this.OS.application.BaseApplication
                     { text: "__(Sidebar)", switch: true, checked: true },
                     { text: "__(Navigation bar)", switch: true, checked: false },
                     { text: "__(Hidden files)", switch: true, checked: true, dataid: "#{@name}-hidden" },
-                    { text: "__(Type)", child: [
+                    { text: "__(Type)", nodes: [
                         { text: "__(Icon view)", radio: true, checked: true, dataid: "#{@name}-icon", type: 'icon' },
                         { text: "__(List view)", radio:true, checked: false, dataid: "#{@name}-list", type: 'list' },
                         { text: "__(Tree view)", radio:true, checked: false, dataid: "#{@name}-tree", type: 'tree' }
-                     ], onchildselect: (e) -> @notify e.data.item.data.text
+                     ], onchildselect: (e) => @notify e.data.item.data.text
                     },
                 ], onchildselect: (e) => @notify e.data.item.data.text
             },

@@ -1,0 +1,37 @@
+{
+    "targets" : {
+        "Build single package" :{
+            "jobs": [
+                {
+                    "name": "batch",
+                    "data": {
+                        "target": "release",
+                        "modules": ["Blogger"]
+                    }
+                }
+            ]
+        },
+        "Build all" :{
+            "jobs": [
+                {
+                    "name": "batch",
+                    "data": {
+                        "target": "release"
+                    }
+                }
+            ]
+        },
+        "Release": {
+            "require": ["backend"],
+            "jobs": [
+                {
+                    "name": "lua-exec",
+                    "data": {
+                        "path": "home://workspace/antosdk-apps/release.lua",
+                        "params": {}
+                    }
+                }
+            ]
+        }
+    }
+}

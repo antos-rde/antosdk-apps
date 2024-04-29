@@ -2,462 +2,502 @@
 	{
 		"pkgname": "About",
 		"name": "About AntOS",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/About/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/About/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.1.1-b",
+		"version": "0.1.2-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/About/build/release/About.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/About/build/release/About.zip"
 	},
 	{
 		"pkgname": "ACECore",
 		"name": "ACE Editor core",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ACECore/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ACECore/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "1.4.12-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ACECore/build/release/ACECore.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ACECore/build/release/ACECore.zip"
 	},
 	{
 		"pkgname": "AceDiff",
 		"name": "AceDiff addon library",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AceDiff/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AceDiff/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "3.0.3-r",
 		"dependencies": ["ACECore@1.4.12-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AceDiff/build/release/AceDiff.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AceDiff/build/release/AceDiff.zip"
 	},
 	{
 		"pkgname": "ActivityMonitor",
 		"name": "Activity monitor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ActivityMonitor/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.0.7-b",
+		"version": "0.0.8-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ActivityMonitor/build/release/ActivityMonitor.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ActivityMonitor/build/release/ActivityMonitor.zip"
 	},
 	{
 		"pkgname": "Antedit",
 		"name": "Antos Editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antedit/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.2.3-b",
+		"version": "0.2.6-b",
 		"dependencies": ["MonacoCore@0.33.0-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antedit/build/release/Antedit.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antedit/build/release/Antedit.zip"
 	},
 	{
 		"pkgname": "Antunnel",
 		"name": "Antunnel",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antunnel/README.md",
 		"category": "Library",
 		"author": "Xuan Sang LE",
 		"version": "0.2.1-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Antunnel/build/release/Antunnel.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Antunnel/build/release/Antunnel.zip"
 	},
 	{
 		"pkgname": "AntunnelPlugins",
 		"name": "Antunnel Plugins",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelPlugins/README.md",
 		"category": "Library",
 		"author": "Dany LE",
 		"version": "0.1.2-a",
 		"dependencies": ["Antunnel@0.2.0-b"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelPlugins/build/release/AntunnelPlugins.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelPlugins/build/release/AntunnelPlugins.zip"
 	},
 	{
 		"pkgname": "AntunnelTestClient",
 		"name": "AntunnelTestClient",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelTestClient/README.md",
 		"category": "Development",
 		"author": "Dany LE",
 		"version": "0.1.0-a",
 		"dependencies": ["Antunnel@0.2.1-b"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/AntunnelTestClient/build/release/AntunnelTestClient.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/AntunnelTestClient/build/release/AntunnelTestClient.zip"
 	},
 	{
 		"pkgname": "Archive",
 		"name": "Archive",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Archive/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.0.3-a",
+		"version": "0.0.4-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Archive/build/release/Archive.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Archive/build/release/Archive.zip"
+	},
+	{
+		"pkgname": "Blogger",
+		"name": "Blogging application",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/README.md",
+		"category": "Internet",
+		"author": "Xuan Sang LE",
+		"version": "0.2.13-a",
+		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r","SQLiteDB@0.1.0-a"],"mimes":["none"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Blogger/build/release/Blogger.zip"
 	},
 	{
 		"pkgname": "Booklet",
 		"name": "Booklet",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Booklet/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.2.4-a",
-		"dependencies": ["SimpleMDE@1.11.2-r","Katex@0.11.1-r"],"mimes":["dir"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Booklet/build/release/Booklet.zip"
+		"version": "0.2.5-a",
+		"dependencies": ["SimpleMDE@2.18.0-r","Katex@0.11.1-r"],"mimes":["dir"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Booklet/build/release/Booklet.zip"
 	},
 	{
 		"pkgname": "Clipper",
 		"name": "Clipper",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Clipper/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.1.3-a",
+		"version": "0.1.4-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Clipper/build/release/Clipper.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Clipper/build/release/Clipper.zip"
 	},
 	{
 		"pkgname": "CodePad",
 		"name": "Code",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/CodePad/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/CodePad/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.5-b",
+		"version": "0.1.8-b",
 		"dependencies": ["ACECore@1.4.12-r"],"mimes":["text/.*","[^/]*/json.*","[^/]*/.*ml","[^/]*/javascript","dir"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/CodePad/build/release/CodePad.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/CodePad/build/release/CodePad.zip"
+	},
+	{
+		"pkgname": "DBDecoder",
+		"name": "DBDecoder",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/DBDecoder/README.md",
+		"category": "Other",
+		"author": "",
+		"version": "0.0.2-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/DBDecoder/build/release/DBDecoder.zip"
 	},
 	{
 		"pkgname": "DiffEditor",
 		"name": "Diff Editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/DiffEditor/README.md",
 		"category": "Development",
 		"author": "",
-		"version": "0.1.5-a",
+		"version": "0.1.6-a",
 		"dependencies": ["AceDiff@3.0.3-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/DiffEditor/build/release/DiffEditor.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/DiffEditor/build/release/DiffEditor.zip"
+	},
+	{
+		"pkgname": "Docify",
+		"name": "Docify",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Docify/README.md",
+		"category": "Office",
+		"author": "Dany LE",
+		"version": "0.1.1-b",
+		"dependencies": ["SQLiteDB@0.1.0-a","libpdfjs@2.6.347-r","PDFLib@1.17.1"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Docify/build/release/Docify.zip"
 	},
 	{
 		"pkgname": "Dockman",
 		"name": "Remote Docker Manager",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Dockman/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Dockman/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
 		"version": "0.1.1-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Dockman/build/release/Dockman.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Dockman/build/release/Dockman.zip"
 	},
 	{
 		"pkgname": "GitGraph",
 		"name": "GIT Visualization",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/GitGraph/README.md",
 		"category": "Development",
 		"author": "Dany LE",
-		"version": "0.1.4-b",
+		"version": "0.1.5-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GitGraph/build/release/GitGraph.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/GitGraph/build/release/GitGraph.zip"
 	},
 	{
 		"pkgname": "GPClient",
 		"name": "Generic Purpose client",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/GPClient/README.md",
 		"category": "Internet",
 		"author": "Xuan Sang LE",
-		"version": "0.1.3-a",
+		"version": "0.1.5-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GPClient/build/release/GPClient.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/GPClient/build/release/GPClient.zip"
 	},
 	{
 		"pkgname": "GraphEditor",
 		"name": "Graph Editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/GraphEditor/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
 		"version": "0.1.2-a",
 		"dependencies": ["ACECore@1.4.12-r"],"iconclass":"fafa-sitemap","mimes":["text/.*graphviz"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/GraphEditor/build/release/GraphEditor.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/GraphEditor/build/release/GraphEditor.zip"
 	},
 	{
 		"pkgname": "ImageEditor",
 		"name": "Image editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ImageEditor/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ImageEditor/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
 		"version": "0.1.0-a",
 		"dependencies": ["libfabric@4.4.0-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ImageEditor/build/release/ImageEditor.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ImageEditor/build/release/ImageEditor.zip"
 	},
 	{
 		"pkgname": "Katex",
 		"name": "Katex",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Katex/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "0.11.1-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Katex/build/release/Katex.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Katex/build/release/Katex.zip"
 	},
 	{
 		"pkgname": "libantosdk",
 		"name": "AntOS SDK builder",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libantosdk/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.16-a",
+		"version": "0.1.2-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libantosdk/build/release/libantosdk.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libantosdk/build/release/libantosdk.zip"
 	},
 	{
 		"pkgname": "libfabric",
 		"name": "Fabric.js library",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libfabric/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libfabric/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "4.4.0-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libfabric/build/release/libfabric.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libfabric/build/release/libfabric.zip"
 	},
 	{
 		"pkgname": "libjpeg",
 		"name": "libjpeg",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libjpeg/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "0.1.1-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libjpeg/build/release/libjpeg.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libjpeg/build/release/libjpeg.zip"
 	},
 	{
 		"pkgname": "libpdfjs",
 		"name": "PDF JS library",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libpdfjs/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libpdfjs/README.md",
 		"category": "Library",
 		"author": "Xuan Sang LE",
 		"version": "2.6.347-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libpdfjs/build/release/libpdfjs.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libpdfjs/build/release/libpdfjs.zip"
 	},
 	{
 		"pkgname": "libplotly",
 		"name": "Plotly",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libplotly/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libplotly/README.md",
 		"category": "Library",
 		"author": "Dany LE",
 		"version": "2.6.2-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libplotly/build/release/libplotly.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libplotly/build/release/libplotly.zip"
 	},
 	{
 		"pkgname": "LibreOffice",
 		"name": "Libre Office Online",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LibreOffice/README.md",
 		"category": "Office",
 		"author": "Dany LE",
-		"version": "0.1.2-a",
+		"version": "0.1.5-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LibreOffice/build/release/LibreOffice.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LibreOffice/build/release/LibreOffice.zip"
 	},
 	{
 		"pkgname": "libthreejs",
 		"name": "libthreejs",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libthreejs/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libthreejs/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "0.0.129-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libthreejs/build/release/libthreejs.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libthreejs/build/release/libthreejs.zip"
 	},
 	{
 		"pkgname": "libwvnc",
 		"name": "libwvnc",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libwvnc/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "0.1.2-a",
 		"dependencies": ["libjpeg@0.1.1-a"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/libwvnc/build/release/libwvnc.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/libwvnc/build/release/libwvnc.zip"
 	},
 	{
 		"pkgname": "LuaPlayground",
 		"name": "LuaPlayground",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LuaPlayground/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.1.0-a",
+		"version": "0.1.2-a",
 		"dependencies": ["ACECore@1.4.12-r"],"mimes":["none"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/LuaPlayground/build/release/LuaPlayground.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/LuaPlayground/build/release/LuaPlayground.zip"
 	},
 	{
 		"pkgname": "MarkOn",
 		"name": "Markdown editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MarkOn/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.0.8-a",
-		"dependencies": ["SimpleMDE@1.11.2-r"],"mimes":["text/.*"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MarkOn/build/release/MarkOn.zip"
+		"version": "0.1.1-a",
+		"dependencies": ["SimpleMDE@2.18.0-r"],"mimes":["text/.*"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MarkOn/build/release/MarkOn.zip"
 	},
 	{
 		"pkgname": "MonacoCore",
 		"name": "Monaco editor core",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MonacoCore/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MonacoCore/README.md",
 		"category": "Library",
 		"author": "",
 		"version": "0.33.0-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/MonacoCore/build/release/MonacoCore.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/MonacoCore/build/release/MonacoCore.zip"
 	},
 	{
 		"pkgname": "OnlyOffice",
 		"name": "Office Suite",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/OnlyOffice/README.md",
 		"category": "Office",
 		"author": "Xuan Sang LE",
-		"version": "0.1.7-a",
+		"version": "0.1.8-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OnlyOffice/build/release/OnlyOffice.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/OnlyOffice/build/release/OnlyOffice.zip"
 	},
 	{
-		"pkgname": "OpenPage",
-		"name": "OpenPage",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/README.md",
-		"category": "Office",
-		"author": "Xuan Sang LE",
-		"version": "0.1.4-a",
+		"pkgname": "PDFLib",
+		"name": "PDFLib",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/PDFLib/README.md",
+		"category": "Library",
+		"author": "pdf-lib.js.org",
+		"version": "1.17.1",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/OpenPage/build/release/OpenPage.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/PDFLib/build/release/PDFLib.zip"
 	},
 	{
 		"pkgname": "Preview",
 		"name": "Preview",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Preview/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
-		"version": "0.1.1-a",
+		"version": "0.1.3-a",
 		"dependencies": ["libpdfjs@2.6.347-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/Preview/build/release/Preview.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/Preview/build/release/Preview.zip"
 	},
 	{
 		"pkgname": "RemoteCamera",
 		"name": "Remote Camera",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteCamera/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/RemoteCamera/README.md",
 		"category": "Graphics",
 		"author": "",
-		"version": "0.1.4-a",
+		"version": "0.1.5-a",
 		"dependencies": ["libjpeg@0.1.1-a","Antunnel@0.1.8-a"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteCamera/build/release/RemoteCamera.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/RemoteCamera/build/release/RemoteCamera.zip"
 	},
 	{
 		"pkgname": "RemoteDesktop",
 		"name": "WVNC remote desktop",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/RemoteDesktop/README.md",
 		"category": "Internet",
 		"author": "Dany LE",
-		"version": "0.1.12-b",
+		"version": "0.1.17-b",
 		"dependencies": [],"category":"Internet","icon":"icon.png","mimes":["none"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/RemoteDesktop/build/release/RemoteDesktop.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/RemoteDesktop/build/release/RemoteDesktop.zip"
 	},
 	{
 		"pkgname": "ServerLogClient",
 		"name": "Server log monitor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ServerLogClient/README.md",
 		"category": "System",
 		"author": "",
 		"version": "0.1.3-b",
 		"dependencies": ["Antunnel@0.2.1-b"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ServerLogClient/build/release/ServerLogClient.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ServerLogClient/build/release/ServerLogClient.zip"
 	},
 	{
 		"pkgname": "ShaderPlayground",
 		"name": "OpenGL Shader Playground",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ShaderPlayground/README.md",
 		"category": "Development",
 		"author": "Xuan Sang LE",
-		"version": "0.0.3-a",
+		"version": "0.0.4-a",
 		"dependencies": ["libthreejs@0.0.129-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShaderPlayground/build/release/ShaderPlayground.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ShaderPlayground/build/release/ShaderPlayground.zip"
 	},
 	{
 		"pkgname": "ShowCase",
 		"name": "ShowCase",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ShowCase/README.md",
 		"category": "Utility",
 		"author": "Xuan Sang LE",
-		"version": "0.0.7-a",
+		"version": "0.0.8-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/ShowCase/build/release/ShowCase.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/ShowCase/build/release/ShowCase.zip"
 	},
 	{
 		"pkgname": "SimpleMDE",
-		"name": "SimpleMDE library",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SimpleMDE/README.md",
+		"name": "EasyMDE",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SimpleMDE/README.md",
 		"category": "Library",
 		"author": "",
-		"version": "1.11.2-r",
+		"version": "2.18.0-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SimpleMDE/build/release/SimpleMDE.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SimpleMDE/build/release/SimpleMDE.zip"
+	},
+	{
+		"pkgname": "SQLiteDB",
+		"name": "SQLite3 Browser",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SQLiteDB/README.md",
+		"category": "Library",
+		"author": "Dany LE",
+		"version": "0.1.0-a",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SQLiteDB/build/release/SQLiteDB.zip"
+	},
+	{
+		"pkgname": "SVGEdit",
+		"name": "SVG Editor",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SVGEdit/README.md",
+		"category": "Graphic",
+		"author": "Dany LE",
+		"version": "0.1.0-r",
+		"dependencies": [],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SVGEdit/build/release/SVGEdit.zip"
 	},
 	{
 		"pkgname": "SystemControl",
 		"name": "System monitoring",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/README.md",
 		"category": "System",
 		"author": "",
-		"version": "0.1.11-a",
-		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.11-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/SystemControl/build/release/SystemControl.zip"
+		"version": "0.1.13-a",
+		"dependencies": ["Antunnel@0.2.1-b"],"version":"0.1.13-a","category":"System","iconclass":"fafa-tachometer","mimes":["none"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/SystemControl/build/release/SystemControl.zip"
 	},
 	{
 		"pkgname": "TinyEditor",
 		"name": "Tiny editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/TinyEditor/README.md",
 		"category": "Other",
 		"author": "Xuan Sang LE",
 		"version": "0.0.4-a",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/TinyEditor/build/release/TinyEditor.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/TinyEditor/build/release/TinyEditor.zip"
 	},
 	{
 		"pkgname": "vfsx",
 		"name": "AntOS VFS handles",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vfsx/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/vfsx/README.md",
 		"category": "Library",
 		"author": "Dany LE",
-		"version": "0.1.0-b",
+		"version": "0.1.1-b",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vfsx/build/release/vfsx.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/vfsx/build/release/vfsx.zip"
 	},
 	{
 		"pkgname": "VizApp",
 		"name": "Viz editor",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/VizApp/README.md",
 		"category": "Graphics",
 		"author": "Xuan Sang LE",
 		"version": "0.1.0-a",
 		"dependencies": ["ACECore@1.4.12-r"],"iconclass":"bibi-bounding-box","mimes":["text/.*graphviz"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/VizApp/build/release/VizApp.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/VizApp/build/release/VizApp.zip"
 	},
 	{
 		"pkgname": "vTerm",
 		"name": "Virtual Terminal",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/vTerm/README.md",
 		"category": "System",
 		"author": "Xuan Sang LE",
-		"version": "0.1.17-a",
-		"dependencies": ["Antunnel@0.2.1-b","xTerm@4.8.1-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/vTerm/build/release/vTerm.zip"
-	},
-	{
-		"pkgname": "wTerm",
-		"name": "Terminal",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/README.md",
-		"category": "System",
-		"author": "Xuan Sang LE",
-		"version": "0.0.6-a",
-		"dependencies": ["xTerm@4.8.1-r"],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/wTerm/build/release/wTerm.zip"
+		"version": "0.1.20-a",
+		"dependencies": ["Antunnel@0.2.1-b","xTerm@5.1.0-r"],
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/vTerm/build/release/vTerm.zip"
 	},
 	{
 		"pkgname": "xTerm",
 		"name": "xTerm Library",
-		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/xTerm/README.md",
+		"description": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/xTerm/README.md",
 		"category": "Library",
 		"author": "",
-		"version": "4.8.1-r",
+		"version": "5.1.0-r",
 		"dependencies": [],
-		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/master/xTerm/build/release/xTerm.zip"
+		"download": "https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/xTerm/build/release/xTerm.zip"
 	}
 
 ]

@@ -195,6 +195,62 @@ namespace OS {
                         }
                     });
                 }
+                else if(job === "batch")
+                {
+                    return new Promise(async (resolve, reject) =>
+                    {
+                        try{
+                            if(!data || !data.target)
+                            {
+                                const err = __("No target provided for job: batch");
+                                this.logger.error(err);
+                                throw new Error(err.__());
+                            }
+                            let pwd = data.pwd;
+                            if(!pwd)
+                            {
+                                pwd = this.root;
+                            }
+                            const ret = await pwd.asFileHandle().read();
+                            if(ret.error)
+                            {
+                                this.logger.error(ret.error);
+                                throw new Error(ret.error);
+                            }
+                            let dirs = ret.result.filter(e => e.type === "dir");
+                            if(data.modules)
+                            {
+                                dirs = dirs.filter(e => data.modules.includes(e.filename));
+                            }
+                            for(let entry of dirs)
+                            {
+                                const build_file = `${entry.path}/build.json`.asFileHandle();
+                                try {
+                                    await build_file.onready();
+                                }
+                                catch(e)
+                                {
+                                    this.logger.info(__("No build.json file found in {0}, ignore this file", entry.path));
+                                    continue;
+                                }
+                                this.logger.info(__("########### BUILDING: {0} ###########", entry.path));
+                                const sdk = new AntOSDKBuilder(this.logger,entry.path);
+                                const options = await build_file.read("json");
+                                if(!options.root)
+                                {
+                                    options.root = entry.path;
+                                }
+                                await sdk.batch([data.target], options);
+                            }
+                            this.logger.info(__("########### Batch building done ###########"));
+                            return resolve(undefined);
+                        }
+                        catch(error)
+                        {
+                            reject(error);
+                        }
+                    });
+                }
                 return AntOSDKBuilder.worker.submit(job,data, this.root, this.logger);
             }
             

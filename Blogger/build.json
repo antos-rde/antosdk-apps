@@ -1,0 +1,112 @@
+{
+    "name": "Blogger",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+        "ts": {
+            "require": [
+                "ts"
+            ],
+            "jobs": [
+                {
+                    "name": "ts-antos-sdk",
+                    "data": {
+                        "version": "2.0.x"
+                    }
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": [
+                            "main.ts",
+                            "dialogs.ts",
+                            "tags.ts"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/main.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "scheme.html",
+                            "api",
+                            "package.json",
+                            "README.md",
+                            "main.css"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+         "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/", "api/"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
+        },
+        "debug": {
+            "depend": [
+                "init",
+                "ts",
+                "copy"
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "ts",
+                "uglify",
+                "copy"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/Blogger.zip"
+                    }
+                }
+            ]
+        }
+    }
+}

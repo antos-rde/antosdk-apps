@@ -186,64 +186,60 @@ namespace OS {
                 this.logs = [];
                 $(this.log_container)
                     .css("overflow-y", "auto");
-                let menu = this.find("menu-level") as GUI.tag.MenuTag;
+                let menu = this.find("menu-level") as GUI.tag.StackMenuTag;
+                menu.onmenuselect = (e) => {
+                    let data = e.data.item.data;
+                    this.filter[data.severity] = data.checked;
+                    console.log(this.filter);
+                }
                 menu.items = [
                     {
-                        text: __("Default level"),
-                        nodes: [
-                            {
-                                text: __("Debug"),
-                                switch: true,
-                                checked: true,
-                                severity: "debug"
-                            },
-                            {
-                                text: __("Notice"),
-                                switch: true,
-                                checked: true,
-                                severity: "notice"
-                            },
-                            {
-                                text: __("Info"),
-                                switch: true,
-                                checked: true,
-                                severity: "info"
-                            },
-                            {
-                                text: __("Warning"),
-                                switch: true,
-                                checked: true,
-                                severity: "warning"
-                            },
-                            {
-                                text: __("Error"),
-                                switch: true,
-                                checked: true,
-                                severity: "err"
-                            },
-                            {
-                                text: __("Critical"),
-                                switch: true,
-                                checked: true,
-                                severity: "crit"
-                            },
-                            {
-                                text: __("Alert"),
-                                switch: true,
-                                checked: true,
-                                severity: "alert"
-                            },
-                            {
-                                text: __("Emergency"),
-                                switch: true,
-                                checked: true,
-                                severity: "emerg"
-                            }
-                        ],
-                        onchildselect: (e) => {
-                            let data = e.data.item.data;
-                            this.filter[data.severity] = data.checked;
-                        }
+                        text: __("Debug"),
+                        switch: true,
+                        checked: true,
+                        severity: "debug"
+                    },
+                    {
+                        text: __("Notice"),
+                        switch: true,
+                        checked: true,
+                        severity: "notice"
+                    },
+                    {
+                        text: __("Info"),
+                        switch: true,
+                        checked: true,
+                        severity: "info"
+                    },
+                    {
+                        text: __("Warning"),
+                        switch: true,
+                        checked: true,
+                        severity: "warning"
+                    },
+                    {
+                        text: __("Error"),
+                        switch: true,
+                        checked: true,
+                        severity: "err"
+                    },
+                    {
+                        text: __("Critical"),
+                        switch: true,
+                        checked: true,
+                        severity: "crit"
+                    },
+                    {
+                        text: __("Alert"),
+                        switch: true,
+                        checked: true,
+                        severity: "alert"
+                    },
+                    {
+                        text: __("Emergency"),
+                        switch: true,
+                        checked: true,
+                        severity: "emerg"
                     }
                 ];
                 

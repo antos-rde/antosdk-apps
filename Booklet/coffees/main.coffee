@@ -166,7 +166,7 @@ class Booklet extends this.OS.application.BaseApplication
         @previewOn = false
         @editormux = false
         
-        @editor = new SimpleMDE
+        @editor = new EasyMDE
             element: markarea
             autoDownloadFontAwesome: false
             autofocus: true
@@ -232,7 +232,7 @@ class Booklet extends this.OS.application.BaseApplication
                     name: __("Preview"),
                     className: "fa fa-eye no-disable",
                     action: (e) =>
-                        SimpleMDE.togglePreview e
+                        EasyMDE.togglePreview e
                         #/console.log @select ".editor-preview editor-preview-active"
                         renderMathInElement @find "mycontainer"
                         @renderLocalElement()
@@ -246,7 +246,7 @@ class Booklet extends this.OS.application.BaseApplication
                 
                 preview.innerHTML = html
         
-        @on "hboxchange", (e) => @resizeContent()
+        @on "resize", (e) => @resizeContent()
         @bindKey "ALT-N", () => @actionFile "#{@name}-New"
         @bindKey "ALT-O", () => @actionFile "#{@name}-Open"
         @bindKey "CTRL-S", () => @actionFile "#{@name}-Save"
@@ -263,12 +263,12 @@ class Booklet extends this.OS.application.BaseApplication
         @currentToc.descFile.cache = @editor.value()
 
     resizeContent: () ->
-        children = ($ @container).children()
+        children = ($ ".EasyMDEContainer", @container).children()
         titlebar = (($ @scheme).find ".afx-window-top")[0]
-        toolbar = children[1]
-        statusbar = children[4]
+        toolbar = children[0]
+        statusbar = children[3]
         cheight = ($ @scheme).height() - ($ titlebar).height() - ($ toolbar).height() - ($ statusbar).height() - 40
-        ($ children[2]).css("height", cheight + "px")
+        ($ children[1]).css("height", cheight + "px")
 
 
     menu: () ->

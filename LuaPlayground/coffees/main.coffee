@@ -175,6 +175,16 @@ class LuaPlayground extends this.OS.application.BaseApplication
         
         @socket = null
         @bindKey "CTRL-R", () => @run()
+
+        @morphon OS.GUI.RESPONSIVE.PORTRAIT, (fulfilled) =>
+            console.log fulfilled, "FULL"
+            if fulfilled
+                this.find("wrapper").dir = "column"
+                this.find("resizer").dir = "column"
+            else
+                this.find("wrapper").dir = "row"
+                this.find("resizer").dir = "row"
+
     menu: () ->
         menu = [{
                 text: "__(Code)",
@@ -233,5 +243,8 @@ class LuaPlayground extends this.OS.application.BaseApplication
 LuaPlayground.dependencies = [
     "pkg://ACECore/core/ace.js",
     "pkg://ACECore/path.js",
+    "pkg://ACECore/core/ext-language_tools.js",
+    "pkg://ACECore/core/ext-modelist.js",
+    "pkg://ACECore/core/ext-themelist.js",
 ]
 this.OS.register "LuaPlayground", LuaPlayground

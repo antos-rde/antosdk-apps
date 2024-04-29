@@ -7,7 +7,7 @@
         "author": "Dany LE",
         "email": "contact@iohub.dev"
     },
-    "version":"0.1.4-b",
+    "version":"0.1.5-b",
     "category":"Development",
     "iconclass":"bi bi-git",
     "mimes":["dir"],

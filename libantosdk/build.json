@@ -30,8 +30,10 @@
                     "data": ["build","build/debug","build/release"]
                 },
                 {
-                    "name": "ts-import",
-                    "data": ["core/ts/core.d.ts", "core/ts/jquery.d.ts","core/ts/antos.d.ts"]
+                    "name": "ts-antos-sdk",
+                    "data": {
+                        "version": "2.0.x"
+                    }
                 },
                 {
                     "name": "ts-compile",

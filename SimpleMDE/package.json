@@ -1,12 +1,12 @@
 {
     "pkgname": "SimpleMDE",
-    "name":"SimpleMDE library",
-    "description":"SimpleMDE",
+    "name":"EasyMDE",
+    "description":"EasyMDE library, a fork of SimpleMDE",
     "info":{
         "author": "",
         "email": ""
     },
-    "version":"1.11.2-r",
+    "version":"2.18.0-r",
     "category":"Library",
     "iconclass":"fa  fa-cog",
     "mimes":["none"],

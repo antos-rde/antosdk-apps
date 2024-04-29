@@ -38,15 +38,11 @@ namespace OS {
                     return this.info.mimeType === "application/vnd.google-apps.folder";
                 }
                 private load(promise: Promise<any>): Promise<any> {
-                    const q = API.mid();
-                    return new Promise(async (resolve, reject) => {
-                        API.loading(q, "GAPI");
+                    return API.Task(async (resolve, reject) => {
                         try {
                             let ret = await promise;
-                            API.loaded(q, "GAPI", "OK");
                             return resolve(ret);
                         } catch (e) {
-                            API.loaded(q, "GAPI", "FAIL");
                             return reject(__e(e));
                         }
                     });
@@ -494,7 +490,6 @@ namespace OS {
                             }
                             var o = ($('<input>')).attr('type', 'file').css("display", "none");
                             o.on("change", async () => {
-                                //Ant.OS.API.loading q, p
                                 const fo = (o[0] as HTMLInputElement).files[0];
                                 const file = (this.child(fo.name)).asFileHandle();
                                 file.cache = fo;

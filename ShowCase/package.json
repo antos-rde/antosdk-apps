@@ -7,7 +7,7 @@
         "email": "xsang.le@gmail.com",
         "licences": "GPLv3"
     },
-    "version":"0.0.7-a",
+    "version":"0.0.8-a",
     "category":"Utility",
     "mimes":["none"],
     "iconclass": "fa fa-delicious",

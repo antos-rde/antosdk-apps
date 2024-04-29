@@ -59,6 +59,7 @@ class Preview extends this.OS.application.BaseApplication
         @img = undefined
         ($ @view).empty()
         @zoom.value = 100
+        @scheme.apptitle = @currfile.info.name
         if mime.match /^[^\/]+\/.*pdf.*/g
             @renderPDF()
         else if mime.match /image\/.*svg.*/g
@@ -133,7 +134,7 @@ class Preview extends this.OS.application.BaseApplication
                 @img = img
                 #console.log canvas.width, canvas.height
                 context.drawImage img, 0, 0
-                @setStatus "#{@currfile.info.name} (#{@currfile.info.size} Kb) - #{img.width}x#{img.height}"
+                @setStatus "#{@currfile.info.size} Kb - #{img.width}x#{img.height}"
             
             blob = new Blob [d], { type: @currfile.info.mime }
             img.src = URL.createObjectURL blob

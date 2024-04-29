@@ -12,6 +12,9 @@ VTerm depends on the server side **tunnel** plugin and the AntOS **Antunnel**
 client side package
 
 ## Change logs
+- v0.1.20-fix bug with new xterm.js
+- v0.1.19-a Use the new xterm.js libraries v5.1.0
+- v0.1.18-a support AntOS v2.0.x
 - v0.1.17-a update dependencies to latest
 - v0.1.16-a fix incorrect control command
 - v0.1.15-a update dependencies to latest

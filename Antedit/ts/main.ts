@@ -561,7 +561,7 @@ namespace OS {
                 this.loadExtensionMetaData();
                 this.toggleSideBar();
                 this.toggleSplitMode();
-                this.applyAllSetting();
+                //this.applyAllSetting();
             }
 
             /**
@@ -718,7 +718,7 @@ namespace OS {
 
             showOutput(toggle: boolean = false): void {
                 if (toggle)
-                    this.showBottomBar(true);
+                    this.setting.showBottomBar = true;
                 this.bottombar.selectedIndex = 0;
             }
             
@@ -749,7 +749,6 @@ namespace OS {
              * @memberof Antedit
              */
             public showBottomBar(v: boolean): void {
-                this.setting.showBottomBar = v;
                 if (v) {
                     $(this.bottombar).show();
                 }
@@ -765,7 +764,7 @@ namespace OS {
              * @memberof Antedit
              */
             private toggleBottomBar(): void {
-                this.showBottomBar(!this.setting.showBottomBar);
+                this.setting.showBottomBar = !this.setting.showBottomBar;
             }
             
             /**
@@ -817,7 +816,7 @@ namespace OS {
                             dataid: "recent",
                             nodes: recent,
                             onchildselect: (
-                                e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                                e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                                 r: Antedit
                             ) => {
                                 const handle = e.data.item.data.text.asFileHandle();
@@ -849,7 +848,7 @@ namespace OS {
                         },
                     ],
                     onchildselect: (
-                        e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                        e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                         r: Antedit
                     ) => {
                         return this.menuAction(e.data.item.data.dataid, r);
@@ -866,9 +865,9 @@ namespace OS {
              * @memberof Antedit
              */
             private ctxFileMenuHandle(
-                e: GUI.TagEventType<GUI.tag.MenuEventData>
+                e: GUI.TagEventType<GUI.tag.StackMenuEventData>
             ): void {
-                const el = e.data.item as GUI.tag.MenuEntryTag;
+                const el = e.data.item;
                 if (!el) {
                     return;
                 }
@@ -1150,7 +1149,7 @@ namespace OS {
                             }
                         ],
                         onchildselect: (
-                            e: GUI.TagEventType<GUI.tag.MenuEventData>,
+                            e: GUI.TagEventType<GUI.tag.StackMenuEventData>,
                             r: EditorFileHandle
                         ) => {
                             switch (e.data.item.data.dataid) {

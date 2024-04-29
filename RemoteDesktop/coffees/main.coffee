@@ -6,48 +6,47 @@ class ConnectionDialog extends this.OS.GUI.BasicDialog
     main: () ->
         super.main()
         @find("bbp").data = [
-            { text: "16 bits", value: 16, selected: true },
+            { text: "16 bits", value: 16},
             { text: "32 bits", value: 32 }
         ]
-        @find("jq").value = 40
+        (@find "txtWVNC").value = @parent.setting.wvnc
+        (@find "txtServer").value = @parent.setting.server
+        sel = 0
+        sel = 1 if @parent.setting.bbc is 32
+        (@find "bbp").selected = sel
+        (@find "jq").value = @parent.setting.quality
+        
         @find("bt-ok").onbtclick = (e) =>
             return unless @handle
-            data =
-                wvnc: (@find "txtWVNC").value
-                server: (@find "txtServer").value
-                bbp: (@find "bbp").selectedItem.data.value,
-                quality:(@find "jq").value
-            @handle data
+            @parent.setting.wvnc = (@find "txtWVNC").value
+            @parent.setting.server = (@find "txtServer").value
+            @parent.setting.bbc = (@find "bbp").selectedItem.data.value
+            @parent.setting.quality = (@find "jq").value
+            @handle undefined
             @quit()
         
         @find("bt-cancel").onbtclick = (e) =>
             @quit()
 
 ConnectionDialog.scheme = """
-<afx-app-window width='350' height='270'>
-    <afx-hbox>
-        <div data-width="5"></div>
-        <afx-vbox>
-            <afx-label text="__(WVNC Websocket)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtWVNC" value="wss://app.iohub.dev/wbs/wvnc"></input>
-            <afx-label text="__(VNC Server)" data-height="25" class="header" ></afx-label>
-            <input data-height="25" data-id="txtServer" value="192.168.1.27:5900"></input>
-            <div data-height="5"></div>
-            <afx-label text="__(Bits per pixel)" data-height="25" class="header" ></afx-label>
-            <afx-list-view dropdown = "true" data-id ="bbp" data-height="25" ></afx-list-view>
-            <div data-height="5"></div>
-            <afx-label text="__(JPEG quality)" data-height="25" class="header" ></afx-label>
-            <afx-slider data-id ="jq" data-height="25" ></afx-slider>
-            <afx-hbox data-height = '30'>
-                <div  style=' text-align:right;'>
-                    <afx-button data-id = "bt-ok" text = "__(Connect)"></afx-button>
-                    <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
-                </div>
-                <div data-width="5"></div>
-            </afx-hbox>
-        </afx-vbox>
-        <div data-width="5"></div>
-    </afx-hbox>
+<afx-app-window width='350' height='320'>
+    <afx-vbox padding="5">
+        <afx-input label="__(WVNC Websocket)" data-height="50" data-id="txtWVNC"></afx-input>
+        <afx-input label="__(VNC Server)" data-height="50" data-id="txtServer" ></afx-input>
+        <div data-height="5"></div>
+        <afx-label text="__(Bits per pixel)" data-height="30" class="header" ></afx-label>
+        <afx-list-view dropdown = "true" data-id ="bbp" data-height="35" ></afx-list-view>
+        <div data-height="5"></div>
+        <afx-label text="__(JPEG quality)" data-height="30" class="header" ></afx-label>
+        <afx-slider data-id ="jq" data-height="30" ></afx-slider>
+        <div></div>
+        <afx-hbox data-height = '35'>
+            <div  style=' text-align:right;'>
+                <afx-button data-id = "bt-ok" text = "__(Connect)"></afx-button>
+                <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
+            </div>
+        </afx-hbox>
+    </afx-vbox>
 </afx-app-window>
 
 """
@@ -64,23 +63,20 @@ class CredentialDialog extends this.OS.GUI.BasicDialog
                 password: (@find "txtPass").value
             @handle data
             @quit()
-        
         @find("bt-cancel").onbtclick = () =>
             @quit()
 
 CredentialDialog.scheme = """
-<afx-app-window width='350' height='150'>
-    <afx-vbox>
-        <afx-label text="__(Username)" data-height="25" class="header" ></afx-label>
-        <input data-height="30" data-id="txtUser"></input>
-        <afx-label text="__(Password)" data-height="25" class="header" ></afx-label>
-        <input type="password" data-height="30" data-id="txtPass"></input>
-        <afx-hbox data-height = '30'>
+<afx-app-window width='350' height='170'>
+    <afx-vbox padding="5">
+        <afx-input label="__(Username)" data-height="55" data-id="txtUser"></afx-input>
+        <afx-input label="__(Password)" data-height="55" type="password" data-id="txtPass"></afx-input>
+        <div></div>
+        <afx-hbox data-height = '35'>
             <div  style=' text-align:right;'>
                 <afx-button data-id = "bt-ok" text = "__(Ok)"></afx-button>
                 <afx-button data-id = "bt-cancel" text = "__(Cancel)"></afx-button>
             </div>
-            <div data-width="5"></div>
         </afx-hbox>
     </afx-vbox>
 </afx-app-window>
@@ -93,6 +89,34 @@ class RemoteDesktop extends this.OS.application.BaseApplication
     main: () ->
         @canvas = @find "screen"
         @container = @find "container"
+        @zoom = @find "zoom"
+        @btreset = @find "btreset"
+        @zoom.max = 200
+        @zoom.value = 100
+        @zoom.onvaluechange = (e) => @setScale()
+        @switch = @find "capture_mouse"
+        @switch.onswchange = (e) =>
+            @client.mouseCapture = @switch.swon
+        
+        proto = "ws"
+        proto += "s" if window.location.protocol.startsWith "https"
+        host = "#{window.location.host}"
+        if window.location.port and window.location.port isnt ""
+            host += ":#{window.location.port}"
+        @setting.wvnc = "#{proto}://#{host}/wvnc" unless @setting.wvnc
+        @setting.server = "127.0.0.1:5900" unless @setting.server
+        @setting.bbp = 16 unless @setting.bbp
+        @setting.quality = 40 unless @setting.quality
+        @btreset.onbtclick = (e) =>
+            w = $(@container).width()
+            h = $(@container).height()
+            sx = w / @client.resolution.w
+            sy = h / @client.resolution.h
+            if sx > sy
+                @zoom.value = sy*100
+            else
+                @zoom.value = sx*100
+            @setScale()
         @client = new WVNC { 
             element: @canvas
         }
@@ -123,7 +147,7 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                 @openDialog new CredentialDialog, { title: __("User credential") }
                 .then (d) ->
                     r(d.username, d.password)
-        @on "resize", (e)=> @setScale()
+        # @on "resize", (e)=> @setScale()
         @on "focus", (e) => $(@canvas).focus()
         @client.init().then () => 
             @showConnectionDialog()
@@ -146,12 +170,11 @@ class RemoteDesktop extends this.OS.application.BaseApplication
                     .catch (err) => @error err.toString(), err
 
     setScale: () ->
+        console.log "scale changed"
         return unless @client and @client.resolution
-        w = $(@container).width()
-        h = $(@container).height()
-        sx = w / @client.resolution.w
-        sy = h / @client.resolution.h
-        if sx > sy then @client.setScale sy else @client.setScale sx
+        @client.setScale @zoom.value / 100.0
+        @container.scrollLeft = 0
+        @container.scrollTop = 0
     
     menu: () ->
         
@@ -169,10 +192,10 @@ class RemoteDesktop extends this.OS.application.BaseApplication
     
     showConnectionDialog: () ->
         return unless @client
-        @openDialog new ConnectionDialog, { title: __("Connection")}
+        @openDialog new ConnectionDialog, { title: __("Connection"), data: @setting}
         .then (d) =>
-            @client.ws = d.wvnc
-            @client.connect d.server, d
+            @client.ws = @setting.wvnc
+            @client.connect @setting.server, @setting
     
     cleanup: () ->
         @client.disconnect(true) if @client

@@ -49,7 +49,3 @@ afx-app-window[data-id="ServerLogClient"] afx-hbox[data-id="top-header"] afx-lab
     padding-top: 5px;
     padding-right: 3px;
 }
-
-afx-app-window[data-id="ServerLogClient"] afx-hbox[data-id="top-header"] afx-label.field-label i.label-text{
-    font-weight: bold;
-}

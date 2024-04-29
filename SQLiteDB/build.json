@@ -1,0 +1,94 @@
+{
+    "name": "SQLiteDB",
+    "targets":{
+        "clean": {
+            "jobs": [
+                {
+                    "name": "vfs-rm_no_error",
+                    "data": ["build/debug","build/release"]
+                }
+            ]
+        },
+        "build": {
+            "require": ["ts"],
+            "jobs":[
+                {
+                    "name": "vfs-mkdir",
+                    "data": ["build","build/debug","build/release"]
+                },
+                {
+                    "name": "ts-antos-sdk",
+                    "data": {
+                        "version": "2.0.x"
+                    }
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": ["main.ts"],
+                        "dest": "build/debug/main.js"
+                    }
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": ["LibSQLite.ts"],
+                        "dest": "build/debug/libsqlite.js"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": ["terser"],
+            "jobs": [
+                {
+                    "name":"terser-uglify",
+                    "data": ["build/debug/main.js", "build/debug/libsqlite.js"]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "scheme.html",
+                            "package.json",
+                            "README.md",
+                            "api"
+                        ],
+                        "dest":"build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "depend": ["clean","build","uglify", "copy"],
+            "require": ["zip"],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src":"build/debug",
+                        "dest":"build/release/SQLiteDB.zip"
+                    }
+                }
+            ]
+        },
+        "debug": {
+            "depend": ["clean","build", "copy"],
+            "jobs": [
+                {
+                    "name": "vfs-cat",
+                    "data": {
+                        "src": [
+                           "build/debug/main.js", "build/debug/libsqlite.js"
+                        ],
+                        "dest":"build/debug/main.js"
+                    }
+                }
+            ]
+        }
+    }
+}

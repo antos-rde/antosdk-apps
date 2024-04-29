@@ -1,0 +1,78 @@
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="user-container"] afx-label i.label-text{
+    font-weight: bold;
+}
+
+afx-app-window .lbl-header i.label-text{
+    font-weight: bold;
+}
+afx-app-window[data-id="blogger-win"] afx-hbox[data-id="cv-container"] .cat-header{
+    border-bottom: 1px solid #cbcbcb;
+    text-align: center;
+}
+
+afx-app-window[data-id="blogger-win"] .cv-side-bar-btn
+{
+    text-align: right;
+    margin: 0;
+    padding: 0;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > .list-container > ul  .afx-cv-sec-title .label-text{
+    font-weight: bold;
+    
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item afx-label {
+    display: block;
+    
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item p {
+    padding: 0;
+    margin: 0;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item .afx-cv-sec-period,
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item .afx-cv-sec-loc {
+    text-align: right;
+}
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] afx-blogger-cvsection-item afx-cv-sec-content{
+    text-align: justify;
+    overflow-wrap: break-word;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] > div.list-container > ul  li.selected  {
+    border: 1px solid  #116cd6;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .closable::before{
+    content: "\f014";
+    font-size: 14px; 
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "cv-sec-list"] .period-end::before{
+    content: "-";
+}
+
+afx-app-window[data-id ='blogger-win'] .editor-toolbar{
+    background-color: white;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul li afx-label {
+    display: block;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul .afx-blogpost-title .label-text{
+    font-weight: bold;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul  .blog-dates .label-text{
+    font-size: 10px;
+    font-weight: normal;
+}
+
+afx-app-window[data-id="blogger-win"] afx-list-view[ data-id = "blog-list"] > div.list-container > ul li.selected {
+    background-color: #116cd6;
+    color:white;
+}

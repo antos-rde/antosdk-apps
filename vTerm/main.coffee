@@ -22,10 +22,9 @@ class vTerm extends this.OS.application.BaseApplication
     
     main: () ->
         @mterm = @find "myterm"
-        @term = new Terminal { cursorBlink: true }
+        @term = new Terminal { cursorBlink: true, fontSize: 12 }
         @fitAddon = new FitAddon.FitAddon()
         @term.loadAddon(@fitAddon)
-        @term.setOption('fontSize', '12')
         @term.open @mterm
         @sub = undefined
         
@@ -55,7 +54,7 @@ class vTerm extends this.OS.application.BaseApplication
         # make desktop menu if not exist
         @systemsetting.desktop.menu[@name] = { text: "__(Open terminal)", app: "vTerm" } unless @systemsetting.desktop.menu[@name]
         
-        @on "hboxchange", (e) =>
+        @on "resize", (e) =>
             @resizeContent()
         
         

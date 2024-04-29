@@ -1,0 +1,1 @@
+var OS;!function(i){let t;!function(i){class t extends i.BaseApplication{constructor(i){super("SVGEdit",i)}main(){const i="pkg://SVGEdit/svgedit/index.html".asFileHandle().getlink();this.find("container").src=i}}i.SVGEdit=t}(t=i.application||(i.application={}))}(OS||(OS={}));

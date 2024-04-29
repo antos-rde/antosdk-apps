@@ -31,12 +31,12 @@ function gen_pkg_meta()
     printf "\t{\n"
     printf "\t\t\"pkgname\": \"%s\",\n" "$2"
     printf "\t\t\"name\": \"%s\",\n" "$name"
-    printf "\t\t\"description\": \"https://raw.githubusercontent.com/lxsang/antosdk-apps/master/%s/README.md\",\n" "$2"
+    printf "\t\t\"description\": \"https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/%s/README.md\",\n" "$2"
     printf "\t\t\"category\": \"%s\",\n" "$category"
     printf "\t\t\"author\": \"%s\",\n" "$author"
     printf "\t\t\"version\": \"%s\",\n" "$version"
     printf "\t\t\"dependencies\": [%s],\n" "$dependencies"
-    printf "\t\t\"download\": \"https://raw.githubusercontent.com/lxsang/antosdk-apps/master/%s/build/release/%s.zip\"\n" "$2" "$2"
+    printf "\t\t\"download\": \"https://raw.githubusercontent.com/lxsang/antosdk-apps/2.0.x/%s/build/release/%s.zip\"\n" "$2" "$2"
     printf "\t}\n"
 }
 

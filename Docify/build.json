@@ -1,0 +1,111 @@
+{
+    "name": "Docify",
+    "targets": {
+        "init": {
+            "jobs": [
+                {
+                    "name": "vfs-mkdir",
+                    "data": [
+                        "build",
+                        "build/debug",
+                        "build/release"
+                    ]
+                }
+            ]
+        },
+         "locale": {
+            "require": ["locale"],
+            "jobs": [
+                {
+                    "name":"locale-gen",
+                    "data": {
+                        "src": "",
+                        "exclude": ["build/", "css/", "coffees/"],
+                        "locale": "en_GB",
+                        "dest": "package.json"
+                    }
+                }
+            ]
+        },
+        "ts": {
+            "require": [
+                "ts"
+            ],
+            "jobs": [
+                {
+                    "name": "ts-antos-sdk",
+                    "data": {
+                        "version": "2.0.x"
+                    }
+                },
+                {
+                    "name": "ts-compile",
+                    "data": {
+                        "src": [
+                            "ts/dialogs.ts",
+                            "ts/main.ts"
+                        ],
+                        "dest": "build/debug/main.js"
+                    }
+                }
+            ]
+        },
+        "uglify": {
+            "require": [
+                "terser"
+            ],
+            "jobs": [
+                {
+                    "name": "terser-uglify",
+                    "data": [
+                        "build/debug/main.js"
+                    ]
+                }
+            ]
+        },
+        "copy": {
+            "jobs": [
+                {
+                    "name": "vfs-cp",
+                    "data": {
+                        "src": [
+                            "assets/scheme.html",
+                            "package.json",
+                            "css/main.css",
+                            "README.md"
+                        ],
+                        "dest": "build/debug"
+                    }
+                }
+            ]
+        },
+        "release": {
+            "require": [
+                "zip"
+            ],
+            "depend": [
+                "init",
+                "ts",
+                "uglify",
+                "copy"
+            ],
+            "jobs": [
+                {
+                    "name": "zip-mk",
+                    "data": {
+                        "src": "build/debug",
+                        "dest": "build/release/Docify.zip"
+                    }
+                }
+            ]
+        },
+
+        "debug": {
+            "depend": [
+                "init",
+                "ts",
+                "copy"
+            ]
+        }
+    }
+}

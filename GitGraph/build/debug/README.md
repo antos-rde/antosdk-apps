@@ -14,6 +14,7 @@ graph.base_dir = "home://workspace/repo-git".asFileHandle();
 ```
 
 ## Change logs:
+- v0.1.5-b: Adapt to new AntOS UI API
 - v0.1.4-b: Fetch changes on a commit based on current commit and its left most parent commit
 - v0.1.3-b: Support open Git repo with open with dialog
 - v0.1.2-b: fix init bug

@@ -78,16 +78,21 @@
                 }
             ]
         },
+        "debug": {
+            "depend": [
+                "init",
+                "coffee",
+                "cat",
+                "copy"
+            ]
+        },
         "release": {
             "require": [
                 "zip"
             ],
             "depend": [
-                "init",
-                "coffee",
-                "cat",
-                "uglify",
-                "copy"
+                "debug",
+                "uglify"
             ],
             "jobs": [
                 {

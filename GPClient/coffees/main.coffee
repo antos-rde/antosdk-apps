@@ -23,23 +23,19 @@ class ClientDialog extends this.OS.GUI.BasicDialog
             @quit()
 
 ClientDialog.scheme = """
-<afx-app-window width='300' height='160'>
-    <afx-hbox>
-        <div data-width="5"></div>
-        <afx-vbox>
-            <div data-height="5"></div>
-            <afx-label data-height="25" text = "__(Client name)"></afx-label>
-            <input type="text" name="text" data-height="25" ></input>
-            <div data-height="5"></div>
-            <afx-label data-height="25" text = "__(URL)"></afx-label>
-            <input type="text" name="url" data-height="25" ></input>
-            <div data-height="30" style="text-align: right;">
-                <afx-button data-id="btnok" text="__(Ok)"></afx-button>
-                <afx-button data-id="btncancel" text="__(Cancel)"></afx-button>
-            </div>
-        </afx-vbox>
-        <div data-width="5"></div>
-    </afx-hbox>
+<afx-app-window width='400' height='300'>
+    <afx-vbox padding="5">
+        <afx-label data-height="25" text = "__(Client name)"></afx-label>
+        <input type="text" name="text" data-height="30" ></input>
+        <div data-height="5"></div>
+        <afx-label data-height="25" text = "__(URL)"></afx-label>
+        <input type="text" name="url" data-height="30" ></input>
+        <div></div>
+        <div data-height="35" style="text-align: right;">
+            <afx-button data-id="btnok" text="__(Ok)"></afx-button>
+            <afx-button data-id="btncancel" text="__(Cancel)"></afx-button>
+        </div>
+    </afx-vbox>
 </afx-app-window>
 """
 # 
@@ -47,7 +43,14 @@ ClientDialog.scheme = """
 class ClientListDialog extends this.OS.GUI.BasicDialog
     constructor: () ->
         super "ClientListDialog", ClientListDialog.scheme
-        
+    
+    refresh_list: () ->
+        @clist.data = @parent.setting.clients.map (e) =>
+            {
+                text: e.text,
+                url: e.url
+            }
+
     main: () ->
         super.main()
         @clist = @find("client-list")
@@ -60,9 +63,13 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                         title: __("Add new client")
                     })
                         .then (data) =>
-                            #console.log(data)
+                            console.log(data)
                             @parent.setting.clients.push(data)
-                            @clist.data = @parent.setting.clients
+                            @clist.data = @parent.setting.clients.map (e,i) =>
+                                {
+                                    text: e.text,
+                                    url: e.url
+                                }
                      
             },
             {
@@ -76,25 +83,25 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
                         .then (d) =>
                             return unless d
                             @parent.setting.clients.splice(index,1)
-                            @clist.data = @parent.setting.clients
+                            @refresh_list()
             },
             {
                  text: "",
                  iconclass: "fa fa-pencil-square-o",
                  onbtclick: (e) =>
                     item = @clist.selectedItem
+                    index = @clist.selected
                     return unless item
                     @openDialog(new ClientDialog(), {
-                        title: __("Add new client"),
+                        title: __("Edit client"),
                         text: item.data.text,
                         url: item.data.url
                     })
                         .then (data) =>
-                            #console.log(data)
                             return unless data
-                            item.data.text = data.text
-                            item.data.url = data.url
-                            @clist.data = @parent.setting.clients
+                            @parent.setting.clients[index].text = data.text
+                            @parent.setting.clients[index].url = data.url
+                            @refresh_list()
             }
         ]
         @find("btnswitch").onbtclick = (e) =>
@@ -104,13 +111,13 @@ class ClientListDialog extends this.OS.GUI.BasicDialog
             @parent.setting.cname = item.data.text
             @parent.switchClient()
             @quit()
-        @clist.data = @parent.setting.clients
+        @refresh_list()
 
 ClientListDialog.scheme = """
-<afx-app-window width='200' height='200'>
-    <afx-vbox>
+<afx-app-window width='400' height='300'>
+    <afx-vbox padding="5">
         <afx-list-view data-id="client-list"></afx-list-view>
-        <div data-height="30" style="text-align: right;">
+        <div data-height="35" style="text-align: right;">
             <afx-button text="__(Switch client)" data-id="btnswitch"></afx-button>
         <div>
     </afx-vbox>
