@@ -52,7 +52,9 @@
                             "api",
                             "main.css",
                             "templates",
-                            "icon.png"
+                            "icons/icon.png",
+                            "icons/new.png",
+                            "icons/open.png"
                         ],
                         "dest":"build/debug"
                     }

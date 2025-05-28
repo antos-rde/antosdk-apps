@@ -13,7 +13,18 @@ local result = function(data)
 end
 
 local error = function(msg)
+    LOG_ERROR("Error: "..msg)
     return {error = msg, result = false}
+end
+
+local decode_path = function(str)
+   local encoded = str:gsub("%.(.*)$", ""):gsub('_', '/'):gsub('-', '+')
+    if #encoded % 4 == 2 then
+        encoded = encoded.."=="
+    elseif #encoded %4 == 3 then
+        encoded = encoded.."="
+    end
+    return tostring(enc.b64decode(encoded))
 end
 
 local fetch = function(url)
@@ -63,15 +74,19 @@ end
 
 handle.file = function(data)
     local rq = REQUEST.r
+    LOG_INFO("Request Data:"..JSON.encode(data))
     if not rq then
         return error("Unknown request")
     end
+    
     local ret, stat = vfs.fileinfo(data.file)
     if not ret then
         return error("Unable to query file info")
     end
     local path = vfs.ospath(data.file)
+    LOG_INFO("Check for request GET/POST/or data")
     if rq:match("/wopi/files/[^/]*/contents$") then
+        LOG_INFO("/wopi/files/[^/]*/contents$")
         if REQUEST.method == "GET" then
             std.sendFile(path)
             return nil
@@ -84,14 +99,44 @@ handle.file = function(data)
             return error("Unknown request method")
         end
     elseif rq:match("/wopi/files/[^/]*$") then
-        return {
-            BaseFileName = stat.name,
-            Size =  math.floor(stat.size),
-            UserCanWrite = vfs.checkperm(data.file,"write"),
-            mime = stat.mime,
-            PostMessageOrigin = "*",
-            UserCanNotWriteRelative = false
-        }
+        LOG_INFO("Matching /wopi/files/[^/]*$")
+        if REQUEST.method == "GET" then
+            return {
+                BaseFileName = stat.name,
+                Size =  math.floor(stat.size),
+                UserCanWrite = vfs.checkperm(data.file,"write"),
+                mime = stat.mime,
+                PostMessageOrigin = "*",
+                UserCanNotWriteRelative = false
+            }
+        elseif REQUEST.method == "POST" then
+            LOG_INFO("Checking for header X_WOPI_SUGGESTEDTARGET")
+            local out_file = HEADER['X_WOPI_SUGGESTEDTARGET']
+            if not out_file then
+                return error("Unknown request")
+            end
+            LOG_INFO("Encoded path:"..out_file)
+            local dpath = decode_path(out_file)
+            LOG_INFO("Decoded path:"..dpath)
+            out_file = vfs.ospath(dpath)
+            LOG_INFO("Save file to:"..out_file)
+            local barr = REQUEST["application/octet-stream"]
+            barr:fileout(out_file)
+            local ret, stat = vfs.fileinfo(out_file)
+            if not ret then
+                return error("Unable to save file")
+            end
+            return {
+                BaseFileName = stat.name,
+                Size =  math.floor(stat.size),
+                UserCanWrite = vfs.checkperm(data.file,"write"),
+                mime = stat.mime,
+                PostMessageOrigin = "*",
+                UserCanNotWriteRelative = false
+            }
+        else
+            return error("Unknown request method")
+        end
     else
         return error("Unknown request")
     end
